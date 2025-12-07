@@ -26,18 +26,43 @@ async function generateAll() {
     const topic = concepts[i].topic;
     console.log(`🔹 [${i + 1}/${concepts.length}] Generating: ${topic}`);
 
-    const prompt = `
-You are creating an 80–100 word explainer for busy product managers.
+const prompt = `
+You are generating an AI learning short for Product Managers.
 
-Topic: "${topic}"
+For the topic: "${topic}"
 
-Requirements:
-- Explain in clear, simple language
-- Focus on what it is and why it matters
-- Avoid heavy math
-- Make it practically useful for AI PMs
-- Keep it 80–100 words
+Create a tight, structured, premium-quality SHORT (NOT an essay).
+Total length MUST be around **150 words**.
+
+Structure it like this:
+
+### What it is  
+(40–50 words)  
+A clear explanation in simple language. No jargon unless necessary.
+
+### How it works  
+(50–60 words)  
+Explain the mechanics at a high level. No equations. No deep math.
+
+### Why it matters  
+(40–50 words)  
+Explain the practical impact for AI product managers: user experience, cost, latency, business value, scalability, feasibility.
+
+RULES:
+- Keep it factual, crisp, skimmable.
+- Do NOT exceed 165 words.
+- Avoid fluff, metaphors, or storytelling.
+- This is a "short", not a deep article.
+- Make it feel authoritative and product-focused.
+
+Return JSON with:
+{
+  "topic": "${topic}",
+  "title": "<Clear catchy title>",
+  "summary": "<Your 3-section formatted text>"
+}
 `;
+
 
     const response = await client.responses.create({
       model: "gpt-4.1-mini",
