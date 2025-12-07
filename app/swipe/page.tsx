@@ -119,10 +119,39 @@ export default function SwipePage() {
                 <div className="swipe-card-summary">{concept.summary}</div>
               </div>
 
-              <div className="swipe-card-footer">
-                <div className="swipe-chip">Pre-generated with OpenAI</div>
-                <div>Tap left for previous · right for next →</div>
-              </div>
+<div className="swipe-card-footer">
+
+  <div className="swipe-nav">
+    {index > 0 ? (
+      <span
+        className="swipe-nav-prev"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIndex(index - 1);
+        }}
+      >
+        ← Previous
+      </span>
+    ) : (
+      <span />
+    )}
+
+    {index < total - 1 && (
+      <span
+        className="swipe-nav-next"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIndex(index + 1);
+        }}
+      >
+        Next →
+      </span>
+    )}
+  </div>
+
+</div>
+
+
             </motion.div>
           </AnimatePresence>
         </div>
