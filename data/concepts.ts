@@ -1,7 +1,5 @@
 export const concepts = [
   { topic: "Tokenization in LLMs" },
-  { topic: "Attention mechanism" },
-  { topic: "RAG: Retrieval Augmented Generation" },
-  { topic: "Vector databases" },
-  { topic: "Transformers basics" },
+  { topic: "Attention Mechanism" },
+  // same 50 topics as your .ts file
 ];

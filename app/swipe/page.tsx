@@ -1,77 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import TinderCard from "react-tinder-card";
-import { concepts } from "../../data/concepts";
-
-type CardData = {
-  title: string;
-  summary: string;
-};
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { concepts } from "../../data/concepts.generated";
 
 export default function SwipePage() {
   const [index, setIndex] = useState(0);
-  const [card, setCard] = useState<CardData | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const topic = concepts[index]?.topic;
   const total = concepts.length;
+  const concept = concepts[index];
 
-  useEffect(() => {
-    const fetchConcept = async () => {
-      if (!topic) return;
-      setLoading(true);
-      setError(null);
-      setCard(null);
-
-      try {
-        const res = await fetch("/api/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || "Failed to fetch concept");
-        }
-        setCard({ title: data.title, summary: data.summary });
-      } catch (err: any) {
-        setError(err.message || "Unknown error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchConcept();
-  }, [topic]);
-
-  const handleSwipe = () => {
-    setIndex((prev) => prev + 1);
+  const handleNext = () => {
+    if (index < total - 1) {
+      setIndex((prev) => prev + 1);
+    } else {
+      // go to "all caught up" state
+      setIndex(total);
+    }
   };
 
-  if (!topic) {
+  // no more topics left
+  if (!concept) {
     return (
       <main className="ai-shorts-center-text">
         <div style={{ textAlign: "center" }}>
           <div style={{ marginBottom: 6 }}>🎓 You’re all caught up.</div>
           <div style={{ fontSize: 12 }}>
-            Add more topics in <code>data/concepts.ts</code> to keep going.
+            You’ve finished all {total} AI concepts.
+            To add more, edit <code>data/concepts.js</code> and
+            re-run the generator script.
           </div>
-        </div>
-      </main>
-    );
-  }
-
-  if (loading || !card) {
-    return (
-      <main className="ai-shorts-center-text">
-        <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: 13, marginBottom: 6, color: "#9ca3af" }}>
-            Preparing your next AI short…
-          </div>
-          <div style={{ fontSize: 15, fontWeight: 600 }}>{topic}</div>
         </div>
       </main>
     );
@@ -89,16 +46,15 @@ export default function SwipePage() {
         </div>
         <div className="ai-shorts-chip">
           <span className="ai-shorts-chip-dot" />
-          <span>Live · Swipe to learn</span>
+          <span>Static · Instant · No API calls</span>
         </div>
       </header>
 
-{/* Hero Heading */}
-<div className="ai-shorts-hero">
-  <h1 className="ai-shorts-hero-title">AI Concepts</h1>
-  <p className="ai-shorts-hero-sub">Learn one swipe at a time</p>
-</div>
-
+      {/* Hero */}
+      <div className="ai-shorts-hero">
+        <h1 className="ai-shorts-hero-title">AI Concepts</h1>
+        <p className="ai-shorts-hero-sub">Learn one swipe at a time</p>
+      </div>
 
       {/* Progress */}
       <div className="ai-shorts-progress-row">
@@ -112,15 +68,19 @@ export default function SwipePage() {
         </div>
       </div>
 
-      {/* Main swipe card */}
+      {/* Main card with smooth transition */}
       <main className="ai-shorts-main">
         <div className="card-stack-wrapper">
-          <TinderCard
-            onSwipe={handleSwipe}
-            preventSwipe={["up", "down"]}
-            className="absolute w-full h-full"
-          >
-            <div className="swipe-card">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={index}
+              className="swipe-card"
+              initial={{ opacity: 0, y: 14, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -14, scale: 0.97 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              onClick={handleNext}
+            >
               <div>
                 <div className="swipe-card-meta-row">
                   <span className="swipe-card-tag">Today’s concept</span>
@@ -129,20 +89,20 @@ export default function SwipePage() {
                   </span>
                 </div>
 
-                <div className="swipe-card-title">{card.title}</div>
+                <div className="swipe-card-title">{concept.title}</div>
                 <div className="swipe-card-topic">
-                  {topic} · foundation topic
+                  {concept.topic} · foundation topic
                 </div>
 
-                <div className="swipe-card-summary">{card.summary}</div>
+                <div className="swipe-card-summary">{concept.summary}</div>
               </div>
 
               <div className="swipe-card-footer">
-                <div className="swipe-chip">Generated with OpenAI</div>
-                <div>Swipe ⟶ next concept</div>
+                <div className="swipe-chip">Pre-generated with OpenAI</div>
+                <div>Tap → next concept</div>
               </div>
-            </div>
-          </TinderCard>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
     </div>
