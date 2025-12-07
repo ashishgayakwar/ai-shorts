@@ -9,12 +9,35 @@ export default function SwipePage() {
   const total = concepts.length;
   const concept = concepts[index];
 
-  const handleNext = () => {
+  const goNext = () => {
     if (index < total - 1) {
       setIndex((prev) => prev + 1);
     } else {
-      // go to "all caught up" state
+      // move into "all caught up" state
       setIndex(total);
+    }
+  };
+
+  const goPrev = () => {
+    if (index === total) {
+      // if you're on the "caught up" screen, go back to last card
+      setIndex(total - 1);
+    } else if (index > 0) {
+      setIndex((prev) => prev - 1);
+    }
+  };
+
+  // click handler: left half = previous, right half = next
+  const handleCardClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+
+    if (x < rect.width / 2) {
+      goPrev();
+    } else {
+      goNext();
     }
   };
 
@@ -25,9 +48,8 @@ export default function SwipePage() {
         <div style={{ textAlign: "center" }}>
           <div style={{ marginBottom: 6 }}>🎓 You’re all caught up.</div>
           <div style={{ fontSize: 12 }}>
-            You’ve finished all {total} AI concepts.
-            To add more, edit <code>data/concepts.js</code> and
-            re-run the generator script.
+            You’ve finished all {total} AI concepts. To add more,
+            edit <code>data/concepts.js</code> and re-run the generator.
           </div>
         </div>
       </main>
@@ -46,7 +68,7 @@ export default function SwipePage() {
         </div>
         <div className="ai-shorts-chip">
           <span className="ai-shorts-chip-dot" />
-          <span>Static · Instant · No API calls</span>
+          <span>Live · Swipe to learn</span>
         </div>
       </header>
 
@@ -79,7 +101,7 @@ export default function SwipePage() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -14, scale: 0.97 }}
               transition={{ duration: 0.22, ease: "easeOut" }}
-              onClick={handleNext}
+              onClick={handleCardClick}
             >
               <div>
                 <div className="swipe-card-meta-row">
@@ -99,7 +121,7 @@ export default function SwipePage() {
 
               <div className="swipe-card-footer">
                 <div className="swipe-chip">Pre-generated with OpenAI</div>
-                <div>Tap → next concept</div>
+                <div>Tap left for previous · right for next →</div>
               </div>
             </motion.div>
           </AnimatePresence>
