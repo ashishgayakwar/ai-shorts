@@ -24,3 +24,252 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* === AI SHORTS – Product-style dark UI === */
+
+:root {
+  color-scheme: dark;
+  --bg: #020617;
+  --bg-elevated: #020617;
+  --card-bg: rgba(15, 23, 42, 0.96);
+  --card-border: rgba(148, 163, 184, 0.28);
+  --text-main: #e5e7eb;
+  --text-muted: #9ca3af;
+  --accent: #38bdf8;
+  --accent-soft: rgba(56, 189, 248, 0.14);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(56, 189, 248, 0.16) 0, transparent 40%),
+    radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.08) 0, transparent 55%),
+    #020617;
+  color: var(--text-main);
+}
+
+/* Layout shell for the swipe page */
+.ai-shorts-shell {
+  min-height: 100vh;
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.ai-shorts-topbar {
+  padding: 16px 20px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ai-shorts-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ai-shorts-brand-title {
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #e5e7eb;
+}
+
+.ai-shorts-brand-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ai-shorts-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(15, 23, 42, 0.7);
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-shorts-chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #22c55e;
+}
+
+/* Progress */
+.ai-shorts-progress-row {
+  display: flex;
+  justify-content: center;
+  padding: 0 20px 10px;
+}
+
+.progress-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(51, 65, 85, 0.8);
+  opacity: 0.35;
+}
+
+.progress-dot.active {
+  width: 16px;
+  background: var(--accent);
+  opacity: 1;
+}
+
+/* Main */
+.ai-shorts-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 16px 24px;
+}
+
+.card-stack-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 60vh;
+  max-height: 480px;
+}
+
+/* Base card style */
+.swipe-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 22px;
+  padding: 18px 18px 16px;
+  box-sizing: border-box;
+  background: linear-gradient(
+      135deg,
+      rgba(15, 23, 42, 0.8),
+      rgba(15, 23, 42, 0.98)
+    );
+  border: 1px solid var(--card-border);
+  box-shadow:
+    0 18px 45px rgba(15, 23, 42, 0.95),
+    0 0 0 1px rgba(15, 23, 42, 0.8);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: cardEnter 220ms ease-out;
+}
+
+/* Card header: topic + tag */
+.swipe-card-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.swipe-card-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: #e0f2fe;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.swipe-card-count {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Title + topic line */
+.swipe-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.swipe-card-topic {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Summary body */
+.swipe-card-summary {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+
+/* Footer */
+.swipe-card-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(51, 65, 85, 0.8);
+}
+
+.swipe-chip {
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: rgba(15, 23, 42, 0.95);
+}
+
+/* Center states */
+.ai-shorts-center-text {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Entry animation */
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+/* === Hero Section === */
+
+.ai-shorts-hero {
+  text-align: left;
+  padding: 8px 20px 6px;
+  margin-top: 8px;
+}
+
+.ai-shorts-hero-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.ai-shorts-hero-sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
