@@ -8,7 +8,18 @@ export type VisualTopic = {
 };
 
 export const visualTopics: VisualTopic[] = [
-  {
+   {
+  id: "ai-ml-dl-llm",
+  title: "AI vs ML vs DL vs LLM",
+  heroImage: "/visuals/ai-ml-dl-llm-hero.png",
+  detailImage: "/visuals/ai-ml-dl-llm-detail.jpg",
+  summary:
+    "AI is the broad field of intelligent systems. ML is learning from data, DL uses neural networks, and LLMs are deep learning models specialized for language.",
+  note:
+    "Think hierarchy: AI → ML → DL → LLM. Each level becomes more specialized. LLMs excel at language tasks like reasoning, summarization, and conversation."
+},
+
+{
     id: "embeddings",
     title: "Embeddings & Vector Space",
     heroImage: "/visuals/embeddings-hero.png",
@@ -38,17 +49,7 @@ export const visualTopics: VisualTopic[] = [
     note:
       "Attention weights reveal influence between tokens. Stronger weights show where the model ‘looks,’ enabling reasoning, context tracking, and long-range understanding."
   },
- {
-  id: "ai-ml-dl-llm",
-  title: "AI vs ML vs DL vs LLM",
-  heroImage: "/visuals/ai-ml-dl-llm-hero.png",
-  detailImage: "/visuals/ai-ml-dl-llm-detail.jpg",
-  summary:
-    "AI is the broad field of intelligent systems. ML is learning from data, DL uses neural networks, and LLMs are deep learning models specialized for language.",
-  note:
-    "Think hierarchy: AI → ML → DL → LLM. Each level becomes more specialized. LLMs excel at language tasks like reasoning, summarization, and conversation."
-}
-,
+
   {
     id: "pretrain-finetune",
     title: "Pre-training & Fine-tuning",
