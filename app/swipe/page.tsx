@@ -4,6 +4,8 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { concepts } from "../../data/concepts.generated";
 import { quizLevels } from "../../data/quizLevels";
+import { visualTopics } from "../../data/visualTopics";
+import type { VisualTopic } from "../../data/visualTopics";
 
 type Concept = (typeof concepts)[number];
 
@@ -86,7 +88,7 @@ function renderParagraphs(text: string) {
    MAIN COMPONENT
 ------------------------------------------------------- */
 export default function SwipePage() {
-  const [mode, setMode] = useState<"cards" | "quiz">("cards");
+  const [mode, setMode] = useState<"cards" | "quiz" | "visualize">("cards");
 
   /* CARD MODE STATE */
   const [index, setIndex] = useState(0);
@@ -104,6 +106,11 @@ export default function SwipePage() {
   const questions = quizLevels[currentLevel];
   const totalQuestions = questions.length;
   const currentQuestion = questions[quizIndex];
+
+  /* VISUALIZE MODE STATE */
+  const [visualIndex, setVisualIndex] = useState(0);
+  const visualTotal = visualTopics.length;
+  const visualTopic: VisualTopic | undefined = visualTopics[visualIndex];
 
   /* QUIZ HANDLERS */
   function switchToQuiz() {
@@ -149,6 +156,18 @@ export default function SwipePage() {
     setSelectedOption(null);
     setShowAnswer(false);
   }
+
+  /* VISUALIZE HANDLERS */
+  function switchToVisualize() {
+    setMode("visualize");
+    setVisualIndex(0);
+  }
+
+  const handleNextVisual = () =>
+    visualIndex < visualTotal - 1 && setVisualIndex(visualIndex + 1);
+
+  const handlePrevVisual = () =>
+    visualIndex > 0 && setVisualIndex(visualIndex - 1);
 
   /* CARD NAV HANDLERS */
   const handleNextCard = () => index < total - 1 && setIndex(index + 1);
@@ -303,6 +322,127 @@ export default function SwipePage() {
   }
 
   /* =======================================================
+     VISUALIZE MODE UI
+  ======================================================= */
+  if (mode === "visualize" && visualTopic) {
+    return (
+      <div className="ai-shorts-shell">
+        {/* HEADER */}
+        <header className="ai-shorts-topbar">
+          <div className="ai-shorts-brand">
+            <div className="ai-shorts-brand-title">AI SHORTS</div>
+            <div className="ai-shorts-brand-subtitle">
+              150-word primers for busy PMs
+            </div>
+          </div>
+
+          <div className="ai-shorts-header-actions-row">
+            <div className="ai-shorts-chip">
+              <span className="ai-shorts-chip-dot" />
+              <span>Live · Visual mode</span>
+            </div>
+
+            <button className="mode-toggle-btn" onClick={switchToCards}>
+              ← Back to cards
+            </button>
+          </div>
+        </header>
+
+        {/* HERO */}
+        <div className="ai-shorts-hero">
+          <h1 className="ai-shorts-hero-title">Visualize Concepts</h1>
+          <p className="ai-shorts-hero-sub">Understand AI with diagrams</p>
+        </div>
+
+        {/* CARD + NAV */}
+        <main className="ai-shorts-main">
+          <div className="card-stack-wrapper">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={visualTopic.id + visualIndex}
+                className="swipe-card"
+                initial={{ opacity: 0, y: 14, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -14, scale: 0.97 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+              >
+                <div className="swipe-card-inner">
+                  <div className="swipe-card-header">
+                    <div className="swipe-card-meta-row">
+                      <span className="swipe-card-tag">Today’s visual</span>
+                      <span className="swipe-card-count">
+                        {visualIndex + 1} / {visualTotal}
+                      </span>
+                    </div>
+
+                    <div className="swipe-card-title">
+                      {visualTopic.title}
+                    </div>
+                  </div>
+
+                  {/* HERO + DETAIL WITH LABELS */}
+                  <div className="swipe-card-section">
+                    <div className="visual-label">Concept Overview</div>
+
+                    <div className="visual-image-wrapper">
+                      <img
+                        src={visualTopic.heroImage}
+                        alt={visualTopic.title + " overview"}
+                        className="visual-image-hero"
+                      />
+                    </div>
+
+                    <div className="swipe-card-summary">
+                      <p className="visual-text">{visualTopic.summary}</p>
+                    </div>
+
+                    <div className="visual-label">Deep Dive</div>
+
+                    <div className="visual-image-wrapper secondary">
+                      <img
+                        src={visualTopic.detailImage}
+                        alt={visualTopic.title + " detail"}
+                        className="visual-image-detail"
+                      />
+                    </div>
+
+                    {visualTopic.note && (
+                      <div className="swipe-card-summary">
+                        <p className="visual-text">{visualTopic.note}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* NAV UNDER CARD */}
+            <div className="swipe-global-footer">
+              <div className="swipe-nav">
+                <button
+                  className="swipe-nav-btn"
+                  onClick={handlePrevVisual}
+                  disabled={visualIndex === 0}
+                >
+                  ← Previous
+                </button>
+
+                <button
+                  className="swipe-nav-btn"
+                  onClick={handleNextVisual}
+                  disabled={visualIndex === visualTotal - 1}
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  /* =======================================================
      CARD MODE UI
   ======================================================= */
 
@@ -341,6 +481,10 @@ export default function SwipePage() {
 
             <button className="mode-toggle-btn" onClick={switchToQuiz}>
               🎯 Quiz mode
+            </button>
+
+            <button className="mode-toggle-btn" onClick={switchToVisualize}>
+              👁 Visualize
             </button>
           </div>
         </div>
