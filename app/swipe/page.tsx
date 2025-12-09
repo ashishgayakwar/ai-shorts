@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { concepts } from "../../data/concepts.generated";
 import { quizLevels } from "../../data/quizLevels";
@@ -97,6 +97,10 @@ export default function SwipePage() {
   const total = concepts.length;
   const concept = concepts[index] as Concept | undefined;
 
+  /* TOUCH SWIPE STATE (for cards) */
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
+
   /* QUIZ MODE STATE */
   const [currentLevel, setCurrentLevel] =
     useState<"level1" | "level2" | "level3">("level1");
@@ -174,6 +178,39 @@ export default function SwipePage() {
   /* CARD NAV HANDLERS */
   const handleNextCard = () => index < total - 1 && setIndex(index + 1);
   const handlePrevCard = () => index > 0 && setIndex(index - 1);
+
+  /* TOUCH HANDLERS FOR CARD SWIPE */
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 1) {
+      setTouchStartX(e.touches[0].clientX);
+      setTouchEndX(null);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 1) {
+      setTouchEndX(e.touches[0].clientX);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) {
+      setTouchStartX(null);
+      setTouchEndX(null);
+      return;
+    }
+
+    const deltaX = touchEndX - touchStartX;
+
+    if (deltaX < -SWIPE_THRESHOLD) {
+      handleNextCard();
+    } else if (deltaX > SWIPE_THRESHOLD) {
+      handlePrevCard();
+    }
+
+    setTouchStartX(null);
+    setTouchEndX(null);
+  };
 
   /* =======================================================
      QUIZ MODE UI
@@ -505,18 +542,10 @@ export default function SwipePage() {
             <motion.div
               key={index}
               className="swipe-card"
-              drag="x"
-              dragMomentum={false}
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.15}
-              style={{ touchAction: "pan-y", userSelect: "none" }}
-              onDragEnd={(_, info) => {
-                if (info.offset.x < -SWIPE_THRESHOLD) {
-                  handleNextCard();
-                } else if (info.offset.x > SWIPE_THRESHOLD) {
-                  handlePrevCard();
-                }
-              }}
+              // Manual touch swipe (single finger)
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
               initial={{ opacity: 0, y: 14, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -14, scale: 0.97 }}

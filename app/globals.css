@@ -598,3 +598,10 @@ body {
   border-radius: 16px;
   margin: 12px 0 16px;
 }
+.swipe-card {
+  touch-action: pan-y;
+  user-select: none;
+}
+.swipe-card {
+  user-select: none;
+}
