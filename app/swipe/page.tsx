@@ -16,6 +16,11 @@ type ParsedSummary = {
 };
 
 /* -------------------------------------------------------
+   SWIPE CONFIG
+------------------------------------------------------- */
+const SWIPE_THRESHOLD = 120; // px left/right to trigger card change
+
+/* -------------------------------------------------------
    NORMALIZE SUMMARY
 ------------------------------------------------------- */
 function normalizeSummary(input: string): string {
@@ -515,6 +520,16 @@ export default function SwipePage() {
             <motion.div
               key={index}
               className="swipe-card"
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.15}
+              onDragEnd={(_, info) => {
+                if (info.offset.x < -SWIPE_THRESHOLD) {
+                  handleNextCard();
+                } else if (info.offset.x > SWIPE_THRESHOLD) {
+                  handlePrevCard();
+                }
+              }}
               initial={{ opacity: 0, y: 14, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -14, scale: 0.97 }}
