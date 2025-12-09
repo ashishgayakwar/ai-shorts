@@ -7,6 +7,8 @@ import { quizLevels } from "../../data/quizLevels";
 import { visualTopics } from "../../data/visualTopics";
 import type { VisualTopic } from "../../data/visualTopics";
 
+const SWIPE_THRESHOLD = 80; // px left/right to trigger card change
+
 type Concept = (typeof concepts)[number];
 
 type ParsedSummary = {
@@ -14,11 +16,6 @@ type ParsedSummary = {
   howItWorks: string;
   whyItMatters: string;
 };
-
-/* -------------------------------------------------------
-   SWIPE CONFIG
-------------------------------------------------------- */
-const SWIPE_THRESHOLD = 120; // px left/right to trigger card change
 
 /* -------------------------------------------------------
    NORMALIZE SUMMARY
@@ -501,18 +498,6 @@ export default function SwipePage() {
         <p className="ai-shorts-hero-sub">Learn one swipe at a time</p>
       </div>
 
-      {/* PROGRESS DOTS */}
-      <div className="ai-shorts-progress-row">
-        <div className="progress-dots">
-          {concepts.map((_, i) => (
-            <div
-              key={i}
-              className={"progress-dot" + (i === index ? " active" : "")}
-            />
-          ))}
-        </div>
-      </div>
-
       {/* CARD + NAV */}
       <main className="ai-shorts-main">
         <div className="card-stack-wrapper">
@@ -521,8 +506,10 @@ export default function SwipePage() {
               key={index}
               className="swipe-card"
               drag="x"
+              dragMomentum={false}
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.15}
+              style={{ touchAction: "pan-y", userSelect: "none" }}
               onDragEnd={(_, info) => {
                 if (info.offset.x < -SWIPE_THRESHOLD) {
                   handleNextCard();
