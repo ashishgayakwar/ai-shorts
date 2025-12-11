@@ -2,14 +2,19 @@
 
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { concepts } from "../../data/concepts.generated";
-import { quizLevels } from "../../data/quizLevels";
-import { visualTopics } from "../../data/visualTopics";
-import type { VisualTopic } from "../../data/visualTopics";
+
+import { concepts as baseConcepts } from "@/data/concepts";
+import { concepts as generatedConcepts } from "@/data/concepts.generated";
+import { MODULE_META } from "@/data/modules";
+import { quizLevels } from "@/data/quizLevels";
+import { visualTopics } from "@/data/visualTopics";
+import type { VisualTopic } from "@/data/visualTopics";
 
 const SWIPE_THRESHOLD = 80; // px left/right to trigger card change
 
-type Concept = (typeof concepts)[number];
+type BaseConcept = (typeof baseConcepts)[number];
+type GeneratedConcept = (typeof generatedConcepts)[number];
+type Concept = GeneratedConcept & { module?: BaseConcept["module"] };
 
 type ParsedSummary = {
   whatItIs: string;
@@ -18,9 +23,46 @@ type ParsedSummary = {
 };
 
 /* -------------------------------------------------------
+   MERGE GENERATED + BASE (to bring module onto concepts)
+------------------------------------------------------- */
+
+const generatedByTopic: Record<string, GeneratedConcept> = Object.fromEntries(
+  generatedConcepts.map((c) => [c.topic, c])
+);
+
+// Ordered list driven by data/concepts.ts but merged with module
+const orderedConcepts: Concept[] = baseConcepts
+  .map((base) => {
+    const gen = generatedByTopic[base.topic];
+    if (!gen) return undefined;
+    return {
+      ...gen,
+      module: base.module,
+    };
+  })
+  .filter(Boolean) as Concept[];
+
+// Build module options (1, 2, 3...) with names
+const moduleOptions = Array.from(
+  new Set(
+    baseConcepts
+      .map((c) => c.module)
+      .filter((m): m is number => typeof m === "number")
+  )
+)
+  .sort((a, b) => a - b)
+  .map((m) => ({
+    value: m,
+    label: MODULE_META[m]
+      ? `Module ${m}: ${MODULE_META[m]}`
+      : `Module ${m}`,
+  }));
+
+/* -------------------------------------------------------
    NORMALIZE SUMMARY
 ------------------------------------------------------- */
 function normalizeSummary(input: string): string {
+  if (!input) return "";
   let s = input.trim();
 
   // Strip ``` fences if present
@@ -79,6 +121,7 @@ function parseSummary(summary: string): ParsedSummary {
    RENDER PARAGRAPHS
 ------------------------------------------------------- */
 function renderParagraphs(text: string) {
+  if (!text) return null;
   return text
     .split(/\n{2,}/)
     .map((t) => t.trim())
@@ -94,8 +137,14 @@ export default function SwipePage() {
 
   /* CARD MODE STATE */
   const [index, setIndex] = useState(0);
-  const total = concepts.length;
-  const concept = concepts[index] as Concept | undefined;
+  const total = orderedConcepts.length;
+  const concept = orderedConcepts[index];
+
+  // "View more" state – reserved for later if you expand sections
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  // Module filter / jump state
+  const [selectedModule, setSelectedModule] = useState<"all" | number>("all");
 
   /* TOUCH SWIPE STATE (for cards) */
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -118,7 +167,9 @@ export default function SwipePage() {
   const visualTotal = visualTopics.length;
   const visualTopic: VisualTopic | undefined = visualTopics[visualIndex];
 
-  /* QUIZ HANDLERS */
+  /* ---------------------------------
+     QUIZ HANDLERS
+  --------------------------------- */
   function switchToQuiz() {
     setMode("quiz");
     setQuizIndex(0);
@@ -163,7 +214,9 @@ export default function SwipePage() {
     setShowAnswer(false);
   }
 
-  /* VISUALIZE HANDLERS */
+  /* ---------------------------------
+     VISUALIZE HANDLERS
+  --------------------------------- */
   function switchToVisualize() {
     setMode("visualize");
     setVisualIndex(0);
@@ -175,11 +228,54 @@ export default function SwipePage() {
   const handlePrevVisual = () =>
     visualIndex > 0 && setVisualIndex(visualIndex - 1);
 
-  /* CARD NAV HANDLERS */
-  const handleNextCard = () => index < total - 1 && setIndex(index + 1);
-  const handlePrevCard = () => index > 0 && setIndex(index - 1);
+  /* ---------------------------------
+     CARD NAV HANDLERS
+  --------------------------------- */
+  const handleNextCard = () => {
+    if (index < total - 1) {
+      setIndex(index + 1);
+      setExpandedIndex(null);
+    }
+  };
 
-  /* TOUCH HANDLERS FOR CARD SWIPE */
+  const handlePrevCard = () => {
+    if (index > 0) {
+      setIndex(index - 1);
+      setExpandedIndex(null);
+    }
+  };
+
+  /* ---------------------------------
+     MODULE DROPDOWN HANDLER
+     (Jump to first card of that module)
+  --------------------------------- */
+  function handleModuleChange(
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) {
+    const value = e.target.value;
+    if (value === "all") {
+      setSelectedModule("all");
+      setIndex(0);
+      setExpandedIndex(null);
+      return;
+    }
+
+    const moduleNumber = Number(value);
+    setSelectedModule(moduleNumber);
+
+    const firstIndex = orderedConcepts.findIndex(
+      (c) => c.module === moduleNumber
+    );
+
+    if (firstIndex !== -1) {
+      setIndex(firstIndex);
+      setExpandedIndex(null);
+    }
+  }
+
+  /* ---------------------------------
+     TOUCH HANDLERS FOR CARD SWIPE
+  --------------------------------- */
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 1) {
       setTouchStartX(e.touches[0].clientX);
@@ -308,7 +404,7 @@ export default function SwipePage() {
                 })}
               </div>
 
-              {/* EXPLANATION (only if provided) */}
+              {/* EXPLANATION */}
               {showAnswer && explanation && (
                 <div className="quiz-explanation">{explanation}</div>
               )}
@@ -498,9 +594,17 @@ export default function SwipePage() {
     );
   }
 
-  const normalized = normalizeSummary(concept.summary);
+  const normalized = normalizeSummary(concept.summary ?? "");
   const sections = parseSummary(normalized);
-  const cleanTitle = concept.title.replace("· foundation topic", "").trim();
+  const cleanTitle = (concept.title ?? concept.topic)
+    .replace("· foundation topic", "")
+    .trim();
+
+  const currentModule = concept.module;
+  const currentModuleName =
+    currentModule && MODULE_META[currentModule]
+      ? MODULE_META[currentModule]
+      : undefined;
 
   return (
     <div className="ai-shorts-shell">
@@ -535,6 +639,33 @@ export default function SwipePage() {
         <p className="ai-shorts-hero-sub">Learn one swipe at a time</p>
       </div>
 
+      {/* MODULE DROPDOWN */}
+      {moduleOptions.length > 0 && (
+        <div className="ai-shorts-main">
+          <div className="module-filter-bar">
+            <label className="module-filter-label">
+              Jump to module:
+              <select
+                className="module-filter-select"
+                value={
+                  selectedModule === "all"
+                    ? "all"
+                    : String(selectedModule)
+                }
+                onChange={handleModuleChange}
+              >
+                <option value="all">All modules</option>
+                {moduleOptions.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+      )}
+
       {/* CARD + NAV */}
       <main className="ai-shorts-main">
         <div className="card-stack-wrapper">
@@ -542,7 +673,6 @@ export default function SwipePage() {
             <motion.div
               key={index}
               className="swipe-card"
-              // Manual touch swipe (single finger)
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
@@ -560,6 +690,21 @@ export default function SwipePage() {
                     </span>
                   </div>
 
+                  {/* MODULE PILL */}
+                  {currentModule && (
+                    <div className="swipe-card-meta-row">
+                      <span className="ai-shorts-chip">
+                        <span className="ai-shorts-chip-dot" />
+                        <span>
+                          Module {currentModule}
+                          {currentModuleName
+                            ? `: ${currentModuleName}`
+                            : ""}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+
                   <div className="swipe-card-title">{cleanTitle}</div>
                 </div>
 
@@ -573,7 +718,9 @@ export default function SwipePage() {
 
                 {/* HOW IT WORKS */}
                 <div className="swipe-card-section">
-                  <div className="swipe-card-section-title">HOW IT WORKS</div>
+                  <div className="swipe-card-section-title">
+                    HOW IT WORKS
+                  </div>
                   <div className="swipe-card-summary">
                     {renderParagraphs(sections.howItWorks)}
                   </div>
