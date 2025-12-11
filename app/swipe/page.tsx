@@ -12,6 +12,12 @@ import type { VisualTopic } from "@/data/visualTopics";
 
 const SWIPE_THRESHOLD = 80; // px left/right to trigger card change
 
+// ✅ TS-safe wrapper so we can index with a number
+const MODULE_META_TYPED: Record<number, string> = MODULE_META as Record<
+  number,
+  string
+>;
+
 type BaseConcept = (typeof baseConcepts)[number];
 type GeneratedConcept = (typeof generatedConcepts)[number];
 type Concept = GeneratedConcept & { module?: BaseConcept["module"] };
@@ -53,8 +59,8 @@ const moduleOptions = Array.from(
   .sort((a, b) => a - b)
   .map((m) => ({
     value: m,
-    label: MODULE_META[m]
-      ? `Module ${m}: ${MODULE_META[m]}`
+    label: MODULE_META_TYPED[m]
+      ? `Module ${m}: ${MODULE_META_TYPED[m]}`
       : `Module ${m}`,
   }));
 
@@ -249,9 +255,7 @@ export default function SwipePage() {
      MODULE DROPDOWN HANDLER
      (Jump to first card of that module)
   --------------------------------- */
-  function handleModuleChange(
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) {
+  function handleModuleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const value = e.target.value;
     if (value === "all") {
       setSelectedModule("all");
@@ -602,8 +606,8 @@ export default function SwipePage() {
 
   const currentModule = concept.module;
   const currentModuleName =
-    currentModule && MODULE_META[currentModule]
-      ? MODULE_META[currentModule]
+    currentModule && MODULE_META_TYPED[currentModule]
+      ? MODULE_META_TYPED[currentModule]
       : undefined;
 
   return (
@@ -648,9 +652,7 @@ export default function SwipePage() {
               <select
                 className="module-filter-select"
                 value={
-                  selectedModule === "all"
-                    ? "all"
-                    : String(selectedModule)
+                  selectedModule === "all" ? "all" : String(selectedModule)
                 }
                 onChange={handleModuleChange}
               >
