@@ -1,0 +1,17 @@
+export const comparisonPairs = [
+  { topicA: "Tokenization in LLMs", topicB: "Embeddings and Vector Spaces" },
+  { topicA: "Attention Mechanism", topicB: "Multi-Head Attention" },
+  { topicA: "Self-Attention vs Cross-Attention", topicB: "Attention Mechanism" },
+  { topicA: "Encoder-Only Models (BERT)", topicB: "Decoder-Only Models (GPT)" },
+  { topicA: "Decoder-Only Models (GPT)", topicB: "Encoder–Decoder Models (T5)" },
+  { topicA: "Transformers Architecture", topicB: "RNNs and LSTMs" },
+  { topicA: "Fine-Tuning LLMs", topicB: "Prompt Engineering" },
+  { topicA: "Fine-Tuning LLMs", topicB: "LoRA and PEFT Techniques" },
+  { topicA: "RAG (Retrieval-Augmented Generation)", topicB: "Fine-Tuning LLMs" },
+  { topicA: "RAG (Retrieval-Augmented Generation)", topicB: "Vector Search" },
+  { topicA: "Embeddings and Vector Spaces", topicB: "Cosine Similarity in Embeddings" },
+  { topicA: "Context Window and Token Limits", topicB: "Long Context Models" },
+  { topicA: "Temperature and Sampling", topicB: "Top-K and Top-P" },
+  { topicA: "Latent Space", topicB: "Embedding Space" },
+  { topicA: "ChatGPT (LLMs)", topicB: "Transformers Architecture" },
+];

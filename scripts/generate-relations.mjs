@@ -1,0 +1,199 @@
+#!/usr/bin/env node
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import OpenAI from "openai";
+import { concepts } from "../data/concepts.js";
+
+// ----------------- PATH HELPERS -----------------
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.join(__dirname, "..");
+
+// ----------------- CONFIG -----------------
+const EMBEDDING_MODEL = "text-embedding-3-large";
+const RELATION_MODEL = "gpt-4.1";
+
+// how many nearest neighbors per topic to keep
+const TOP_K = 3;
+
+// ----------------- LOAD TOPICS -----------------
+const topics = concepts.map((c) => c.topic.trim());
+const modules = concepts.map((c) => c.module ?? null);
+
+console.log(`\n🔵 Loaded ${topics.length} topics from data/concepts.js\n`);
+
+// ----------------- OPENAI CLIENT -----------------
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// ----------------- COSINE SIMILARITY -----------------
+function cosineSim(a, b) {
+  let dot = 0;
+  let magA = 0;
+  let magB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    magA += a[i] * a[i];
+    magB += b[i] * b[i];
+  }
+  return dot / (Math.sqrt(magA) * Math.sqrt(magB));
+}
+
+// ----------------- PROMPT BUILDER -----------------
+function buildRelationPrompt(topicA, topicB) {
+  return `
+You are explaining AI and LLM concepts to a senior product manager.
+
+Topic A: "${topicA}"
+Topic B: "${topicB}"
+
+In 3–5 sentences, clearly explain:
+- how these two concepts are related,
+- how they differ,
+- when one is preferred over the other,
+- and how they can work together in real LLM / product scenarios.
+
+Write as one concise paragraph. No bullet points, no headings, no JSON.
+  `.trim();
+}
+
+// ----------------- MAIN -----------------
+async function main() {
+  // 1) Embeddings for all topics
+  console.log("🔵 Generating embeddings for all topics…\n");
+
+  const embRes = await client.embeddings.create({
+    model: EMBEDDING_MODEL,
+    input: topics,
+  });
+
+  const embeddings = embRes.data.map((d) => d.embedding);
+  console.log("✅ Embeddings created.\n");
+
+  // 2) Build similarity matrix
+  console.log("🔵 Building curated pair list using TOP_K neighbors per topic…");
+
+  // similarity[i][j] for convenience
+  const similarity = Array.from({ length: topics.length }, () =>
+    Array(topics.length).fill(0)
+  );
+
+  for (let i = 0; i < topics.length; i++) {
+    for (let j = i + 1; j < topics.length; j++) {
+      const sim = cosineSim(embeddings[i], embeddings[j]);
+      similarity[i][j] = sim;
+      similarity[j][i] = sim;
+    }
+  }
+
+  // 3) For each topic, pick TOP_K nearest neighbors
+  const pairKeySet = new Set();
+
+  for (let i = 0; i < topics.length; i++) {
+    // sort all other topics by similarity to i
+    const neighbors = [];
+    for (let j = 0; j < topics.length; j++) {
+      if (j === i) continue;
+      neighbors.push({ index: j, sim: similarity[i][j] });
+    }
+
+    neighbors.sort((a, b) => b.sim - a.sim);
+
+    // best TOP_K semantic neighbors
+    const topNeighbors = neighbors.slice(0, TOP_K);
+
+    for (const n of topNeighbors) {
+      const j = n.index;
+      const a = Math.min(i, j);
+      const b = Math.max(i, j);
+      const key = `${a}__${b}`;
+      pairKeySet.add(key);
+    }
+
+    // also add all same-module topics as curated pairs
+    const myModule = modules[i];
+    if (myModule != null) {
+      for (let j = 0; j < topics.length; j++) {
+        if (j === i) continue;
+        if (modules[j] === myModule) {
+          const a = Math.min(i, j);
+          const b = Math.max(i, j);
+          const key = `${a}__${b}`;
+          pairKeySet.add(key);
+        }
+      }
+    }
+  }
+
+  const pairIndices = Array.from(pairKeySet).map((key) => {
+    const [a, b] = key.split("__").map(Number);
+    return [a, b];
+  });
+
+  console.log(
+    `📌 Curated pairs to generate relations for: ${pairIndices.length}\n`
+  );
+
+  // 4) Generate relation text for each curated pair
+  const comparisonRecords = [];
+
+  for (const [i, j] of pairIndices) {
+    const topicA = topics[i];
+    const topicB = topics[j];
+
+    console.log(`📝 Generating relation: ${topicA}  ↔  ${topicB}`);
+
+    const prompt = buildRelationPrompt(topicA, topicB);
+
+    const resp = await client.chat.completions.create({
+      model: RELATION_MODEL,
+      temperature: 0.2,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const relationText = resp.choices[0]?.message?.content?.trim() || "";
+
+    comparisonRecords.push({
+      topicA,
+      topicB,
+      title: `${topicA} vs ${topicB}`,
+      relation: relationText,
+    });
+
+    console.log("✅ Done\n");
+  }
+
+  // 5) Write data/comparisons.ts (overwrite every time)
+  const outPath = path.join(projectRoot, "data", "comparisons.ts");
+  console.log("💾 Writing to data/comparisons.ts …");
+
+  const tsFile = `// AUTO-GENERATED by scripts/generate-relations.mjs
+// This file is regenerated from curated pairs every time.
+
+export type ComparisonRecord = {
+  topicA: string;
+  topicB: string;
+  title: string;
+  relation: string;
+};
+
+export const comparisons: ComparisonRecord[] = ${JSON.stringify(
+    comparisonRecords,
+    null,
+    2
+  )};
+`;
+
+  fs.writeFileSync(outPath, tsFile, "utf8");
+  console.log(
+    `🎉 Done! Wrote ${comparisonRecords.length} relations to ${outPath}\n`
+  );
+}
+
+main().catch((err) => {
+  console.error("❌ Fatal error in generate-relations.mjs");
+  console.error(err);
+  process.exit(1);
+});

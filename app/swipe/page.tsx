@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { concepts as baseConcepts } from "@/data/concepts";
@@ -338,6 +339,10 @@ export default function SwipePage() {
             <button className="mode-toggle-btn" onClick={switchToCards}>
               ← Back to cards
             </button>
+
+            <Link href="/compare" className="mode-toggle-btn">
+              🔍 Compare concepts
+            </Link>
           </div>
         </header>
 
@@ -476,14 +481,18 @@ export default function SwipePage() {
           </div>
 
           <div className="ai-shorts-header-actions-row">
-            <div className="ai-shorts-chip">
+            {/* <div className="ai-shorts-chip">
               <span className="ai-shorts-chip-dot" />
               <span>Live · Visual mode</span>
-            </div>
+            </div> */}
 
             <button className="mode-toggle-btn" onClick={switchToCards}>
               ← Back to cards
             </button>
+
+            <Link href="/compare" className="mode-toggle-btn">
+              🔍 Compare concepts
+            </Link>
           </div>
         </header>
 
@@ -607,7 +616,6 @@ export default function SwipePage() {
     .replace("· foundation topic", "")
     .trim();
 
-
   const currentModule = concept.module;
   const currentModuleName =
     currentModule && MODULE_META_TYPED[currentModule]
@@ -625,10 +633,10 @@ export default function SwipePage() {
           </div>
 
           <div className="ai-shorts-header-actions-row">
-            <div className="ai-shorts-chip">
+            {/* <div className="ai-shorts-chip"> 
               <span className="ai-shorts-chip-dot" />
               <span>Live · Swipe to learn</span>
-            </div>
+            </div> */}
 
             <button className="mode-toggle-btn" onClick={switchToQuiz}>
               🎯 Quiz mode
@@ -637,6 +645,10 @@ export default function SwipePage() {
             <button className="mode-toggle-btn" onClick={switchToVisualize}>
               👁 Visualize
             </button>
+
+            <Link href="/compare" className="mode-toggle-btn">
+              🔍 Compare concepts
+            </Link>
           </div>
         </div>
       </header>
@@ -654,20 +666,21 @@ export default function SwipePage() {
             <label className="module-filter-label">
               Jump to module:
               <div className="module-filter-wrapper">
-              <select
-                className="module-filter-select"
-                value={
-                  selectedModule === "all" ? "all" : String(selectedModule)
-                }
-                onChange={handleModuleChange}
-              >
-                <option value="all">All modules</option>
-                {moduleOptions.map((m) => (
-                  <option key={m.value} value={m.value}>
-                    {m.label}
-                  </option>
-                ))}
-              </select></div>
+                <select
+                  className="module-filter-select"
+                  value={
+                    selectedModule === "all" ? "all" : String(selectedModule)
+                  }
+                  onChange={handleModuleChange}
+                >
+                  <option value="all">All modules</option>
+                  {moduleOptions.map((m) => (
+                    <option key={m.value} value={m.value}>
+                      {m.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </label>
           </div>
         </div>
@@ -690,12 +703,8 @@ export default function SwipePage() {
             >
               <div className="swipe-card-inner">
                 <div className="swipe-card-header">
-                  <div className="swipe-card-meta-row">
-                    <span className="swipe-card-tag">Today’s concept</span>
-                    <span className="swipe-card-count">
-                      {index + 1} / {total}
-                    </span>
-                  </div>
+                  <div className="flex justify-between">
+                  
 
                   {/* MODULE PILL */}
                   {currentModule && (
@@ -711,6 +720,12 @@ export default function SwipePage() {
                       </span>
                     </div>
                   )}
+                  <div className="swipe-card-meta-row">
+                    <span className="swipe-card-count">
+                      {index + 1} / {total}
+                    </span>
+                  </div>
+                  </div>
 
                   <div className="swipe-card-title">{cleanTitle}</div>
                 </div>
