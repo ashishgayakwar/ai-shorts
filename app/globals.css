@@ -45,7 +45,7 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 12px 16px 32px;
+  padding: 12px 16px 12px;
 }
 
 /* -------------------------------------------------------
@@ -604,4 +604,47 @@ body {
 }
 .swipe-card {
   user-select: none;
+}
+.module-filter-wrapper {
+  position: relative;
+  display: block;
+}
+
+.module-filter-bar {
+  width : 100%;
+}
+
+.module-filter-select {
+  width: 100%;
+  display: block;
+  padding: 5px 40px 5px 14px; /* space for arrow */
+  font-size: 12px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05); /* subtle background */
+  border: 1px solid rgba(255, 255, 255, 0.25); /* visible clean border */
+  border-radius: 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+/* Dropdown arrow */
+.module-filter-wrapper::after {
+  content: "⌄";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Dropdown items */
+.module-filter-select option {
+  background: #0b0f19; /* your navy-dark theme */
+  color: white;
 }

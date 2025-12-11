@@ -600,9 +600,13 @@ export default function SwipePage() {
 
   const normalized = normalizeSummary(concept.summary ?? "");
   const sections = parseSummary(normalized);
-  const cleanTitle = (concept.title ?? concept.topic)
+
+  // TS sometimes narrows concept to `never` here; use a safe cast for title/topic
+  const c: any = concept;
+  const cleanTitle = (c.title ?? c.topic ?? "")
     .replace("· foundation topic", "")
     .trim();
+
 
   const currentModule = concept.module;
   const currentModuleName =
@@ -649,6 +653,7 @@ export default function SwipePage() {
           <div className="module-filter-bar">
             <label className="module-filter-label">
               Jump to module:
+              <div className="module-filter-wrapper">
               <select
                 className="module-filter-select"
                 value={
@@ -662,7 +667,7 @@ export default function SwipePage() {
                     {m.label}
                   </option>
                 ))}
-              </select>
+              </select></div>
             </label>
           </div>
         </div>
