@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
     ],
-    sitemap: "https://ashishgayakwar.com/sitemap.xml",
+    sitemap: "https://www.aipmworld.com/sitemap.xml",
   };
 }
