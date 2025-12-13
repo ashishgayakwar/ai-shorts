@@ -655,11 +655,94 @@ body {
   background: #0b0f19; /* your navy-dark theme */
   color: white;
 }
-footer {
-    width: 100%;
-    left: 0;
-    bottom: 0;
-    background: #ffffff;
-    padding: 10px;
-    z-index: 2;
+
+/* ================================
+   AI Shorts – Mobile header swipe
+================================ */
+
+.scroll-chips {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 6px;
+  scrollbar-width: none; /* Firefox */
+}
+
+.scroll-chips::-webkit-scrollbar {
+  display: none; /* Chrome / Safari */
+}
+
+/* Prevent buttons from shrinking */
+.scroll-chips .mode-toggle-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+/* Force the AI Shorts header action row to be swipe-scrollable on small screens */
+.ai-shorts-header-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  flex-wrap: nowrap;
+  scrollbar-width: none; /* Firefox */
+}
+
+.ai-shorts-header-actions-row::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* Ensure buttons don’t shrink/wrap */
+.ai-shorts-header-actions-row .mode-toggle-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.ai-shorts-topbar {
+  overflow: visible;
+}
+/* ===== FIX: header buttons cut on small screens ===== */
+
+/* ensure topbar/brand don’t allow children to overflow the page */
+.ai-shorts-topbar,
+.ai-shorts-brand {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* force the actions row to become the scroll container */
+.ai-shorts-header-actions-row {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  align-items: center;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  padding-right: 10px; /* prevents last chip from being half-cut */
+  scrollbar-width: none;
+}
+
+.ai-shorts-header-actions-row::-webkit-scrollbar {
+  display: none;
+}
+
+/* ensure chips don’t shrink (so there is something to scroll) */
+.ai-shorts-header-actions-row .mode-toggle-btn,
+.ai-shorts-header-actions-row a.mode-toggle-btn,
+.ai-shorts-header-actions-row button.mode-toggle-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }

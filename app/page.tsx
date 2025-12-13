@@ -47,7 +47,7 @@ export default function Home() {
                 <div className="space-y-1">
                   <div className="text-lg font-semibold">Basic Module</div>
                   <div className="text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-                    Beginnerfriendly concepts - absolute basics
+                    Day ZERO of learning
                   </div>
                 </div>
                 <div className="shrink-0 rounded-full border border-zinc-200 px-3 py-1 text-sm text-zinc-700 transition group-hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-200 dark:group-hover:bg-zinc-900">
@@ -64,7 +64,7 @@ export default function Home() {
                 <div className="space-y-1">
                   <div className="text-lg font-semibold">Intermediate Module</div>
                   <div className="text-sm leading-6 text-white/80 dark:text-black/70">
-                    Swipe cards, quiz, compare, and visualize concepts
+                    Beyond Day ZERO
                   </div>
                 </div>
                 <div className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-sm text-white transition group-hover:bg-white/15 dark:bg-black/10 dark:text-black dark:group-hover:bg-black/15">

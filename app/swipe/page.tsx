@@ -147,7 +147,7 @@ export default function SwipePage() {
   const total = orderedConcepts.length;
   const concept = orderedConcepts[index];
 
-  // "View more" state – reserved for later if you expand sections
+  // reserved for later (kept to avoid refactor)
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   // Module filter / jump state
@@ -254,7 +254,6 @@ export default function SwipePage() {
 
   /* ---------------------------------
      MODULE DROPDOWN HANDLER
-     (Jump to first card of that module)
   --------------------------------- */
   function handleModuleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const value = e.target.value;
@@ -322,7 +321,14 @@ export default function SwipePage() {
     return (
       <div className="ai-shorts-shell">
         {/* HEADER */}
-        <header className="ai-shorts-topbar">
+        <header className="ai-shorts-topbar relative">
+          <Link
+            href="/"
+            className="absolute right-4 top-4 text-xs text-zinc-400 hover:text-zinc-200"
+          >
+            Home
+          </Link>
+
           <div className="ai-shorts-brand">
             <div className="ai-shorts-brand-title">AI SHORTS</div>
             <div className="ai-shorts-brand-subtitle">
@@ -330,7 +336,11 @@ export default function SwipePage() {
             </div>
           </div>
 
-          <div className="ai-shorts-header-actions-row">
+          <div
+            className="ai-shorts-header-actions-row scroll-chips"
+            role="navigation"
+            aria-label="Modes"
+          >
             <div className="ai-shorts-chip">
               <span className="ai-shorts-chip-dot" />
               <span>Live · Quiz mode</span>
@@ -377,9 +387,7 @@ export default function SwipePage() {
                 Q {quizIndex + 1} / {totalQuestions}
               </div>
 
-              <div className="quiz-question">
-                {currentQuestion.question}
-              </div>
+              <div className="quiz-question">{currentQuestion.question}</div>
 
               <div className="quiz-options">
                 {currentQuestion.options.map((opt, i) => {
@@ -394,19 +402,15 @@ export default function SwipePage() {
                     cls += " selected";
                   }
 
-                  const optionLetter = String.fromCharCode(65 + i); // A, B, C, D
+                  const optionLetter = String.fromCharCode(65 + i);
 
                   return (
                     <button
                       key={i}
                       className={cls}
-                      onClick={() =>
-                        !showAnswer && setSelectedOption(i)
-                      }
+                      onClick={() => !showAnswer && setSelectedOption(i)}
                     >
-                      <span className="quiz-option-label">
-                        {optionLetter}
-                      </span>
+                      <span className="quiz-option-label">{optionLetter}</span>
                       <span className="quiz-option-text">{opt}</span>
                     </button>
                   );
@@ -472,7 +476,14 @@ export default function SwipePage() {
     return (
       <div className="ai-shorts-shell">
         {/* HEADER */}
-        <header className="ai-shorts-topbar">
+        <header className="ai-shorts-topbar relative">
+          <Link
+            href="/"
+            className="absolute right-4 top-4 text-xs text-zinc-400 hover:text-zinc-200"
+          >
+            Home
+          </Link>
+
           <div className="ai-shorts-brand">
             <div className="ai-shorts-brand-title">AI SHORTS</div>
             <div className="ai-shorts-brand-subtitle">
@@ -480,12 +491,11 @@ export default function SwipePage() {
             </div>
           </div>
 
-          <div className="ai-shorts-header-actions-row">
-            {/* <div className="ai-shorts-chip">
-              <span className="ai-shorts-chip-dot" />
-              <span>Live · Visual mode</span>
-            </div> */}
-
+          <div
+            className="ai-shorts-header-actions-row scroll-chips"
+            role="navigation"
+            aria-label="Modes"
+          >
             <button className="mode-toggle-btn" onClick={switchToCards}>
               ← Back to cards
             </button>
@@ -523,9 +533,7 @@ export default function SwipePage() {
                       </span>
                     </div>
 
-                    <div className="swipe-card-title">
-                      {visualTopic.title}
-                    </div>
+                    <div className="swipe-card-title">{visualTopic.title}</div>
                   </div>
 
                   {/* HERO + DETAIL WITH LABELS */}
@@ -625,31 +633,37 @@ export default function SwipePage() {
   return (
     <div className="ai-shorts-shell">
       {/* HEADER */}
-      <header className="ai-shorts-topbar">
+      <header className="ai-shorts-topbar relative">
+        <Link
+          href="/"
+          className="absolute right-4 top-4 text-xs text-zinc-400 hover:text-zinc-200"
+        >
+          Home
+        </Link>
+
         <div className="ai-shorts-brand">
           <div className="ai-shorts-brand-title">AI SHORTS</div>
           <div className="ai-shorts-brand-subtitle">
             150-word primers for busy PMs
           </div>
+        </div>
 
-          <div className="ai-shorts-header-actions-row">
-            {/* <div className="ai-shorts-chip"> 
-              <span className="ai-shorts-chip-dot" />
-              <span>Live · Swipe to learn</span>
-            </div> */}
+        <div
+          className="ai-shorts-header-actions-row scroll-chips"
+          role="navigation"
+          aria-label="Modes"
+        >
+          <button className="mode-toggle-btn" onClick={switchToQuiz}>
+            🎯 Quiz mode
+          </button>
 
-            <button className="mode-toggle-btn" onClick={switchToQuiz}>
-              🎯 Quiz mode
-            </button>
+          <button className="mode-toggle-btn" onClick={switchToVisualize}>
+            👁 Visualize
+          </button>
 
-            <button className="mode-toggle-btn" onClick={switchToVisualize}>
-              👁 Visualize
-            </button>
-
-            <Link href="/compare" className="mode-toggle-btn">
-              🔍 Compare concepts
-            </Link>
-          </div>
+          <Link href="/compare" className="mode-toggle-btn">
+            🔍 Compare concepts
+          </Link>
         </div>
       </header>
 
@@ -668,9 +682,7 @@ export default function SwipePage() {
               <div className="module-filter-wrapper">
                 <select
                   className="module-filter-select"
-                  value={
-                    selectedModule === "all" ? "all" : String(selectedModule)
-                  }
+                  value={selectedModule === "all" ? "all" : String(selectedModule)}
                   onChange={handleModuleChange}
                 >
                   <option value="all">All modules</option>
@@ -704,27 +716,24 @@ export default function SwipePage() {
               <div className="swipe-card-inner">
                 <div className="swipe-card-header">
                   <div className="flex justify-between">
-                  
-
-                  {/* MODULE PILL */}
-                  {currentModule && (
-                    <div className="swipe-card-meta-row">
-                      <span className="ai-shorts-chip">
-                        <span className="ai-shorts-chip-dot" />
-                        <span>
-                          Module {currentModule}
-                          {currentModuleName
-                            ? `: ${currentModuleName}`
-                            : ""}
+                    {/* MODULE PILL */}
+                    {currentModule && (
+                      <div className="swipe-card-meta-row">
+                        <span className="ai-shorts-chip">
+                          <span className="ai-shorts-chip-dot" />
+                          <span>
+                            Module {currentModule}
+                            {currentModuleName ? `: ${currentModuleName}` : ""}
+                          </span>
                         </span>
+                      </div>
+                    )}
+
+                    <div className="swipe-card-meta-row">
+                      <span className="swipe-card-count">
+                        {index + 1} / {total}
                       </span>
                     </div>
-                  )}
-                  <div className="swipe-card-meta-row">
-                    <span className="swipe-card-count">
-                      {index + 1} / {total}
-                    </span>
-                  </div>
                   </div>
 
                   <div className="swipe-card-title">{cleanTitle}</div>
@@ -740,9 +749,7 @@ export default function SwipePage() {
 
                 {/* HOW IT WORKS */}
                 <div className="swipe-card-section">
-                  <div className="swipe-card-section-title">
-                    HOW IT WORKS
-                  </div>
+                  <div className="swipe-card-section-title">HOW IT WORKS</div>
                   <div className="swipe-card-summary">
                     {renderParagraphs(sections.howItWorks)}
                   </div>
@@ -750,9 +757,7 @@ export default function SwipePage() {
 
                 {/* WHY IT MATTERS */}
                 <div className="swipe-card-section">
-                  <div className="swipe-card-section-title">
-                    WHY IT MATTERS
-                  </div>
+                  <div className="swipe-card-section-title">WHY IT MATTERS</div>
                   <div className="swipe-card-summary">
                     {renderParagraphs(sections.whyItMatters)}
                   </div>

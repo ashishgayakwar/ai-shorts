@@ -173,7 +173,7 @@ export default function BasicsPage() {
         </main>
 
         {/* NAVIGATION */}
-        <footer className="mt-12 flex justify-between">
+<footer className="mt-12 flex justify-between rounded-xl bg-white/70 p-4 shadow-sm backdrop-blur dark:bg-zinc-950/60">
           <button
             onClick={prev}
             disabled={index === 0}
