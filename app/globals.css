@@ -656,11 +656,10 @@ body {
   color: white;
 }
 footer {
-    position: fixed;
     width: 100%;
     left: 0;
     bottom: 0;
-    background: #000;
+    background: #ffffff;
     padding: 10px;
     z-index: 2;
 }
