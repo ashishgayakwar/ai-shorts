@@ -19,10 +19,8 @@ export default function Home() {
               />
             </div>
             <div className="leading-tight">
-              <div className="text-sm font-semibold">AI Shorts</div>
-              <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                Learn AI in minutes
-              </div>
+              <div className="text-sm font-semibold">AI Shorts with ASHISH</div>
+
             </div>
           </div>
         </header>
@@ -31,10 +29,10 @@ export default function Home() {
         <main className="flex flex-1 flex-col justify-center py-14">
           <div className="space-y-3">
             <h1 className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-              Choose your starting point
+              Learn AI - one concept at a time
             </h1>
             <p className="max-w-xl text-base leading-7 text-zinc-600 dark:text-zinc-400">
-              Start with the basics in a simple reader format, or jump straight
+              Start with the basics, or jump straight
               into the interactive swipe + quiz experience.
             </p>
           </div>
@@ -49,8 +47,7 @@ export default function Home() {
                 <div className="space-y-1">
                   <div className="text-lg font-semibold">Basic Module</div>
                   <div className="text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-                    20 beginner-friendly concepts in a clean reader flow with
-                    Next / Previous navigation.
+                    Beginnerfriendly concepts - absolute basics
                   </div>
                 </div>
                 <div className="shrink-0 rounded-full border border-zinc-200 px-3 py-1 text-sm text-zinc-700 transition group-hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-200 dark:group-hover:bg-zinc-900">
@@ -67,8 +64,7 @@ export default function Home() {
                 <div className="space-y-1">
                   <div className="text-lg font-semibold">Intermediate Module</div>
                   <div className="text-sm leading-6 text-white/80 dark:text-black/70">
-                    Swipe cards, quiz, compare, and visualize concepts — your
-                    existing interactive flow.
+                    Swipe cards, quiz, compare, and visualize concepts
                   </div>
                 </div>
                 <div className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-sm text-white transition group-hover:bg-white/15 dark:bg-black/10 dark:text-black dark:group-hover:bg-black/15">
