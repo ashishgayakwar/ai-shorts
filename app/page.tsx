@@ -19,7 +19,7 @@ export default function Home() {
               />
             </div>
             <div className="leading-tight">
-              <div className="text-sm font-semibold">AI Shorts with ASHISH</div>
+              <div className="text-lg font-semibold">AI PM  WORLD</div>
 
             </div>
           </div>

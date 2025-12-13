@@ -341,10 +341,7 @@ export default function SwipePage() {
             role="navigation"
             aria-label="Modes"
           >
-            <div className="ai-shorts-chip">
-              <span className="ai-shorts-chip-dot" />
-              <span>Live · Quiz mode</span>
-            </div>
+
 
             <button className="mode-toggle-btn" onClick={switchToCards}>
               ← Back to cards
