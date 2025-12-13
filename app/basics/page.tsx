@@ -4,11 +4,27 @@ import { useState } from "react";
 import Link from "next/link";
 import { basicConcepts } from "@/data/basicConcepts";
 
+type Block =
+  | { type: "idea" | "intuition"; text: string[] }
+  | { type: "example"; title?: string; text: string[] }
+  | { type: "steps"; title: string; steps: string[] }
+  | { type: "checklist"; title: string; bullets: string[] }
+  | { type: "commonMistake"; mistake: string; fix: string }
+  | { type: "takeaway"; text: string };
+
+type BasicConcept = {
+  id: string;
+  title: string;
+  subtitle: string;
+  blocks: Block[];
+};
+
 export default function BasicsPage() {
   const [index, setIndex] = useState(0);
 
-  const total = basicConcepts.length;
-  const concept = basicConcepts[index];
+  const concepts = basicConcepts as BasicConcept[];
+  const total = concepts.length;
+  const concept = concepts[index];
 
   function next() {
     if (index < total - 1) setIndex(index + 1);
@@ -78,7 +94,7 @@ export default function BasicsPage() {
                       className="rounded-xl bg-zinc-100 p-4 dark:bg-zinc-900"
                     >
                       <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                        {block.title || "Example"}
+                        {(block.title || "Example").toUpperCase()}
                       </div>
                       <div className="space-y-2">
                         {block.text.map((t, j) => (
@@ -129,14 +145,10 @@ export default function BasicsPage() {
                       className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-black"
                     >
                       <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                        Common misconception
+                        COMMON MISCONCEPTION
                       </div>
-                      <p className="mb-2 text-sm">
-                        ❌ {block.mistake}
-                      </p>
-                      <p className="text-sm">
-                        ✅ {block.fix}
-                      </p>
+                      <p className="mb-2 text-sm">❌ {block.mistake}</p>
+                      <p className="text-sm">✅ {block.fix}</p>
                     </div>
                   );
 
@@ -147,7 +159,7 @@ export default function BasicsPage() {
                       className="rounded-xl bg-zinc-900 p-4 text-white dark:bg-zinc-800"
                     >
                       <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/70">
-                        Key takeaway
+                        KEY TAKEAWAY
                       </div>
                       <p className="text-base leading-7">{block.text}</p>
                     </div>
