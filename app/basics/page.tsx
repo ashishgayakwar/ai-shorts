@@ -27,11 +27,13 @@ export default function BasicsPage() {
   const concept = concepts[index];
 
   function next() {
-    if (index < total - 1) setIndex(index + 1);
+    if (index < total - 1) setIndex(index + 1); 
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function prev() {
     if (index > 0) setIndex(index - 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
