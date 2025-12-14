@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -14,16 +13,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// ✅ ONLY GTM ID (NO GA ID ANYWHERE IN CODE)
+const GTM_ID = "GTM-WZ3KGPZF";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://aipmworld.com"),
   title: {
     default: "AI Shorts — Learn AI in minutes",
     template: "%s | AI Shorts",
   },
-
   description:
     "AI Shorts helps you learn AI concepts through beginner-friendly reader mode and interactive swipe, quiz, compare, and visualize experiences.",
-
   openGraph: {
     title: "AI Shorts — Learn AI in minutes",
     description:
@@ -38,7 +38,6 @@ export const metadata: Metadata = {
       },
     ],
   },
-
   twitter: {
     card: "summary_large_image",
     title: "AI Shorts — Learn AI in minutes",
@@ -48,7 +47,6 @@ export const metadata: Metadata = {
   },
 };
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -56,31 +54,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-  
-  {/* Google Analytics */}
-  {process.env.NEXT_PUBLIC_GA_ID && (
-    <>
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-        strategy="afterInteractive"
-      />
-      <Script id="ga-init" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
-            page_path: window.location.pathname,
-          });
-        `}
-      </Script>
-    </>
-  )}
+      <head>
+        {/* ✅ Google Tag Manager (Head) */}
+        <Script id="gtm-head" strategy="afterInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','${GTM_ID}');
+          `}
+        </Script>
+      </head>
 
-  {children}
-</body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* ✅ Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
 
+        {children}
+      </body>
     </html>
   );
 }
