@@ -31,10 +31,12 @@ export default async function ConceptPage(
 
   if (idx === -1) notFound();
 
-  const current = list[idx];
-  const generated = (generatedConcepts as any[]).find(
+const current = list[idx];
+
+const generated = generatedConcepts.find(
   (c) => c.topic === current.topic
 );
+
 
 let parsedSummary: { title?: string; summary?: string } | null = null;
 
