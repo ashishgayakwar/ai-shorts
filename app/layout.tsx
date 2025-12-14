@@ -15,10 +15,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://aipmworld.com"),
   title: {
     default: "AI Shorts — Learn AI in minutes",
     template: "%s | AI Shorts",
   },
+
   description:
     "AI Shorts helps you learn AI concepts through beginner-friendly reader mode and interactive swipe, quiz, compare, and visualize experiences.",
 
