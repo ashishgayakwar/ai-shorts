@@ -16,6 +16,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   rateLimit     RateLimit?
+  generationLogs GenerationLog[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
