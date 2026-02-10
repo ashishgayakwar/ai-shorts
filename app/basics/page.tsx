@@ -38,7 +38,7 @@ export default function BasicsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
-      <div className="mx-auto max-w-3xl px-6 py-8 pb-24">
+      <div className="mx-auto max-w-3xl px-6 py-8">
         {/* HEADER */}
         <header className="mb-10 flex items-center justify-between">
           <div>
@@ -175,7 +175,7 @@ export default function BasicsPage() {
         </main>
 
         {/* NAVIGATION */}
-        <footer className="sticky bottom-4 mt-12 flex w-full justify-between rounded-xl bg-white/70 p-4 shadow-sm backdrop-blur dark:bg-zinc-950/60">
+<footer className="mt-12 flex justify-between rounded-xl bg-white/70 p-4 shadow-sm backdrop-blur dark:bg-zinc-950/60">
           <button
             onClick={prev}
             disabled={index === 0}
