@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getServerSession } from "next-auth";
+import type { Prisma } from "@prisma/client";
 
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -688,7 +689,7 @@ export async function POST(req: Request) {
     const windowStart = new Date(now.getTime() - RATE_LIMIT_WINDOW_MS);
 
     const limitResult = await prisma.$transaction(
-      async (tx) => {
+      async (tx: Prisma.TransactionClient) => {
         const limitRecord = await tx.rateLimit.findUnique({ where: { userId: user.id } });
 
         const windowExpired = !limitRecord || limitRecord.window10Start < windowStart;
