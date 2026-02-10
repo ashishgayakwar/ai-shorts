@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
-import type { User } from "@prisma/client";
 
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -21,7 +20,7 @@ export default async function UsersPage() {
     redirect("/");
   }
 
-  const users: User[] = await prisma.user.findMany({
+  const users = await prisma.user.findMany({
     orderBy: { createdAt: "desc" },
   });
 
@@ -34,7 +33,7 @@ export default async function UsersPage() {
         </p>
 
         <div className="mt-6 space-y-3">
-          {users.map((u) => (
+          {users.map((u: { id: string; name: string | null; email: string | null; createdAt: Date }) => (
             <div
               key={u.id}
               className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950"
