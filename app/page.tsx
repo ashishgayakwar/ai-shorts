@@ -1,7 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getServerSession } from "next-auth";
 
-export default function Home() {
+import { authOptions } from "@/lib/auth";
+
+export default async function Home() {
+  const session = await getServerSession(authOptions);
+  const userLabel = session?.user?.name || session?.user?.email;
+
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col px-6 py-10">
@@ -22,6 +28,35 @@ export default function Home() {
               <div className="text-lg font-semibold">AI PM  WORLD</div>
 
             </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {userLabel ? (
+              <>
+                <span className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Signed in as {userLabel}
+                </span>
+                <Link
+                  href="/admin/users"
+                  className="rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-900"
+                >
+                  Users
+                </Link>
+                <Link
+                  href="/api/auth/signout?callbackUrl=/"
+                  className="rounded-full bg-zinc-900 px-3 py-1 text-xs text-white dark:bg-white dark:text-black"
+                >
+                  Sign out
+                </Link>
+              </>
+            ) : (
+              <Link
+                href="/api/auth/signin"
+                className="rounded-full bg-zinc-900 px-3 py-1 text-xs text-white dark:bg-white dark:text-black"
+              >
+                Sign in with Google
+              </Link>
+            )}
           </div>
         </header>
 
@@ -68,6 +103,23 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-sm text-white transition group-hover:bg-white/15 dark:bg-black/10 dark:text-black dark:group-hover:bg-black/15">
+                  Start
+                </div>
+              </div>
+            </Link>
+
+            <Link
+              href="/case-study-generator"
+              className="group rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-200 transition hover:shadow-md dark:bg-zinc-950 dark:ring-zinc-800"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="text-lg font-semibold">Case Study Generator</div>
+                  <div className="text-sm leading-6 text-zinc-600 dark:text-zinc-400">
+                    Generate interview-style case packets
+                  </div>
+                </div>
+                <div className="shrink-0 rounded-full border border-zinc-200 px-3 py-1 text-sm text-zinc-700 transition group-hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-200 dark:group-hover:bg-zinc-900">
                   Start
                 </div>
               </div>
