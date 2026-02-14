@@ -5,7 +5,11 @@ import SwipeClient from "../SwipeClient";
 import { concepts as baseConcepts } from "@/data/concepts";
 import { concepts as generatedConcepts } from "@/data/concepts.generated";
 
-type Concept = (typeof generatedConcepts)[number];
+type Concept = {
+  topic: string;
+  title?: string;
+  summary?: string;
+};
 type SwipeMode = "cards" | "quiz" | "visualize";
 
 function slugify(s: string) {
@@ -22,7 +26,7 @@ function normalizeMode(mode?: string): SwipeMode {
 }
 
 const generatedByTopic: Record<string, Concept> = Object.fromEntries(
-  generatedConcepts.map((c) => [c.topic, c])
+  generatedConcepts.map((c) => [c.topic, c as Concept])
 );
 
 const orderedConcepts = baseConcepts
@@ -41,7 +45,7 @@ export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await params;
-  const concept = conceptBySlug[slug];
+  const concept: Concept | undefined = conceptBySlug[slug];
 
   if (!concept) {
     return {

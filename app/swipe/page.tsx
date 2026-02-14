@@ -19,7 +19,9 @@ export default async function SwipePage(
   { searchParams }: { searchParams: Promise<{ mode?: string }> }
 ) {
   const { mode } = await searchParams;
-  const generatedByTopic = new Set(generatedConcepts.map((c) => c.topic));
+  const generatedByTopic = new Set<string>(
+    generatedConcepts.map((c) => c.topic as string)
+  );
   const first = baseConcepts.find((c) => generatedByTopic.has(c.topic));
 
   if (!first) {

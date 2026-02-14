@@ -21,8 +21,12 @@ const MODULE_META_TYPED: Record<number, string> = MODULE_META as Record<
 >;
 
 type BaseConcept = (typeof baseConcepts)[number];
-type GeneratedConcept = (typeof generatedConcepts)[number];
-type Concept = GeneratedConcept & { module?: BaseConcept["module"] };
+type Concept = {
+  topic: string;
+  title?: string;
+  summary?: string;
+  module?: BaseConcept["module"];
+};
 
 type ParsedSummary = {
   whatItIs: string;
@@ -44,8 +48,8 @@ function slugify(s: string) {
    MERGE GENERATED + BASE (to bring module onto concepts)
 ------------------------------------------------------- */
 
-const generatedByTopic: Record<string, GeneratedConcept> = Object.fromEntries(
-  generatedConcepts.map((c) => [c.topic, c])
+const generatedByTopic: Record<string, Concept> = Object.fromEntries(
+  generatedConcepts.map((c) => [c.topic, c as Concept])
 );
 
 // Ordered list driven by data/concepts.ts but merged with module
@@ -168,7 +172,7 @@ export default function SwipeClient(
   /* CARD MODE STATE */
   const [index, setIndex] = useState(initialIndex);
   const total = orderedConcepts.length;
-  const concept = orderedConcepts[index];
+  const concept: Concept | undefined = orderedConcepts[index];
   const selectedModule: "all" | number =
     typeof concept?.module === "number" ? concept.module : "all";
 
@@ -623,11 +627,12 @@ export default function SwipeClient(
   const normalized = normalizeSummary(concept.summary ?? "");
   const sections = parseSummary(normalized);
 
-  const cleanTitle = (concept.title ?? concept.topic ?? "")
+  const conceptData: Concept = concept;
+  const cleanTitle = (conceptData.title ?? conceptData.topic ?? "")
     .replace("· foundation topic", "")
     .trim();
 
-  const currentModule = concept.module;
+  const currentModule = conceptData.module;
   const currentModuleName =
     currentModule && MODULE_META_TYPED[currentModule]
       ? MODULE_META_TYPED[currentModule]
