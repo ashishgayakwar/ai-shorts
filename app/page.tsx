@@ -125,15 +125,17 @@ export default async function Home() {
                 className="group relative overflow-hidden rounded-2xl border border-white/15 bg-slate-950/35 p-5 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-cyan-200/40"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${track.accent} opacity-70`} />
-                <div className="relative">
-                  <span className="inline-flex rounded-full border border-white/20 bg-black/30 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-200">
+                <div className="relative flex h-full flex-col">
+                  <span className="inline-flex rounded-full bg-black/30 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-200">
                     {track.tag}
                   </span>
                   <h2 className="mt-3 text-xl font-semibold text-white">{track.title}</h2>
                   <p className="mt-2 text-sm leading-6 text-slate-300">{track.desc}</p>
-                  <p className="mt-4 text-sm font-medium text-cyan-100 transition group-hover:text-cyan-50">
-                    Enter track -&gt;
-                  </p>
+                  <div className="mt-4 flex justify-end">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-cyan-200/40 bg-cyan-300/15 text-base font-semibold text-cyan-100 transition group-hover:translate-x-0.5 group-hover:bg-cyan-300/25 group-hover:text-cyan-50">
+                      ›
+                    </span>
+                  </div>
                 </div>
               </Link>
             ))}
