@@ -1,14 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+
 import { concepts as baseConcepts } from "../../data/concepts";
 import { concepts as generatedConcepts } from "../../data/concepts.generated";
 import { getComparison } from "../../lib/getComparison";
-
-/* -------------------------------------------------------
-   SUMMARY HELPERS (same logic as swipe page)
-------------------------------------------------------- */
 
 type ParsedSummary = {
   whatItIs: string;
@@ -16,18 +13,18 @@ type ParsedSummary = {
   whyItMatters: string;
 };
 
+type GeneratedConcept = (typeof generatedConcepts)[number];
+
 function normalizeSummary(input: string): string {
   if (!input) return "";
   let s = input.trim();
 
-  // Strip ``` fences if present
   if (s.startsWith("```")) {
     s = s.replace(/^```[a-zA-Z0-9]*\s*/m, "");
     s = s.replace(/```$/m, "");
     s = s.trim();
   }
 
-  // If it's a JSON-wrapped object with { summary: ... }
   if (s.startsWith("{") && s.endsWith("}")) {
     try {
       const obj = JSON.parse(s);
@@ -35,14 +32,11 @@ function normalizeSummary(input: string): string {
         s = obj.summary;
       }
     } catch {
-      // ignore JSON parse error and keep original
+      // ignore parse errors and keep original summary
     }
   }
 
-  // Replace escaped newlines and trim again
-  s = s.replace(/\\n/g, "\n").trim();
-
-  return s;
+  return s.replace(/\\n/g, "\n").trim();
 }
 
 function parseSummary(summary: string): ParsedSummary {
@@ -58,11 +52,7 @@ function parseSummary(summary: string): ParsedSummary {
   const whyItMatters = whyMatch?.[1]?.trim() ?? "";
 
   if (!whatItIs && !howItWorks && !whyItMatters) {
-    return {
-      whatItIs: summary,
-      howItWorks: "",
-      whyItMatters: "",
-    };
+    return { whatItIs: summary, howItWorks: "", whyItMatters: "" };
   }
 
   return { whatItIs, howItWorks, whyItMatters };
@@ -77,17 +67,9 @@ function renderParagraphs(text: string) {
     .map((para, i) => <p key={i}>{para}</p>);
 }
 
-/* -------------------------------------------------------
-   MAP TOPIC -> GENERATED CONCEPT
-------------------------------------------------------- */
-
-const generatedByTopic: Record<string, any> = Object.fromEntries(
-  generatedConcepts.map((c: any) => [c.topic, c])
+const generatedByTopic: Record<string, GeneratedConcept> = Object.fromEntries(
+  generatedConcepts.map((c) => [c.topic, c])
 );
-
-/* -------------------------------------------------------
-   SEARCHABLE DROPDOWN COMPONENT
-------------------------------------------------------- */
 
 type ConceptSearchSelectProps = {
   label: string;
@@ -102,43 +84,78 @@ function ConceptSearchSelect({
   value,
   onChange,
   topics,
-  placeholder = "Search concept…",
+  placeholder = "Search concept...",
 }: ConceptSearchSelectProps) {
   const [query, setQuery] = useState(value || "");
   const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
-  // Keep local query in sync with external value
   useEffect(() => {
-    setQuery(value || "");
-  }, [value]);
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (!rootRef.current) return;
+      if (!rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   const lowerQuery = query.toLowerCase();
   const filtered =
     lowerQuery.length === 0
-      ? topics
-      : topics.filter((t) => t.toLowerCase().includes(lowerQuery));
+      ? topics.slice(0, 60)
+      : topics
+          .filter((t) => t.toLowerCase().includes(lowerQuery))
+          .slice(0, 60);
 
   return (
-    <div className="block text-xs font-medium text-gray-300">
-      {label}
-      <div className="mt-1 relative">
+    <div ref={rootRef} className="block text-xs font-medium text-gray-300">
+      <div className="mb-1.5 uppercase tracking-[0.1em] text-[10px] text-slate-400">
+        {label}
+      </div>
+
+      <div className="relative">
         <input
           value={query}
           onChange={(e) => {
-            setQuery(e.target.value);
+            const next = e.target.value;
+            setQuery(next);
             setOpen(true);
+
+            if (next.trim().length === 0 && value) {
+              onChange("");
+            }
           }}
           onFocus={() => setOpen(true)}
-          className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-white/70"
+          className="w-full rounded-xl border border-white/20 bg-white/[0.06] px-3 py-2.5 pr-9 text-sm text-white outline-none transition focus:border-cyan-300/70 focus:bg-white/[0.09]"
           placeholder={placeholder}
         />
+
+        {query && (
+          <button
+            type="button"
+            onClick={() => {
+              setQuery("");
+              onChange("");
+              setOpen(false);
+            }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-1.5 py-0.5 text-[11px] text-slate-400 transition hover:bg-white/10 hover:text-slate-200"
+            aria-label={`Clear ${label}`}
+          >
+            Clear
+          </button>
+        )}
+
         {open && (
-          <div className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-white/10 bg-black/90 backdrop-blur-sm">
+          <div className="absolute z-20 mt-1.5 max-h-64 w-full overflow-y-auto rounded-xl border border-white/15 bg-black/90 p-1 backdrop-blur-md">
             {filtered.length === 0 && (
               <div className="px-3 py-2 text-xs text-gray-400">
-                No concepts match “{query}”.
+                No concepts match &quot;{query}&quot;.
               </div>
             )}
+
             {filtered.map((topic) => (
               <button
                 key={topic}
@@ -148,7 +165,7 @@ function ConceptSearchSelect({
                   setQuery(topic);
                   setOpen(false);
                 }}
-                className="block w-full text-left px-3 py-2 text-xs text-gray-100 hover:bg-white/10"
+                className="block w-full rounded-lg px-3 py-2 text-left text-xs text-gray-100 transition hover:bg-white/10"
               >
                 {topic}
               </button>
@@ -160,19 +177,54 @@ function ConceptSearchSelect({
   );
 }
 
-/* -------------------------------------------------------
-   MAIN PAGE
-------------------------------------------------------- */
+type SectionColumnsProps = {
+  title: string;
+  topicA: string;
+  topicB: string;
+  textA: string;
+  textB: string;
+};
+
+function SectionColumns({ title, topicA, topicB, textA, textB }: SectionColumnsProps) {
+  return (
+    <div className="swipe-card-section">
+      <div className="swipe-card-section-title">{title}</div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+        <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/[0.06] px-4 py-3.5 text-sm text-gray-100 backdrop-blur-sm">
+          <div className="mb-2 inline-flex rounded-full border border-cyan-300/35 bg-cyan-400/15 px-2.5 py-0.5 text-[11px] font-semibold text-cyan-100">
+            {topicA}
+          </div>
+          <div className="space-y-2 text-[13px] leading-6 text-slate-100/95">
+            {renderParagraphs(textA || "No summary available for this concept yet.")}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-emerald-300/20 bg-emerald-400/[0.06] px-4 py-3.5 text-sm text-gray-100 backdrop-blur-sm">
+          <div className="mb-2 inline-flex rounded-full border border-emerald-300/35 bg-emerald-400/15 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-100">
+            {topicB}
+          </div>
+          <div className="space-y-2 text-[13px] leading-6 text-slate-100/95">
+            {renderParagraphs(textB || "No summary available for this concept yet.")}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function ComparePage() {
   const [topicA, setTopicA] = useState<string>("");
   const [topicB, setTopicB] = useState<string>("");
 
-  const comparison =
-    topicA && topicB ? getComparison(topicA, topicB) : undefined;
+  const topicOptions = useMemo(
+    () => baseConcepts.map((c) => c.topic).sort((a, b) => a.localeCompare(b)),
+    []
+  );
+
+  const comparison = topicA && topicB ? getComparison(topicA, topicB) : undefined;
   const relationText = comparison?.relation;
 
-  // Per-topic summaries (one-time content)
   const conceptA = topicA ? generatedByTopic[topicA] : undefined;
   const conceptB = topicB ? generatedByTopic[topicB] : undefined;
 
@@ -184,202 +236,131 @@ export default function ComparePage() {
     ? parseSummary(normalizeSummary(conceptB.summary ?? ""))
     : null;
 
-  const hasSelection = topicA && topicB;
-
-  const topicOptions = baseConcepts.map((c: any) => c.topic);
+  const hasSelection = Boolean(topicA && topicB);
 
   return (
     <div className="ai-shorts-shell">
-      {/* HEADER */}
       <header className="ai-shorts-topbar">
         <div className="ai-shorts-brand">
           <div className="ai-shorts-brand-title">AI SHORTS</div>
-          <div className="ai-shorts-brand-subtitle">
-            150-word primers for busy PMs
-          </div>
+          <div className="ai-shorts-brand-subtitle">150-word primers for busy PMs</div>
         </div>
 
         <div className="ai-shorts-header-actions-row">
-          {/* <div className="ai-shorts-chip">
-            <span className="ai-shorts-chip-dot" />
-            <span>Live · Compare mode</span>
-          </div> */}
-
           <Link href="/swipe" className="mode-toggle-btn">
             ← Back to swipe
           </Link>
         </div>
       </header>
 
-      {/* HERO */}
       <div className="ai-shorts-hero">
         <h1 className="ai-shorts-hero-title">Compare Concepts</h1>
         <p className="ai-shorts-hero-sub">
-          One-time explainer per concept, plus an optional relational layer.
+          Pick two AI topics and review them side-by-side with a clean relational summary.
         </p>
       </div>
 
-      {/* MAIN */}
       <main className="ai-shorts-main">
         <div className="card-stack-wrapper">
           <div className="swipe-card">
             <div className="swipe-card-inner">
-              {/* CARD HEADER */}
               <div className="swipe-card-header">
                 <div className="swipe-card-meta-row">
                   <span className="swipe-card-tag">Concept comparison</span>
+                  {hasSelection && (
+                    <span className="swipe-card-count">{topicA} vs {topicB}</span>
+                  )}
                 </div>
 
                 <div className="swipe-card-title text-xl md:text-2xl">
-                  {hasSelection
-                    ? `${topicA} vs ${topicB}`
-                    : "Pick two concepts to compare"}
+                  {hasSelection ? "Side-by-side concept breakdown" : "Pick two concepts to compare"}
                 </div>
               </div>
 
-              {/* SELECTORS */}
               <div className="swipe-card-section">
-                <div className="swipe-card-section-title">SELECT CONCEPTS</div>
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <div className="swipe-card-section-title !mb-0">SELECT CONCEPTS</div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTopicA("");
+                        setTopicB("");
+                      }}
+                      disabled={!topicA && !topicB}
+                      className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[11px] font-medium text-slate-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <ConceptSearchSelect
-                    label="Choose Concept A"
+                    label="Concept A"
                     value={topicA}
                     onChange={setTopicA}
-                    topics={topicOptions}
-                    placeholder="Search Concept A…"
+                    topics={topicOptions.filter((t) => t !== topicB)}
+                    placeholder="Search concept A..."
                   />
 
                   <ConceptSearchSelect
-                    label="Choose Concept B"
+                    label="Concept B"
                     value={topicB}
                     onChange={setTopicB}
-                    topics={topicOptions}
-                    placeholder="Search Concept B…"
+                    topics={topicOptions.filter((t) => t !== topicA)}
+                    placeholder="Search concept B..."
                   />
                 </div>
               </div>
 
-              {/* EMPTY STATE */}
               {!hasSelection && (
                 <div className="swipe-card-section">
-                  <div className="swipe-card-summary text-sm text-gray-300">
-                    Choose any two topics above. The left and right columns reuse
-                    the same one-time “What / How / Why it matters” explainer
-                    you already generated, and we optionally add a relational
-                    layer if it exists.
+                  <div className="rounded-xl border border-white/12 bg-white/[0.04] px-4 py-3 text-sm leading-6 text-slate-300">
+                    Choose two concepts to unlock side-by-side comparison in three layers:
+                    <span className="text-slate-100"> what it is, how it works, and why it matters.</span>
                   </div>
                 </div>
               )}
 
-              {/* AUTO COMPARISON FROM PER-TOPIC SUMMARIES */}
               {hasSelection && (
                 <>
-                  {/* WHAT IT IS */}
+                  <SectionColumns
+                    title="WHAT IT IS"
+                    topicA={topicA}
+                    topicB={topicB}
+                    textA={parsedA?.whatItIs ?? ""}
+                    textB={parsedB?.whatItIs ?? ""}
+                  />
+
+                  <SectionColumns
+                    title="HOW IT WORKS"
+                    topicA={topicA}
+                    topicB={topicB}
+                    textA={parsedA?.howItWorks ?? ""}
+                    textB={parsedB?.howItWorks ?? ""}
+                  />
+
+                  <SectionColumns
+                    title="WHY IT MATTERS"
+                    topicA={topicA}
+                    topicB={topicB}
+                    textA={parsedA?.whyItMatters ?? ""}
+                    textB={parsedB?.whyItMatters ?? ""}
+                  />
+
                   <div className="swipe-card-section">
-                    <div className="swipe-card-section-title">WHAT IT IS</div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                      <div className="rounded-xl border border-white/12 bg-white/5 px-4 py-3 text-sm text-gray-100 backdrop-blur-sm">
-                        <div className="font-semibold mb-1 text-gray-50">
-                          {topicA}
-                        </div>
-                        <div className="space-y-2">
-                          {parsedA
-                            ? renderParagraphs(parsedA.whatItIs)
-                            : "No summary available for this concept yet."}
-                        </div>
-                      </div>
-
-                      <div className="rounded-xl border border-white/12 bg-white/5 px-4 py-3 text-sm text-gray-100 backdrop-blur-sm">
-                        <div className="font-semibold mb-1 text-gray-50">
-                          {topicB}
-                        </div>
-                        <div className="space-y-2">
-                          {parsedB
-                            ? renderParagraphs(parsedB.whatItIs)
-                            : "No summary available for this concept yet."}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* HOW IT WORKS */}
-                  <div className="swipe-card-section">
-                    <div className="swipe-card-section-title">HOW IT WORKS</div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                      <div className="rounded-xl border border-white/12 bg-white/5 px-4 py-3 text-sm text-gray-100 backdrop-blur-sm">
-                        <div className="font-semibold mb-1 text-gray-50">
-                          {topicA}
-                        </div>
-                        <div className="space-y-2">
-                          {parsedA
-                            ? renderParagraphs(parsedA.howItWorks)
-                            : "No summary available for this concept yet."}
-                        </div>
-                      </div>
-
-                      <div className="rounded-xl border border-white/12 bg-white/5 px-4 py-3 text-sm text-gray-100 backdrop-blur-sm">
-                        <div className="font-semibold mb-1 text-gray-50">
-                          {topicB}
-                        </div>
-                        <div className="space-y-2">
-                          {parsedB
-                            ? renderParagraphs(parsedB.howItWorks)
-                            : "No summary available for this concept yet."}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* WHY IT MATTERS */}
-                  <div className="swipe-card-section">
-                    <div className="swipe-card-section-title">
-                      WHY IT MATTERS
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                      <div className="rounded-xl border border-white/12 bg-white/5 px-4 py-3 text-sm text-gray-100 backdrop-blur-sm">
-                        <div className="font-semibold mb-1 text-gray-50">
-                          {topicA}
-                        </div>
-                        <div className="space-y-2">
-                          {parsedA
-                            ? renderParagraphs(parsedA.whyItMatters)
-                            : "No summary available for this concept yet."}
-                        </div>
-                      </div>
-
-                      <div className="rounded-xl border border-white/12 bg-white/5 px-4 py-3 text-sm text-gray-100 backdrop-blur-sm">
-                        <div className="font-semibold mb-1 text-gray-50">
-                          {topicB}
-                        </div>
-                        <div className="space-y-2">
-                          {parsedB
-                            ? renderParagraphs(parsedB.whyItMatters)
-                            : "No summary available for this concept yet."}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* RELATION LAYER */}
-                  <div className="swipe-card-section">
-                    <div className="swipe-card-section-title">
-                      HOW THEY RELATE
-                    </div>
+                    <div className="swipe-card-section-title">HOW THEY RELATE</div>
 
                     {relationText ? (
-                      <div className="mt-3 rounded-xl border border-blue-400/25 bg-blue-500/15 px-4 py-3 text-sm leading-relaxed text-blue-50 backdrop-blur-sm">
+                      <div className="rounded-2xl border border-blue-400/25 bg-blue-500/15 px-4 py-3 text-sm leading-relaxed text-blue-50 backdrop-blur-sm">
                         {relationText}
                       </div>
                     ) : (
-                      <div className="mt-3 rounded-xl border border-white/12 bg-white/5 px-4 py-3 text-xs leading-relaxed text-gray-300 backdrop-blur-sm">
-                        No curated relation for this pair yet. You’re still
-                        seeing a clean A vs B comparison using each concept’s
-                        own “What / How / Why”, but the relational narrative
-                        hasn’t been authored or generated for this pair.
+                      <div className="rounded-2xl border border-white/12 bg-white/5 px-4 py-3 text-xs leading-relaxed text-gray-300 backdrop-blur-sm">
+                        No curated relation exists for this pair yet. You still get a full side-by-side
+                        concept comparison from the generated summaries.
                       </div>
                     )}
                   </div>

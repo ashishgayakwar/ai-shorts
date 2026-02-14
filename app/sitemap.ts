@@ -29,5 +29,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified,
   }));
 
-  return [...staticRoutes, ...conceptRoutes];
+  const swipeConceptRoutes: MetadataRoute.Sitemap = concepts.map((c) => ({
+    url: `${baseUrl}/swipe/${slugify(c.topic)}`,
+    lastModified,
+  }));
+
+  return [...staticRoutes, ...conceptRoutes, ...swipeConceptRoutes];
 }

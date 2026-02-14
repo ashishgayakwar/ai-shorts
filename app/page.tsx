@@ -4,136 +4,147 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
 
+const learningTracks = [
+  {
+    title: "Basics Track",
+    href: "/basics",
+    tag: "Reader Mode",
+    desc: "Day Zero foundations, explained without jargon.",
+    accent: "from-cyan-400/20 to-sky-500/5",
+  },
+  {
+    title: "Concept Swipe",
+    href: "/swipe",
+    tag: "Interactive",
+    desc: "Card-based learning with next/prev concept journeys.",
+    accent: "from-emerald-400/20 to-cyan-500/5",
+  },
+  {
+    title: "Case Studio",
+    href: "/case-study-generator",
+    tag: "Practice",
+    desc: "Generate interview-ready AI PM case simulations.",
+    accent: "from-amber-300/20 to-orange-500/5",
+  },
+];
+
 export default async function Home() {
   const session = await getServerSession(authOptions);
   const userLabel = session?.user?.name || session?.user?.email;
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
-      <div className="mx-auto flex min-h-screen max-w-3xl flex-col px-6 py-10">
-        {/* Header */}
-        <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Replace with your own logo file in /public if you want */}
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-zinc-200 dark:bg-zinc-950 dark:ring-zinc-800">
-              <Image
-                src="/favicon.ico"
-                alt="AI Shorts"
-                width={20}
-                height={20}
-                priority
-              />
-            </div>
-            <div className="leading-tight">
-              <div className="text-lg font-semibold">AI PM  WORLD</div>
+    <div className="relative min-h-screen overflow-hidden bg-[#040b18] text-slate-100">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-32 left-1/2 h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.22),rgba(3,7,18,0))]" />
+        <div className="absolute bottom-[-180px] right-[-120px] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(251,191,36,0.18),rgba(3,7,18,0))]" />
+      </div>
 
+      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 sm:py-8">
+        <header className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur-xl sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10">
+                <Image src="/favicon.ico" alt="AI PM World" width={20} height={20} priority />
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-200/90">
+                  AI PM World
+                </p>
+                <p className="text-xs text-slate-300/80">Learn. Build. Ship AI products.</p>
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center gap-3">
-            {userLabel ? (
-              <>
-                <span className="text-xs text-zinc-600 dark:text-zinc-400">
-                  Signed in as {userLabel}
-                </span>
-                <Link
-                  href="/admin/users"
-                  className="rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-900"
-                >
-                  Users
-                </Link>
-                <Link
-                  href="/api/auth/signout?callbackUrl=/"
-                  className="rounded-full bg-zinc-900 px-3 py-1 text-xs text-white dark:bg-white dark:text-black"
-                >
-                  Sign out
-                </Link>
-              </>
-            ) : (
-              <Link
-                href="/api/auth/signin"
-                className="rounded-full bg-zinc-900 px-3 py-1 text-xs text-white dark:bg-white dark:text-black"
-              >
-                Sign in with Google
-              </Link>
-            )}
+            <div className="flex flex-wrap items-center gap-2">
+              {userLabel ? (
+                <>
+                  <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-slate-300">
+                    {userLabel}
+                  </span>
+                  <Link
+                    href="/admin/users"
+                    className="rounded-full border border-white/25 px-3 py-1 text-xs text-slate-100 transition hover:bg-white/10"
+                  >
+                    Admin
+                  </Link>
+                  <Link
+                    href="/api/auth/signout?callbackUrl=/"
+                    className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900 transition hover:bg-cyan-100"
+                  >
+                    Sign out
+                  </Link>
+                </>
+              ) : null}
+            </div>
           </div>
         </header>
 
-        {/* Main */}
-        <main className="flex flex-1 flex-col justify-center py-14">
-          <div className="space-y-3">
-            <h1 className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-              Learn AI - one concept at a time
-            </h1>
-            <p className="max-w-xl text-base leading-7 text-zinc-600 dark:text-zinc-400">
-              Start with the basics, or jump straight
-              into the interactive swipe + quiz experience.
+        <main className="flex flex-1 flex-col py-10 sm:py-14">
+          <section className="max-w-3xl">
+            <p className="inline-flex items-center rounded-full border border-cyan-200/20 bg-cyan-300/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-cyan-100">
+              Built for AI Product Managers
             </p>
-          </div>
+            <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight text-white sm:text-6xl">
+              Modern AI learning,
+              <span className="block bg-gradient-to-r from-cyan-200 to-emerald-200 bg-clip-text text-transparent">
+                designed for execution.
+              </span>
+            </h1>
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+              Move from fundamentals to applied AI PM workflows with concise modules,
+              swipe concepts, and interview-grade case practice in one place.
+            </p>
 
-          {/* CTAs */}
-          <div className="mt-10 grid gap-4">
-            <Link
-              href="/basics"
-              className="group rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-200 transition hover:shadow-md dark:bg-zinc-950 dark:ring-zinc-800"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="text-lg font-semibold">Basic Module</div>
-                  <div className="text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-                    Day ZERO of learning
-                  </div>
-                </div>
-                <div className="shrink-0 rounded-full border border-zinc-200 px-3 py-1 text-sm text-zinc-700 transition group-hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-200 dark:group-hover:bg-zinc-900">
-                  Start
-                </div>
-              </div>
-            </Link>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Link
+                href="/swipe?mode=quiz"
+                className="rounded-full border border-cyan-200/35 bg-cyan-300/10 px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/20"
+              >
+                Quiz Mode
+              </Link>
+              <Link
+                href="/swipe?mode=visualize"
+                className="rounded-full border border-cyan-200/35 bg-cyan-300/10 px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/20"
+              >
+                Visualize
+              </Link>
+              <Link
+                href="/compare"
+                className="rounded-full border border-cyan-200/35 bg-cyan-300/10 px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/20"
+              >
+                Compare Concepts
+              </Link>
+            </div>
 
-            <Link
-              href="/swipe"
-              className="group rounded-2xl bg-zinc-900 p-5 text-white shadow-sm transition hover:shadow-md dark:bg-white dark:text-black"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="text-lg font-semibold">Intermediate Module</div>
-                  <div className="text-sm leading-6 text-white/80 dark:text-black/70">
-                    Beyond Day ZERO
-                  </div>
-                </div>
-                <div className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-sm text-white transition group-hover:bg-white/15 dark:bg-black/10 dark:text-black dark:group-hover:bg-black/15">
-                  Start
-                </div>
-              </div>
-            </Link>
+          </section>
 
-            <Link
-              href="/case-study-generator"
-              className="group rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-200 transition hover:shadow-md dark:bg-zinc-950 dark:ring-zinc-800"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="text-lg font-semibold">Case Study Generator</div>
-                  <div className="text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-                    Generate interview-style case packets
-                  </div>
+          <section className="mt-10 grid gap-4 md:grid-cols-3">
+            {learningTracks.map((track) => (
+              <Link
+                key={track.href}
+                href={track.href}
+                className="group relative overflow-hidden rounded-2xl border border-white/15 bg-slate-950/35 p-5 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-cyan-200/40"
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${track.accent} opacity-70`} />
+                <div className="relative">
+                  <span className="inline-flex rounded-full border border-white/20 bg-black/30 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-200">
+                    {track.tag}
+                  </span>
+                  <h2 className="mt-3 text-xl font-semibold text-white">{track.title}</h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{track.desc}</p>
+                  <p className="mt-4 text-sm font-medium text-cyan-100 transition group-hover:text-cyan-50">
+                    Enter track -&gt;
+                  </p>
                 </div>
-                <div className="shrink-0 rounded-full border border-zinc-200 px-3 py-1 text-sm text-zinc-700 transition group-hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-200 dark:group-hover:bg-zinc-900">
-                  Start
-                </div>
-              </div>
-            </Link>
-          </div>
+              </Link>
+            ))}
+          </section>
+
         </main>
 
-        {/* Footer */}
-        <footer className="pt-6 text-xs text-zinc-500 dark:text-zinc-400">
+        <footer className="border-t border-white/10 pt-5 text-xs text-slate-400">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <span>© {new Date().getFullYear()} AI Shorts</span>
-            <span className="text-zinc-400 dark:text-zinc-500">
-              Basic → Reader mode · Intermediate → Swipe mode
-            </span>
+            <span>© {new Date().getFullYear()} AI PM World</span>
+            <span>Basics · Swipe · Compare · Case Studio</span>
           </div>
         </footer>
       </div>
