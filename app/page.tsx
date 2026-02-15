@@ -97,20 +97,23 @@ export default async function Home() {
             <div className="mt-6 flex flex-wrap gap-2">
               <Link
                 href="/swipe?mode=quiz"
-                className="rounded-full border border-cyan-200/35 bg-cyan-300/10 px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/20"
+                className="inline-flex items-center gap-2 rounded-xl border border-cyan-200/30 bg-gradient-to-r from-cyan-300 to-cyan-200 px-4 py-2 text-sm font-semibold text-slate-900 shadow-[0_8px_24px_rgba(34,211,238,0.28)] transition hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0"
               >
+                <span>🎯</span>
                 Quiz Mode
               </Link>
               <Link
                 href="/swipe?mode=visualize"
-                className="rounded-full border border-cyan-200/35 bg-cyan-300/10 px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/20"
+                className="inline-flex items-center gap-2 rounded-xl border border-emerald-200/30 bg-gradient-to-r from-emerald-300 to-cyan-200 px-4 py-2 text-sm font-semibold text-slate-900 shadow-[0_8px_24px_rgba(52,211,153,0.28)] transition hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0"
               >
+                <span>👁</span>
                 Visualize
               </Link>
               <Link
                 href="/compare"
-                className="rounded-full border border-cyan-200/35 bg-cyan-300/10 px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/20"
+                className="inline-flex items-center gap-2 rounded-xl border border-sky-200/30 bg-gradient-to-r from-sky-300 to-indigo-200 px-4 py-2 text-sm font-semibold text-slate-900 shadow-[0_8px_24px_rgba(56,189,248,0.28)] transition hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0"
               >
+                <span>🔍</span>
                 Compare Concepts
               </Link>
             </div>
