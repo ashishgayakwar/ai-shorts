@@ -97,24 +97,27 @@ export default async function Home() {
             <div className="mt-6 flex flex-wrap gap-2">
               <Link
                 href="/swipe?mode=quiz"
-                className="inline-flex items-center gap-2 rounded-xl border border-cyan-200/30 bg-gradient-to-r from-cyan-300 to-cyan-200 px-4 py-2 text-sm font-semibold text-slate-900 shadow-[0_8px_24px_rgba(34,211,238,0.28)] transition hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0"
+                className="inline-flex items-center gap-2 rounded-xl border border-cyan-200/30 bg-cyan-400/12 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:-translate-y-0.5 hover:border-cyan-200/55 hover:bg-cyan-300/18"
               >
-                <span>🎯</span>
+                <span className="h-2 w-2 rounded-full bg-cyan-300" />
                 Quiz Mode
+                <span className="text-cyan-200">›</span>
               </Link>
               <Link
                 href="/swipe?mode=visualize"
-                className="inline-flex items-center gap-2 rounded-xl border border-emerald-200/30 bg-gradient-to-r from-emerald-300 to-cyan-200 px-4 py-2 text-sm font-semibold text-slate-900 shadow-[0_8px_24px_rgba(52,211,153,0.28)] transition hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0"
+                className="inline-flex items-center gap-2 rounded-xl border border-emerald-200/30 bg-emerald-400/12 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:-translate-y-0.5 hover:border-emerald-200/55 hover:bg-emerald-300/18"
               >
-                <span>👁</span>
+                <span className="h-2 w-2 rounded-full bg-emerald-300" />
                 Visualize
+                <span className="text-emerald-200">›</span>
               </Link>
               <Link
                 href="/compare"
-                className="inline-flex items-center gap-2 rounded-xl border border-sky-200/30 bg-gradient-to-r from-sky-300 to-indigo-200 px-4 py-2 text-sm font-semibold text-slate-900 shadow-[0_8px_24px_rgba(56,189,248,0.28)] transition hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0"
+                className="inline-flex items-center gap-2 rounded-xl border border-sky-200/30 bg-sky-400/12 px-4 py-2 text-sm font-semibold text-sky-100 transition hover:-translate-y-0.5 hover:border-sky-200/55 hover:bg-sky-300/18"
               >
-                <span>🔍</span>
+                <span className="h-2 w-2 rounded-full bg-sky-300" />
                 Compare Concepts
+                <span className="text-sky-200">›</span>
               </Link>
             </div>
 
