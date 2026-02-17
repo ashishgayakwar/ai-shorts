@@ -363,6 +363,9 @@ export default function SwipeClient(
             <Link href="/compare" className="ai-header-pill">
               Compare
             </Link>
+            <Link href="/interview" className="ai-header-pill">
+              Interview
+            </Link>
             <Link href="/" className="ai-header-pill">
               Home
             </Link>
@@ -387,6 +390,9 @@ export default function SwipeClient(
               </button>
               <Link href="/compare" className="ai-header-pill">
                 Compare
+              </Link>
+              <Link href="/interview" className="ai-header-pill">
+                Interview
               </Link>
               <Link href="/" className="ai-header-pill">
                 Home
@@ -574,6 +580,9 @@ export default function SwipeClient(
           <Link href="/compare" className="ai-header-pill">
             Compare
           </Link>
+          <Link href="/interview" className="ai-header-pill">
+            Interview
+          </Link>
           <Link href="/" className="ai-header-pill">
             Home
           </Link>
@@ -589,6 +598,7 @@ export default function SwipeClient(
               Visualize
             </button>
             <Link href="/compare" className="ai-header-pill">Compare</Link>
+            <Link href="/interview" className="ai-header-pill">Interview</Link>
             <Link href="/" className="ai-header-pill">Home</Link>
           </div>
         </details>
@@ -769,6 +779,9 @@ export default function SwipeClient(
           <Link href="/compare" className="ai-header-pill">
             Compare
           </Link>
+          <Link href="/interview" className="ai-header-pill">
+            Interview
+          </Link>
           <Link href="/" className="ai-header-pill">
             Home
           </Link>
@@ -788,6 +801,7 @@ export default function SwipeClient(
               Visualize
             </button>
             <Link href="/compare" className="ai-header-pill">Compare</Link>
+            <Link href="/interview" className="ai-header-pill">Interview</Link>
             <Link href="/" className="ai-header-pill">Home</Link>
           </div>
         </details>

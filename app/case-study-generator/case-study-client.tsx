@@ -535,6 +535,9 @@ export default function CaseStudyClient() {
             Compare
           </Link>
           <span className="ai-header-pill ai-header-pill-active">Case Study</span>
+          <Link href="/interview" className="ai-header-pill">
+            Interview
+          </Link>
           <Link href="/" className="ai-header-pill">
             Home
           </Link>
@@ -547,6 +550,7 @@ export default function CaseStudyClient() {
             <Link href="/swipe?mode=visualize" className="ai-header-pill">Visualize</Link>
             <Link href="/compare" className="ai-header-pill">Compare</Link>
             <span className="ai-header-pill ai-header-pill-active">Case Study</span>
+            <Link href="/interview" className="ai-header-pill">Interview</Link>
             <Link href="/" className="ai-header-pill">Home</Link>
           </div>
         </details>

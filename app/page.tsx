@@ -32,6 +32,7 @@ const headerLinks = [
   { label: "Quiz", href: "/swipe?mode=quiz" },
   { label: "Visualize", href: "/swipe?mode=visualize" },
   { label: "Compare Concepts", href: "/compare" },
+  { label: "Interview", href: "/interview" },
 ];
 
 export default async function Home() {
