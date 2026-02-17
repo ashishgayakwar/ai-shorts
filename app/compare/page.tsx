@@ -240,17 +240,34 @@ export default function ComparePage() {
 
   return (
     <div className="ai-shorts-shell">
-      <header className="ai-shorts-topbar">
+      <header className="ai-shorts-topbar ai-shorts-topbar-full">
         <div className="ai-shorts-brand">
           <div className="ai-shorts-brand-title">AI SHORTS</div>
           <div className="ai-shorts-brand-subtitle">150-word primers for busy PMs</div>
         </div>
 
-        <div className="ai-shorts-header-actions-row">
-          <Link href="/swipe" className="mode-toggle-btn">
-            ← Back to swipe
+        <div className="ai-shorts-desktop-actions">
+          <Link href="/swipe" className="ai-header-pill">
+            Cards
+          </Link>
+          <Link href="/swipe?mode=visualize" className="ai-header-pill">
+            Visualize
+          </Link>
+          <span className="ai-header-pill ai-header-pill-active">Compare</span>
+          <Link href="/" className="ai-header-pill">
+            Home
           </Link>
         </div>
+
+        <details className="ai-shorts-mobile-menu">
+          <summary>Menu</summary>
+          <div className="ai-shorts-mobile-menu-panel">
+            <Link href="/swipe" className="ai-header-pill">Cards</Link>
+            <Link href="/swipe?mode=visualize" className="ai-header-pill">Visualize</Link>
+            <span className="ai-header-pill ai-header-pill-active">Compare</span>
+            <Link href="/" className="ai-header-pill">Home</Link>
+          </div>
+        </details>
       </header>
 
       <div className="ai-shorts-hero">

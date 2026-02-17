@@ -38,24 +38,41 @@ export default function BasicsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
-      <div className="mx-auto max-w-3xl px-6 py-8 pb-28">
-        {/* HEADER */}
-        <header className="mb-10 flex items-center justify-between">
-          <div>
-            <div className="text-sm font-semibold">AI Shorts</div>
-            <div className="text-xs text-zinc-500 dark:text-zinc-400">
-              Basic Module
-            </div>
-          </div>
+      <header className="ai-shorts-topbar ai-shorts-topbar-full">
+        <div className="ai-shorts-brand">
+          <div className="ai-shorts-brand-title">AI SHORTS</div>
+          <div className="ai-shorts-brand-subtitle">150-word primers for busy PMs</div>
+        </div>
 
-          <Link
-            href="/"
-            className="text-sm text-zinc-600 hover:underline dark:text-zinc-400"
-          >
-            ← Back to home
+        <div className="ai-shorts-desktop-actions">
+          <Link href="/swipe" className="ai-header-pill">
+            Cards
           </Link>
-        </header>
+          <Link href="/swipe?mode=visualize" className="ai-header-pill">
+            Visualize
+          </Link>
+          <span className="ai-header-pill ai-header-pill-active">Basics</span>
+          <Link href="/case-study-generator" className="ai-header-pill">
+            Case Study
+          </Link>
+          <Link href="/" className="ai-header-pill">
+            Home
+          </Link>
+        </div>
 
+        <details className="ai-shorts-mobile-menu">
+          <summary>Menu</summary>
+          <div className="ai-shorts-mobile-menu-panel">
+            <Link href="/swipe" className="ai-header-pill">Cards</Link>
+            <Link href="/swipe?mode=visualize" className="ai-header-pill">Visualize</Link>
+            <span className="ai-header-pill ai-header-pill-active">Basics</span>
+            <Link href="/case-study-generator" className="ai-header-pill">Case Study</Link>
+            <Link href="/" className="ai-header-pill">Home</Link>
+          </div>
+        </details>
+      </header>
+
+      <div className="mx-auto max-w-3xl px-6 py-8 pb-28">
         {/* CONTENT */}
         <main className="space-y-8">
           {/* Progress */}

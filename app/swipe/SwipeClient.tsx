@@ -337,19 +337,7 @@ export default function SwipeClient(
     return (
       <div className="ai-shorts-shell">
         {/* HEADER */}
-        <header className="ai-shorts-topbar relative">
-          <div className="absolute right-4 top-4 flex items-center gap-3 text-xs">
-            <button
-              className="text-zinc-400 hover:text-zinc-200"
-              onClick={() => setMode("cards")}
-            >
-              Cards
-            </button>
-            <Link href="/" className="text-zinc-400 hover:text-zinc-200">
-              Home
-            </Link>
-          </div>
-
+        <header className="ai-shorts-topbar ai-shorts-topbar-full">
           <div className="ai-shorts-brand">
             <div className="ai-shorts-brand-title">AI SHORTS</div>
             <div className="ai-shorts-brand-subtitle">
@@ -357,6 +345,54 @@ export default function SwipeClient(
             </div>
           </div>
 
+          <div className="ai-shorts-desktop-actions">
+            <button
+              type="button"
+              className="ai-header-pill ai-header-pill-active"
+              onClick={() => setMode("cards")}
+            >
+              Cards
+            </button>
+            <button
+              type="button"
+              className="ai-header-pill"
+              onClick={() => setMode("visualize")}
+            >
+              Visualize
+            </button>
+            <Link href="/compare" className="ai-header-pill">
+              Compare
+            </Link>
+            <Link href="/" className="ai-header-pill">
+              Home
+            </Link>
+          </div>
+
+          <details className="ai-shorts-mobile-menu">
+            <summary>Menu</summary>
+            <div className="ai-shorts-mobile-menu-panel">
+              <button
+                type="button"
+                className="ai-header-pill ai-header-pill-active"
+                onClick={() => setMode("cards")}
+              >
+                Cards
+              </button>
+              <button
+                type="button"
+                className="ai-header-pill"
+                onClick={() => setMode("visualize")}
+              >
+                Visualize
+              </button>
+              <Link href="/compare" className="ai-header-pill">
+                Compare
+              </Link>
+              <Link href="/" className="ai-header-pill">
+                Home
+              </Link>
+            </div>
+          </details>
         </header>
 
         {/* QUIZ AREA */}
@@ -512,19 +548,7 @@ export default function SwipeClient(
     return (
       <div className="ai-shorts-shell">
         {/* HEADER */}
-        <header className="ai-shorts-topbar relative">
-          <div className="absolute right-4 top-4 flex items-center gap-3 text-xs">
-            <button
-              className="text-zinc-400 hover:text-zinc-200"
-              onClick={() => setMode("cards")}
-            >
-              Cards
-            </button>
-            <Link href="/" className="text-zinc-400 hover:text-zinc-200">
-              Home
-            </Link>
-          </div>
-
+        <header className="ai-shorts-topbar ai-shorts-topbar-full">
           <div className="ai-shorts-brand">
             <div className="ai-shorts-brand-title">AI SHORTS</div>
             <div className="ai-shorts-brand-subtitle">
@@ -532,92 +556,151 @@ export default function SwipeClient(
             </div>
           </div>
 
+        <div className="ai-shorts-desktop-actions">
+          <button
+            type="button"
+            className="ai-header-pill"
+            onClick={() => setMode("cards")}
+          >
+            Cards
+          </button>
+          <button
+            type="button"
+            className="ai-header-pill ai-header-pill-active"
+            onClick={() => setMode("visualize")}
+          >
+            Visualize
+          </button>
+          <Link href="/compare" className="ai-header-pill">
+            Compare
+          </Link>
+          <Link href="/" className="ai-header-pill">
+            Home
+          </Link>
+        </div>
+
+        <details className="ai-shorts-mobile-menu">
+          <summary>Menu</summary>
+          <div className="ai-shorts-mobile-menu-panel">
+            <button type="button" className="ai-header-pill" onClick={() => setMode("cards")}>
+              Cards
+            </button>
+            <button type="button" className="ai-header-pill ai-header-pill-active" onClick={() => setMode("visualize")}>
+              Visualize
+            </button>
+            <Link href="/compare" className="ai-header-pill">Compare</Link>
+            <Link href="/" className="ai-header-pill">Home</Link>
+          </div>
+        </details>
         </header>
 
         {/* HERO */}
-        <div className="ai-shorts-hero">
+        <div className="ai-shorts-hero visualize-hero">
           <h1 className="ai-shorts-hero-title">Visualize Concepts</h1>
           <p className="ai-shorts-hero-sub">Understand AI with diagrams</p>
         </div>
 
         {/* CARD + NAV */}
         <main className="ai-shorts-main">
-          <div className="card-stack-wrapper">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={visualTopic.id + visualIndex}
-                className="swipe-card"
-                initial={{ opacity: 0, y: 14, scale: 0.97 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -14, scale: 0.97 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
-              >
-                <div className="swipe-card-inner">
-                  <div className="swipe-card-header">
-                    <div className="swipe-card-meta-row">
-                      <span className="swipe-card-tag">Today’s visual</span>
-                      <span className="swipe-card-count">
-                        {visualIndex + 1} / {visualTotal}
-                      </span>
-                    </div>
+          <div className="visualize-layout">
+            <aside className="visualize-sidebar" aria-label="Visual concept list">
+              <div className="visualize-sidebar-title">Jump to visual</div>
+              <div className="visualize-topic-list">
+                {visualTopics.map((topic, i) => (
+                  <button
+                    key={topic.id}
+                    type="button"
+                    className={
+                      i === visualIndex
+                        ? "visualize-topic-item active"
+                        : "visualize-topic-item"
+                    }
+                    onClick={() => setVisualIndex(i)}
+                  >
+                    <span className="visualize-topic-index">{i + 1}</span>
+                    <span className="visualize-topic-name">{topic.title}</span>
+                  </button>
+                ))}
+              </div>
+            </aside>
 
-                    <div className="swipe-card-title">{visualTopic.title}</div>
-                  </div>
-
-                  {/* HERO + DETAIL WITH LABELS */}
-                  <div className="swipe-card-section">
-                    <div className="visual-label">Concept Overview</div>
-
-                    <div className="visual-image-wrapper">
-                      <img
-                        src={visualTopic.heroImage}
-                        alt={visualTopic.title + " overview"}
-                        className="visual-image-hero"
-                      />
-                    </div>
-
-                    <div className="swipe-card-summary">
-                      <p className="visual-text">{visualTopic.summary}</p>
-                    </div>
-
-                    <div className="visual-label">Deep Dive</div>
-
-                    <div className="visual-image-wrapper secondary">
-                      <img
-                        src={visualTopic.detailImage}
-                        alt={visualTopic.title + " detail"}
-                        className="visual-image-detail"
-                      />
-                    </div>
-
-                    {visualTopic.note && (
-                      <div className="swipe-card-summary">
-                        <p className="visual-text">{visualTopic.note}</p>
+            <div className="card-stack-wrapper">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={visualTopic.id + visualIndex}
+                  className="swipe-card swipe-card-visual"
+                  initial={{ opacity: 0, y: 14, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -14, scale: 0.97 }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                >
+                  <div className="swipe-card-inner">
+                    <div className="swipe-card-header">
+                      <div className="swipe-card-meta-row">
+                        <span className="swipe-card-tag">Today’s visual</span>
+                        <span className="swipe-card-count">
+                          {visualIndex + 1} / {visualTotal}
+                        </span>
                       </div>
-                    )}
+
+                      <div className="swipe-card-title">{visualTopic.title}</div>
+                    </div>
+
+                    {/* HERO + DETAIL WITH LABELS */}
+                    <div className="swipe-card-section">
+                      <div className="visual-label">Concept Overview</div>
+
+                      <div className="visual-image-wrapper">
+                        <img
+                          src={visualTopic.heroImage}
+                          alt={visualTopic.title + " overview"}
+                          className="visual-image-hero"
+                        />
+                      </div>
+
+                      <div className="swipe-card-summary">
+                        <p className="visual-text">{visualTopic.summary}</p>
+                      </div>
+
+                      <div className="visual-label">Deep Dive</div>
+
+                      <div className="visual-image-wrapper secondary">
+                        <img
+                          src={visualTopic.detailImage}
+                          alt={visualTopic.title + " detail"}
+                          className="visual-image-detail"
+                        />
+                      </div>
+
+                      {visualTopic.note && (
+                        <div className="swipe-card-summary">
+                          <p className="visual-text">{visualTopic.note}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* NAV UNDER CARD */}
+              <div className="swipe-global-footer">
+                <div className="swipe-nav">
+                  <button
+                    className="swipe-nav-btn"
+                    onClick={handlePrevVisual}
+                    disabled={visualIndex === 0}
+                  >
+                    ← Previous
+                  </button>
+
+                  <button
+                    className="swipe-nav-btn"
+                    onClick={handleNextVisual}
+                    disabled={visualIndex === visualTotal - 1}
+                  >
+                    Next →
+                  </button>
                 </div>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* NAV UNDER CARD */}
-            <div className="swipe-global-footer">
-              <div className="swipe-nav">
-                <button
-                  className="swipe-nav-btn"
-                  onClick={handlePrevVisual}
-                  disabled={visualIndex === 0}
-                >
-                  ← Previous
-                </button>
-
-                <button
-                  className="swipe-nav-btn"
-                  onClick={handleNextVisual}
-                  disabled={visualIndex === visualTotal - 1}
-                >
-                  Next →
-                </button>
               </div>
             </div>
           </div>
@@ -660,14 +743,7 @@ export default function SwipeClient(
   return (
     <div className="ai-shorts-shell">
       {/* HEADER */}
-      <header className="ai-shorts-topbar relative">
-        <Link
-          href="/"
-          className="absolute right-4 top-4 text-xs text-zinc-400 hover:text-zinc-200"
-        >
-          Home
-        </Link>
-
+      <header className="ai-shorts-topbar ai-shorts-topbar-full">
         <div className="ai-shorts-brand">
           <div className="ai-shorts-brand-title">AI SHORTS</div>
           <div className="ai-shorts-brand-subtitle">
@@ -675,6 +751,46 @@ export default function SwipeClient(
           </div>
         </div>
 
+        <div className="ai-shorts-desktop-actions">
+          <button
+            type="button"
+            className="ai-header-pill ai-header-pill-active"
+            onClick={() => setMode("cards")}
+          >
+            Cards
+          </button>
+          <button
+            type="button"
+            className="ai-header-pill"
+            onClick={() => setMode("visualize")}
+          >
+            Visualize
+          </button>
+          <Link href="/compare" className="ai-header-pill">
+            Compare
+          </Link>
+          <Link href="/" className="ai-header-pill">
+            Home
+          </Link>
+        </div>
+
+        <details className="ai-shorts-mobile-menu">
+          <summary>Menu</summary>
+          <div className="ai-shorts-mobile-menu-panel">
+            <button
+              type="button"
+              className="ai-header-pill ai-header-pill-active"
+              onClick={() => setMode("cards")}
+            >
+              Cards
+            </button>
+            <button type="button" className="ai-header-pill" onClick={() => setMode("visualize")}>
+              Visualize
+            </button>
+            <Link href="/compare" className="ai-header-pill">Compare</Link>
+            <Link href="/" className="ai-header-pill">Home</Link>
+          </div>
+        </details>
       </header>
 
       {/* HERO */}

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useGlobalLoading } from "@/lib/global-loading";
 
@@ -516,6 +517,40 @@ export default function CaseStudyClient() {
         <div className="absolute bottom-[-220px] right-[-120px] h-[520px] w-[520px] rounded-full bg-emerald-500/10 blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_52%)]" />
       </div>
+
+      <header className="ai-shorts-topbar ai-shorts-topbar-full">
+        <div className="ai-shorts-brand">
+          <div className="ai-shorts-brand-title">AI SHORTS</div>
+          <div className="ai-shorts-brand-subtitle">150-word primers for busy PMs</div>
+        </div>
+
+        <div className="ai-shorts-desktop-actions">
+          <Link href="/swipe" className="ai-header-pill">
+            Cards
+          </Link>
+          <Link href="/swipe?mode=visualize" className="ai-header-pill">
+            Visualize
+          </Link>
+          <Link href="/compare" className="ai-header-pill">
+            Compare
+          </Link>
+          <span className="ai-header-pill ai-header-pill-active">Case Study</span>
+          <Link href="/" className="ai-header-pill">
+            Home
+          </Link>
+        </div>
+
+        <details className="ai-shorts-mobile-menu">
+          <summary>Menu</summary>
+          <div className="ai-shorts-mobile-menu-panel">
+            <Link href="/swipe" className="ai-header-pill">Cards</Link>
+            <Link href="/swipe?mode=visualize" className="ai-header-pill">Visualize</Link>
+            <Link href="/compare" className="ai-header-pill">Compare</Link>
+            <span className="ai-header-pill ai-header-pill-active">Case Study</span>
+            <Link href="/" className="ai-header-pill">Home</Link>
+          </div>
+        </details>
+      </header>
 
       <div className="relative mx-auto max-w-6xl px-4 py-10 md:px-6 md:py-14">
         {/* Header */}

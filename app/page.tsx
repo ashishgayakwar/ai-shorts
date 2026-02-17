@@ -46,7 +46,7 @@ export default async function Home() {
       </div>
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 sm:py-8">
-        <header className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur-xl sm:px-6">
+        <header className="sticky top-3 z-50 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur-xl sm:px-6">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10">
@@ -120,7 +120,7 @@ export default async function Home() {
 
         <main className="flex flex-1 flex-col py-5 sm:py-14">
           <section className="max-w-3xl">
-            <h1 className="mt-1 text-4xl font-semibold leading-snug tracking-tight text-white sm:mt-5 sm:text-6xl sm:leading-tight">
+            <h1 className="mt-1 text-3xl font-semibold leading-snug tracking-tight text-white sm:mt-5 sm:text-5xl sm:leading-tight">
               Modern AI learning,
               <span className="bg-gradient-to-r from-cyan-200 to-emerald-200 bg-clip-text text-transparent sm:block">
                 designed for execution.
