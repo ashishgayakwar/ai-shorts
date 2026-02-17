@@ -330,6 +330,9 @@ export default function SwipeClient(
   if (mode === "quiz") {
     const explanation = currentQuestion.explanation?.trim() ?? "";
     const progressPercent = ((quizIndex + 1) / totalQuestions) * 100;
+    const answeredCount = quizIndex + (showAnswer ? 1 : 0);
+    const accuracy =
+      answeredCount > 0 ? Math.round((score / answeredCount) * 100) : 0;
 
     return (
       <div className="ai-shorts-shell">
@@ -359,126 +362,142 @@ export default function SwipeClient(
         {/* QUIZ AREA */}
         <main className="ai-shorts-main">
           <div className="quiz-container">
-            {/* LEVEL SELECTOR */}
-            <div className="quiz-level-selector">
-              <button
-                className={currentLevel === "level1" ? "active" : ""}
-                onClick={() => selectLevel("level1")}
-              >
-                Level 1
-              </button>
-              <button
-                className={currentLevel === "level2" ? "active" : ""}
-                onClick={() => selectLevel("level2")}
-              >
-                Level 2
-              </button>
-              <button
-                className={currentLevel === "level3" ? "active" : ""}
-                onClick={() => selectLevel("level3")}
-              >
-                Level 3
-              </button>
-            </div>
-
-            {/* QUIZ CARD */}
-            <div className="quiz-card">
-              <div className="quiz-meta-row">
-                <div className="quiz-qcount">
-                  Question {quizIndex + 1} / {totalQuestions}
+            <div className="quiz-layout">
+              <div>
+                <div className="quiz-intro">
+                  <h1 className="quiz-title">AI Quiz</h1>
+                  <h2 className="quiz-subtitle">
+                    Test concept clarity in short, level-based rounds.
+                  </h2>
                 </div>
-                <div className="quiz-live-score">Score: {score}</div>
-              </div>
-              <div className="quiz-progress-track" aria-hidden="true">
-                <div
-                  className="quiz-progress-fill"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
 
-              <div className="quiz-question">{currentQuestion.question}</div>
+                {/* LEVEL SELECTOR */}
+                <div className="quiz-level-selector">
+                  <button
+                    className={currentLevel === "level1" ? "active" : ""}
+                    onClick={() => selectLevel("level1")}
+                  >
+                    Level 1
+                  </button>
+                  <button
+                    className={currentLevel === "level2" ? "active" : ""}
+                    onClick={() => selectLevel("level2")}
+                  >
+                    Level 2
+                  </button>
+                  <button
+                    className={currentLevel === "level3" ? "active" : ""}
+                    onClick={() => selectLevel("level3")}
+                  >
+                    Level 3
+                  </button>
+                </div>
 
-              <div className="quiz-options">
-                {currentQuestion.options.map((opt, i) => {
-                  const isCorrect = currentQuestion.correctIndex === i;
-                  const isSelected = selectedOption === i;
+                {/* QUIZ CARD */}
+                <div className="quiz-card">
+                  <div className="quiz-meta-row">
+                    <div className="quiz-qcount">
+                      Question {quizIndex + 1} / {totalQuestions}
+                    </div>
+                    <div className="quiz-live-score">Score: {score}</div>
+                  </div>
+                  <div className="quiz-top-stats">
+                    <span className="quiz-top-stat">Level {currentLevel.slice(-1)}</span>
+                    <span className="quiz-top-stat">Answered {answeredCount}</span>
+                    <span className="quiz-top-stat">Accuracy {accuracy}%</span>
+                  </div>
+                  <div className="quiz-progress-track" aria-hidden="true">
+                    <div
+                      className="quiz-progress-fill"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
 
-                  let cls = "quiz-option";
-                  if (showAnswer) {
-                    if (isCorrect) cls += " correct";
-                    else if (isSelected) cls += " wrong";
-                  } else if (isSelected) {
-                    cls += " selected";
-                  }
+                  <div className="quiz-question">{currentQuestion.question}</div>
 
-                  const optionLetter = String.fromCharCode(65 + i);
+                  <div className="quiz-options">
+                    {currentQuestion.options.map((opt, i) => {
+                      const isCorrect = currentQuestion.correctIndex === i;
+                      const isSelected = selectedOption === i;
 
-                  return (
+                      let cls = "quiz-option";
+                      if (showAnswer) {
+                        if (isCorrect) cls += " correct";
+                        else if (isSelected) cls += " wrong";
+                      } else if (isSelected) {
+                        cls += " selected";
+                      }
+
+                      const optionLetter = String.fromCharCode(65 + i);
+
+                      return (
+                        <button
+                          key={i}
+                          className={cls}
+                          onClick={() => !showAnswer && setSelectedOption(i)}
+                          disabled={showAnswer}
+                          aria-pressed={isSelected}
+                        >
+                          <span className="quiz-option-label">{optionLetter}</span>
+                          <span className="quiz-option-text">{opt}</span>
+                          {showAnswer && isCorrect && (
+                            <span className="quiz-option-state">✓</span>
+                          )}
+                          {showAnswer && !isCorrect && isSelected && (
+                            <span className="quiz-option-state">✕</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* EXPLANATION */}
+                  {showAnswer && explanation && (
+                    <div className="quiz-explanation">{explanation}</div>
+                  )}
+
+                  {/* FOOTER BUTTONS */}
+                  <div className="quiz-footer-row">
                     <button
-                      key={i}
-                      className={cls}
-                      onClick={() => !showAnswer && setSelectedOption(i)}
-                      disabled={showAnswer}
-                      aria-pressed={isSelected}
+                      className="quiz-secondary-btn"
+                      onClick={handleRestartQuiz}
                     >
-                      <span className="quiz-option-label">{optionLetter}</span>
-                      <span className="quiz-option-text">{opt}</span>
-                      {showAnswer && isCorrect && (
-                        <span className="quiz-option-state">✓</span>
-                      )}
-                      {showAnswer && !isCorrect && isSelected && (
-                        <span className="quiz-option-state">✕</span>
-                      )}
+                      Restart quiz
                     </button>
-                  );
-                })}
-              </div>
 
-              {/* EXPLANATION */}
-              {showAnswer && explanation && (
-                <div className="quiz-explanation">{explanation}</div>
-              )}
+                    {!showAnswer ? (
+                      <button
+                        className="quiz-primary-btn"
+                        disabled={selectedOption === null}
+                        onClick={handleSubmitAnswer}
+                      >
+                        Check answer
+                      </button>
+                    ) : quizIndex < totalQuestions - 1 ? (
+                      <button
+                        className="quiz-primary-btn"
+                        onClick={handleNextQuestion}
+                      >
+                        Next question →
+                      </button>
+                    ) : (
+                      <button
+                        className="quiz-primary-btn"
+                        onClick={handleRestartQuiz}
+                      >
+                        Restart
+                      </button>
+                    )}
+                  </div>
 
-              {/* FOOTER BUTTONS */}
-              <div className="quiz-footer-row">
-                <button
-                  className="quiz-secondary-btn"
-                  onClick={handleRestartQuiz}
-                >
-                  Restart quiz
-                </button>
-
-                {!showAnswer ? (
-                  <button
-                    className="quiz-primary-btn"
-                    disabled={selectedOption === null}
-                    onClick={handleSubmitAnswer}
-                  >
-                    Check answer
-                  </button>
-                ) : quizIndex < totalQuestions - 1 ? (
-                  <button
-                    className="quiz-primary-btn"
-                    onClick={handleNextQuestion}
-                  >
-                    Next question →
-                  </button>
-                ) : (
-                  <button
-                    className="quiz-primary-btn"
-                    onClick={handleRestartQuiz}
-                  >
-                    Restart
-                  </button>
-                )}
-              </div>
-
-              {/* FINAL SCORE */}
-              {showAnswer && quizIndex === totalQuestions - 1 && (
-                <div className="quiz-score">
-                  Score: {score} / {totalQuestions}
+                  {/* FINAL SCORE */}
+                  {showAnswer && quizIndex === totalQuestions - 1 && (
+                    <div className="quiz-score">
+                      Score: {score} / {totalQuestions}
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </main>

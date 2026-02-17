@@ -93,8 +93,8 @@ export default async function Home() {
                 </>
               ) : null}
 
-              <details className="relative md:hidden">
-                <summary className="list-none cursor-pointer rounded-full border border-white/20 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-100 transition hover:bg-white/10">
+              <details className="menu-drawer relative md:hidden">
+                <summary className="menu-attn list-none cursor-pointer rounded-full border border-white/20 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-100 transition hover:bg-white/10">
                   Menu
                 </summary>
                 <div className="absolute right-0 top-10 z-30 w-64 rounded-2xl border border-white/15 bg-[#061126]/95 p-3 shadow-[0_14px_42px_rgba(2,6,23,0.55)] backdrop-blur-xl">
@@ -118,18 +118,15 @@ export default async function Home() {
           </div>
         </header>
 
-        <main className="flex flex-1 flex-col py-10 sm:py-14">
+        <main className="flex flex-1 flex-col py-5 sm:py-14">
           <section className="max-w-3xl">
-            <p className="inline-flex items-center rounded-full border border-cyan-200/20 bg-cyan-300/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-cyan-100">
-              Built for AI Product Managers
-            </p>
-            <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight text-white sm:text-6xl">
+            <h1 className="mt-1 text-4xl font-semibold leading-snug tracking-tight text-white sm:mt-5 sm:text-6xl sm:leading-tight">
               Modern AI learning,
-              <span className="block bg-gradient-to-r from-cyan-200 to-emerald-200 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-cyan-200 to-emerald-200 bg-clip-text text-transparent sm:block">
                 designed for execution.
               </span>
             </h1>
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+            <p className="mt-4 max-w-2xl text-sm leading-[1.45] text-slate-300 sm:mt-5 sm:text-base sm:leading-7">
               Move from fundamentals to applied AI PM workflows with concise modules,
               swipe concepts, and interview-grade case practice in one place.
             </p>
