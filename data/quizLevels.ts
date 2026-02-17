@@ -52,11 +52,11 @@ quizLevels.level1 = [
     question: "Why do LLMs use positional encoding?",
     options: [
       "To store model checkpoints",
-      "To understand word order in a sequence",
       "To translate languages",
+      "To understand word order in a sequence",
       "To speed up inference"
     ],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation:
       "Positional encodings let the model know where each token sits in the sequence so it can reason about order, not just content."
   },
@@ -65,11 +65,11 @@ quizLevels.level1 = [
     question: "Which component performs attention?",
     options: [
       "Feed-forward network",
-      "Self-attention layers",
       "Embedding matrix",
-      "Output projection layer"
+      "Output projection layer",
+      "Self-attention layers"
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       "Self-attention layers compute how strongly each token should attend to every other token when building the next representation."
   },
@@ -77,12 +77,12 @@ quizLevels.level1 = [
     id: 5,
     question: "What is a token?",
     options: [
-      "A complete English word only",
       "Subword unit used by LLMs",
+      "A complete English word only",
       "GPU memory chunk",
       "A cache artifact"
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       "A token is a subword unit (could be a word, part of a word, or punctuation) defined by the tokenizer for efficient modeling."
   },
@@ -103,12 +103,12 @@ quizLevels.level1 = [
     id: 7,
     question: "What is a context window?",
     options: [
-      "Token limit the model can attend to",
       "The model’s browser input",
       "A GPU batching method",
+      "Token limit the model can attend to",
       "A temperature parameter"
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       "The context window is the maximum number of tokens the model can see and reason over in one request."
   },
@@ -117,11 +117,11 @@ quizLevels.level1 = [
     question: "Embeddings enable what type of search?",
     options: [
       "Keyword matching",
-      "Semantic similarity search",
       "Password encryption",
-      "GPU parallel search"
+      "GPU parallel search",
+      "Semantic similarity search"
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       "By comparing embedding vectors, we can search based on meaning rather than exact keyword overlaps."
   },
@@ -129,12 +129,12 @@ quizLevels.level1 = [
     id: 9,
     question: "Which is a primary symptom of hallucination?",
     options: [
-      "Model refuses to answer",
       "Factual-sounding but made-up content",
+      "Model refuses to answer",
       "Slow inference",
       "Repeated words in output"
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       "Hallucination is when the model confidently generates content that sounds right but is actually fabricated or wrong."
   },
@@ -155,12 +155,12 @@ quizLevels.level1 = [
     id: 11,
     question: "What does RAG stand for?",
     options: [
-      "Retrieval-Augmented Generation",
       "Random AI Generator",
       "Real-time API Gateway",
+      "Retrieval-Augmented Generation",
       "Reinforcement Adaptive Graph"
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       "RAG = Retrieval-Augmented Generation, where the model is given retrieved documents as extra grounded context before generating."
   },
@@ -169,11 +169,11 @@ quizLevels.level1 = [
     question: "What is the retrieval step responsible for in RAG?",
     options: [
       "Training the model",
-      "Fetching relevant context from a knowledge base",
       "Running inference faster",
-      "Tokenizing text"
+      "Tokenizing text",
+      "Fetching relevant context from a knowledge base"
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       "Retrieval finds the most relevant chunks from your knowledge store to feed into the prompt alongside the user query."
   },
@@ -208,11 +208,11 @@ quizLevels.level1 = [
     question: "What does a vector database store?",
     options: [
       "User passwords",
-      "Embedding vectors",
       "Model checkpoints",
+      "Embedding vectors",
       "Browser logs"
     ],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation:
       "A vector database stores embedding vectors (plus metadata) and supports fast similarity search over them."
   },
@@ -220,12 +220,12 @@ quizLevels.level1 = [
     id: 16,
     question: "Attention helps the model:",
     options: [
-      "Look at relevant tokens in the sequence",
       "Train faster",
       "Reduce costs",
-      "Store user history"
+      "Store user history",
+      "Look at relevant tokens in the sequence"
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       "Attention lets each token weigh other tokens differently, focusing on the parts of the sequence that matter for the current step."
   },
@@ -233,12 +233,12 @@ quizLevels.level1 = [
     id: 17,
     question: "Which is an example of semantic similarity?",
     options: [
-      "Dog ≠ Cat because spelling differs",
       "‘Doctor’ and ‘physician’ are similar in meaning",
+      "Dog ≠ Cat because spelling differs",
       "Sorting words alphabetically",
       "Counting word frequency"
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       "Semantic similarity cares about meaning, so ‘doctor’ and ‘physician’ are close even though the words are different."
   },
@@ -273,11 +273,11 @@ quizLevels.level1 = [
     question: "Which basic evaluation checks factuality?",
     options: [
       "BLEU",
-      "Grounded accuracy",
       "Latency",
-      "Chunk size"
+      "Chunk size",
+      "Grounded accuracy"
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       "Grounded accuracy measures whether answers are supported by the retrieved or reference documents, i.e., factual correctness."
   }
@@ -292,12 +292,12 @@ quizLevels.level2 = [
     id: 21,
     question: "Which part of a RAG system determines WHAT to retrieve?",
     options: [
-      "Generator",
       "Retriever",
+      "Generator",
       "Tokenizer",
       "Attention head"
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       "The retriever turns the query into an embedding and selects which documents or chunks to bring back for the model."
   },
@@ -305,12 +305,12 @@ quizLevels.level2 = [
     id: 22,
     question: "What is chunking?",
     options: [
-      "Splitting documents into fixed-size meaningful parts",
       "GPU parallel execution",
+      "Splitting documents into fixed-size meaningful parts",
       "Data encryption",
       "Token compression"
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       "Chunking breaks long documents into smaller, coherent pieces that can fit into the context window and be retrieved independently."
   },
@@ -318,12 +318,12 @@ quizLevels.level2 = [
     id: 23,
     question: "Why is chunk size important in RAG?",
     options: [
-      "Too big causes hallucination; too small loses context",
       "Too small increases temperature",
       "It controls GPU selection",
+      "Too big causes hallucination; too small loses context",
       "Large chunks reduce tokenization"
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       "Oversized chunks overflow context and mix topics; tiny chunks lose meaning—both hurt retrieval quality and increase hallucinations."
   },
@@ -332,11 +332,11 @@ quizLevels.level2 = [
     question: "What do vector indexes (HNSW/IVF) optimize?",
     options: [
       "Tokenization speed",
-      "Similarity search performance",
       "Model training speed",
-      "Inference batching"
+      "Inference batching",
+      "Similarity search performance"
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       "Indexes like HNSW/IVF approximate nearest neighbours so semantic search stays fast even with millions of embeddings."
   },
@@ -344,12 +344,12 @@ quizLevels.level2 = [
     id: 25,
     question: "Which is a PM metric for evaluating AI assistants?",
     options: [
+      "Task success rate",
       "Transformer layers",
       "Embeddings dimension",
-      "Task success rate",
       "GPU model"
     ],
-    correctIndex: 2,
+    correctIndex: 0,
     explanation:
       "Task success rate connects the assistant’s behaviour directly to whether users successfully complete their jobs."
   },
@@ -357,12 +357,12 @@ quizLevels.level2 = [
     id: 26,
     question: "What is an example of retrieval failure?",
     options: [
-      "Retriever surfaces irrelevant chunks",
       "LLM times out",
+      "Retriever surfaces irrelevant chunks",
       "Temperature too high",
       "Tokenizer splits incorrectly"
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       "If retrieval brings back irrelevant or off-topic chunks, the model will generate answers from the wrong evidence."
   },
@@ -371,11 +371,11 @@ quizLevels.level2 = [
     question: "Which is a benefit of embeddings over keyword search?",
     options: [
       "Lower insertion time",
-      "Finds semantically similar content",
       "Reduces storage cost",
+      "Finds semantically similar content",
       "Removes duplicates"
     ],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation:
       "Embeddings can match ‘refund policy’ with ‘money back conditions’ even when no keywords overlap."
   },
@@ -383,12 +383,12 @@ quizLevels.level2 = [
     id: 28,
     question: "Why does a model sometimes ignore retrieved context?",
     options: [
-      "Context window overflow",
       "GPU overheating",
       "Tokenizer mismatch",
-      "Wrong API settings"
+      "Wrong API settings",
+      "Context window overflow"
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       "If the prompt hits the context limit, earlier retrieved chunks may be truncated and the model never actually sees them."
   },
@@ -409,12 +409,12 @@ quizLevels.level2 = [
     id: 30,
     question: "What is the advantage of Hybrid Search (BM25 + Vectors)?",
     options: [
-      "Balances keyword precision + semantic recall",
       "Makes model smaller",
+      "Balances keyword precision + semantic recall",
       "Reduces bill cost",
       "Improves token accuracy"
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       "Hybrid search combines exact term matches (BM25) with semantic similarity, catching both precise and fuzzy matches."
   },
@@ -423,11 +423,11 @@ quizLevels.level2 = [
     question: "As an AI PM, how do you measure hallucination reduction?",
     options: [
       "Lower latency",
-      "Increase in grounded accuracy",
       "Higher GPU utilization",
+      "Increase in grounded accuracy",
       "Lower chunk size"
     ],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation:
       "Grounded accuracy directly measures whether answers are supported by retrieved docs, so improvements here reflect fewer hallucinations."
   },
@@ -435,12 +435,12 @@ quizLevels.level2 = [
     id: 32,
     question: "Why is prompt formatting important in RAG?",
     options: [
-      "LLMs ignore retrieval unless context is framed properly",
       "It speeds up inference",
       "It reduces cost",
-      "It improves embeddings"
+      "It improves embeddings",
+      "LLMs ignore retrieval unless context is framed properly"
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       "If the prompt doesn’t clearly separate instructions, question and context, the model may under-use or misinterpret retrieved text."
   },
@@ -475,11 +475,11 @@ quizLevels.level2 = [
     question: "What makes RAG superior to fine-tuning for factual tasks?",
     options: [
       "Lower temperature",
-      "Real-time access to updated data",
       "Bigger models",
+      "Real-time access to updated data",
       "Fewer tokens"
     ],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation:
       "RAG can always pull the latest facts from your knowledge base, while a fine-tuned model’s knowledge is frozen at train time."
   },
@@ -488,11 +488,11 @@ quizLevels.level2 = [
     question: "Why do LLMs forget earlier text in long prompts?",
     options: [
       "Temperature too low",
-      "Attention distribution weakens over long context",
       "Embeddings mismatch",
-      "Prompt was not chunked"
+      "Prompt was not chunked",
+      "Attention distribution weakens over long context"
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       "Attention weights get spread over more tokens as context grows, so earlier parts may get very low attention and be ‘forgotten’."
   },
@@ -526,12 +526,12 @@ quizLevels.level2 = [
     id: 39,
     question: "Which is a common reason RAG output feels generic?",
     options: [
-      "Retriever not specific enough",
       "High temperature",
       "Low chunk size",
+      "Retriever not specific enough",
       "Slow GPU"
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       "If retrieval brings broad, non-specific chunks, the model will answer in a generic way even if the question was precise."
   },
@@ -539,12 +539,12 @@ quizLevels.level2 = [
     id: 40,
     question: "Hybrid RAG helps mainly with:",
     options: [
-      "Combining keyword precision + semantic diversity",
       "Reducing model size",
       "Improving dataset quality",
-      "Encrypting embeddings"
+      "Encrypting embeddings",
+      "Combining keyword precision + semantic diversity"
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       "Hybrid RAG uses both lexical and semantic match signals so you catch niche keyword matches and broader semantic matches together."
   }
@@ -559,12 +559,12 @@ quizLevels.level3 = [
     id: 41,
     question: "Why can't LLMs ‘access memory’ like humans?",
     options: [
-      "They are not trained enough",
       "They only compute next-token probabilities",
+      "They are not trained enough",
       "They store data on GPU",
       "They lack embeddings"
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       "LLMs don’t look up facts the way humans do; they just compute the next-token distribution from their weights and the prompt."
   },
@@ -585,12 +585,12 @@ quizLevels.level3 = [
     id: 43,
     question: "What is multi-query attention used for?",
     options: [
-      "Faster inference with shared keys/values",
       "Increasing creativity",
       "Parallel training",
+      "Faster inference with shared keys/values",
       "Reducing hallucination"
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       "Multi-query attention reuses keys and values across heads, reducing memory bandwidth and speeding up decoding."
   },
@@ -598,12 +598,12 @@ quizLevels.level3 = [
     id: 44,
     question: "Why is Beam Search used?",
     options: [
-      "To ensure deterministic high-quality text generation",
       "To reduce hallucination",
       "To speed up embedding queries",
-      "To lower context usage"
+      "To lower context usage",
+      "To ensure deterministic high-quality text generation"
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       "Beam search keeps multiple high-probability candidate sequences and picks the best, often improving output quality vs greedy sampling."
   },
@@ -611,12 +611,12 @@ quizLevels.level3 = [
     id: 45,
     question: "What is the BEST way to reduce inference cost at scale?",
     options: [
-      "Use larger models",
       "Use distillation, quantization, and caching",
+      "Use larger models",
       "Increase temperature",
       "Extend context window"
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       "Distilling to a smaller student, quantizing weights and caching frequent results cut tokens and compute without huge quality loss."
   },
@@ -637,12 +637,12 @@ quizLevels.level3 = [
     id: 47,
     question: "Why do some RAG systems use re-ranking?",
     options: [
-      "To reorder candidate documents by semantic relevance",
       "To reduce token cost",
       "To increase GPU throughput",
+      "To reorder candidate documents by semantic relevance",
       "To embed faster"
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       "Re-ranking lets a stronger model or scoring function reorder the top-k retrieved chunks so the very best evidence is shown first."
   },
@@ -651,11 +651,11 @@ quizLevels.level3 = [
     question: "What is the biggest governance challenge for AI PMs?",
     options: [
       "Deciding vector size",
-      "Ensuring safety, fairness, and compliance",
       "Reducing latency",
-      "Choosing a GPU"
+      "Choosing a GPU",
+      "Ensuring safety, fairness, and compliance"
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       "Beyond UX, AI PMs must ensure the system behaves safely, complies with regulations and doesn’t introduce unfair bias."
   },
@@ -663,12 +663,12 @@ quizLevels.level3 = [
     id: 49,
     question: "Which is an example of prompt injection risk?",
     options: [
-      "Too many tokens",
       "User instructs model to ignore previous instructions",
+      "Too many tokens",
       "High temperature",
       "Wrong fine-tuning data"
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       "Prompt injection occurs when user content tricks the model into discarding system or developer instructions."
   },
@@ -690,11 +690,11 @@ quizLevels.level3 = [
     question: "Which evaluation is closest to real product quality?",
     options: [
       "Offline perplexity",
-      "Human preference evals",
       "BLEU score",
+      "Human preference evals",
       "Context window size"
     ],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation:
       "Human preference or task-based evals measure how real users or experts rate outputs, which is closest to product reality."
   },
@@ -702,12 +702,12 @@ quizLevels.level3 = [
     id: 52,
     question: "When should an AI PM choose Fine-tuning over RAG?",
     options: [
-      "When tasks require new reasoning patterns",
       "When knowledge changes frequently",
       "When retrieval is slow",
-      "Never"
+      "Never",
+      "When tasks require new reasoning patterns"
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       "Fine-tuning is better when you need the model to learn new behaviours or styles, not just access more facts."
   },
@@ -715,12 +715,12 @@ quizLevels.level3 = [
     id: 53,
     question: "Why is grounding insufficient by itself?",
     options: [
-      "RAG is slow",
       "LLMs may ignore retrieved content",
+      "RAG is slow",
       "Embedding vectors lose quality",
       "Documents are too long"
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       "Even with good retrieval, a poorly-designed prompt can cause the model to under-use or ignore the grounded context."
   },
@@ -742,11 +742,11 @@ quizLevels.level3 = [
     question: "Which PM metric shows deep value creation?",
     options: [
       "Daily queries",
-      "Task success × Retention",
       "Context expansion",
+      "Task success × Retention",
       "GPU throughput"
     ],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation:
       "If users both succeed at tasks and keep coming back, the feature is solving real problems in a durable way."
   },
@@ -754,12 +754,12 @@ quizLevels.level3 = [
     id: 56,
     question: "Why is latency critical in AI UX?",
     options: [
-      "Users drop off if responses take > 3 seconds",
       "GPU usage increases",
       "Context shortens",
-      "Embeddings degrade"
+      "Embeddings degrade",
+      "Users drop off if responses take > 3 seconds"
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       "Multiple studies show that even a few extra seconds of delay can spike abandonment for interactive products."
   },
@@ -793,12 +793,12 @@ quizLevels.level3 = [
     id: 59,
     question: "Why is distillation valuable?",
     options: [
-      "Makes models cheaper without losing much quality",
       "Improves embeddings",
       "Speeds up tokenization",
+      "Makes models cheaper without losing much quality",
       "Reduces RAG complexity"
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       "Distillation transfers knowledge from a large teacher into a smaller student, preserving most quality at a much lower cost."
   },
@@ -807,11 +807,11 @@ quizLevels.level3 = [
     question: "What is the strongest signal your AI feature is trusted?",
     options: [
       "Model size increases",
-      "Users repeatedly rely on it for critical tasks",
       "Higher API cost",
-      "Longer prompts"
+      "Longer prompts",
+      "Users repeatedly rely on it for critical tasks"
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       "When users use your AI feature for high-stakes, repeat tasks, it shows deep trust beyond just curiosity usage."
   }
