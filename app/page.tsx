@@ -28,6 +28,12 @@ const learningTracks = [
   },
 ];
 
+const headerLinks = [
+  { label: "Quiz", href: "/swipe?mode=quiz" },
+  { label: "Visualize", href: "/swipe?mode=visualize" },
+  { label: "Compare Concepts", href: "/compare" },
+];
+
 export default async function Home() {
   const session = await getServerSession(authOptions);
   const userLabel = session?.user?.name || session?.user?.email;
@@ -41,7 +47,7 @@ export default async function Home() {
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 sm:py-8">
         <header className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur-xl sm:px-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10">
                 <Image src="/favicon.ico" alt="AI PM World" width={20} height={20} priority />
@@ -53,6 +59,18 @@ export default async function Home() {
                 <p className="text-xs text-slate-300/80">Learn. Build. Ship AI products.</p>
               </div>
             </div>
+
+            <nav className="hidden items-center gap-2 md:flex">
+              {headerLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-full border border-white/20 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-slate-200 transition hover:border-cyan-200/45 hover:bg-cyan-300/15 hover:text-cyan-50"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
 
             <div className="flex flex-wrap items-center gap-2">
               {userLabel ? (
@@ -74,6 +92,28 @@ export default async function Home() {
                   </Link>
                 </>
               ) : null}
+
+              <details className="relative md:hidden">
+                <summary className="list-none cursor-pointer rounded-full border border-white/20 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-100 transition hover:bg-white/10">
+                  Menu
+                </summary>
+                <div className="absolute right-0 top-10 z-30 w-64 rounded-2xl border border-white/15 bg-[#061126]/95 p-3 shadow-[0_14px_42px_rgba(2,6,23,0.55)] backdrop-blur-xl">
+                  <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                    Quick Access
+                  </div>
+                  <div className="grid gap-2">
+                    {headerLinks.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="rounded-xl border border-white/15 bg-white/[0.04] px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-200/45 hover:bg-cyan-300/15"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </details>
             </div>
           </div>
         </header>
@@ -93,34 +133,6 @@ export default async function Home() {
               Move from fundamentals to applied AI PM workflows with concise modules,
               swipe concepts, and interview-grade case practice in one place.
             </p>
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              <Link
-                href="/swipe?mode=quiz"
-                className="inline-flex items-center gap-2 rounded-xl border border-cyan-200/30 bg-cyan-400/12 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:-translate-y-0.5 hover:border-cyan-200/55 hover:bg-cyan-300/18"
-              >
-                <span className="h-2 w-2 rounded-full bg-cyan-300" />
-                Quiz Mode
-                <span className="text-cyan-200">›</span>
-              </Link>
-              <Link
-                href="/swipe?mode=visualize"
-                className="inline-flex items-center gap-2 rounded-xl border border-emerald-200/30 bg-emerald-400/12 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:-translate-y-0.5 hover:border-emerald-200/55 hover:bg-emerald-300/18"
-              >
-                <span className="h-2 w-2 rounded-full bg-emerald-300" />
-                Visualize
-                <span className="text-emerald-200">›</span>
-              </Link>
-              <Link
-                href="/compare"
-                className="inline-flex items-center gap-2 rounded-xl border border-sky-200/30 bg-sky-400/12 px-4 py-2 text-sm font-semibold text-sky-100 transition hover:-translate-y-0.5 hover:border-sky-200/55 hover:bg-sky-300/18"
-              >
-                <span className="h-2 w-2 rounded-full bg-sky-300" />
-                Compare Concepts
-                <span className="text-sky-200">›</span>
-              </Link>
-            </div>
-
           </section>
 
           <section className="mt-10 grid gap-4 md:grid-cols-3">
