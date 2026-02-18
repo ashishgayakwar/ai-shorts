@@ -51,9 +51,11 @@ export default function BasicsPage() {
           <Link href="/swipe?mode=visualize" className="ai-header-pill">
             Visualize
           </Link>
-          <span className="ai-header-pill ai-header-pill-active">Basics</span>
-          <Link href="/case-study-generator" className="ai-header-pill">
-            Case Study
+          <Link href="/compare" className="ai-header-pill">
+            Compare
+          </Link>
+          <Link href="/interview" className="ai-header-pill">
+            Interview
           </Link>
           <Link href="/" className="ai-header-pill">
             Home
@@ -65,8 +67,8 @@ export default function BasicsPage() {
           <div className="ai-shorts-mobile-menu-panel">
             <Link href="/swipe" className="ai-header-pill">Cards</Link>
             <Link href="/swipe?mode=visualize" className="ai-header-pill">Visualize</Link>
-            <span className="ai-header-pill ai-header-pill-active">Basics</span>
-            <Link href="/case-study-generator" className="ai-header-pill">Case Study</Link>
+            <Link href="/compare" className="ai-header-pill">Compare</Link>
+            <Link href="/interview" className="ai-header-pill">Interview</Link>
             <Link href="/" className="ai-header-pill">Home</Link>
           </div>
         </details>

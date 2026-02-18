@@ -29,9 +29,11 @@ const learningTracks = [
 ];
 
 const headerLinks = [
-  { label: "Quiz", href: "/swipe?mode=quiz" },
+  { label: "Cards", href: "/swipe" },
   { label: "Visualize", href: "/swipe?mode=visualize" },
-  { label: "Compare Concepts", href: "/compare" },
+  { label: "Compare", href: "/compare" },
+  { label: "Interview", href: "/interview" },
+  { label: "Home", href: "/" },
 ];
 
 export default async function Home() {
