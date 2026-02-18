@@ -1,0 +1,184 @@
+{
+  "answers": [
+    {
+      "question_id": "q_ps_011",
+      "category": "product_sense",
+      "question": "How would you design AI for coding beginners?",
+      "framework": "Learning Loop Ladder",
+      "spoken_answer": "For coding beginners, I would design the product around a learning loop, not a code generation shortcut. The flow starts with intent capture, then gives a scaffolded solution path, then asks the learner to complete one missing step before revealing the next hint. I would track concept mastery lift and weekly active learners completing guided exercises as the primary metric, with a target of reducing abandonment between lesson start and first runnable output. The core tradeoff is speed versus comprehension: instant full solutions feel magical, but they weaken retention and confidence when learners face new problems alone. I would include explain-before-generate modes, misconception alerts, and confidence checks after each task. The experience should reward progress signals, not just copied output, so beginners build durable mental models instead of dependency.",
+      "written_answer_md": "### Signal to interviewer\nI can design for true skill formation, not vanity engagement, by making learning outcomes the product center.\n\n### Clarify\nI would clarify learner segment, programming language scope, and expected outcomes: assignment completion, interview prep, or long-term fluency. I would also define whether this is self-serve or instructor-supported.\n\n### Approach\nUse a laddered learning loop: problem framing, guided decomposition, partial implementation, feedback, and reflection. Limit full-solution reveal until the learner attempts key steps.\n\n### Metrics & instrumentation\nPrimary metric: mastery progression across core concepts. Secondary metrics: first successful run time, hint dependency trend, and weekly guided completion. Guardrails: copy-paste behavior, unresolved error loops, and frustration drop-off.\n\n### Tradeoffs\nMore automation increases short-term satisfaction but can reduce conceptual depth. Strong pedagogy increases learning but may feel slower to impatient users.\n\n### Risks & mitigations\nRisk: users game the system for quick answers; mitigate with attempt checkpoints. Risk: overwhelming feedback; mitigate with progressive hints. Risk: low confidence despite success; mitigate with reflective recap and small wins.\n\n### Example\nIn a beginner Python course, the assistant asks users to write loop conditions themselves, then provides targeted hints when logic fails.\n\n### 90-second version\nBuild AI coding for beginners as a structured coach. Measure mastery, not output volume. Keep assistance high, but preserve challenge so users can solve similar problems independently.",
+      "followups": {
+        "clarification": [
+          "Which beginner profile are you optimizing for first: students, career switchers, or internal trainees?",
+          "How will you define mastery for a concept like loops or conditionals?"
+        ],
+        "depth": [
+          "How would you instrument hint dependency to detect overreliance?",
+          "What evaluation setup would you use to compare learning outcomes versus a standard tutorial?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ps_012",
+      "category": "product_sense",
+      "question": "How would you improve AI onboarding experience?",
+      "framework": "Activation Friction Map",
+      "spoken_answer": "I would improve AI onboarding by mapping every friction point from signup to first meaningful success. Instead of showing generic tips, I would ask one intent question upfront and route users into a tailored first-run path with one concrete outcome, like drafting a message, summarizing a document, or solving a support ticket. The main metric would be activation rate defined as users completing a high-value task in the first session, while tracking median time-to-value as a secondary metric. The tradeoff is personalization versus simplicity: deeper onboarding improves relevance, but too many questions increase abandonment. I would keep upfront input minimal, infer context from behavior, and offer progressive setup only after the first win. To sustain trust, each step would include transparent cues on what the AI can and cannot do, plus easy correction controls.",
+      "written_answer_md": "### Signal to interviewer\nI can improve onboarding by translating abstract AI value into fast, role-specific wins with measurable activation impact.\n\n### Clarify\nI would clarify user intents, device context, and product jobs-to-be-done. I would also align on what qualifies as activation and what early drop-off patterns currently look like.\n\n### Approach\nUse an activation friction map. Identify where users stall, then redesign the flow around one tailored first outcome with minimal cognitive load.\n\n### Metrics & instrumentation\nPrimary metric: first-session activation completion. Secondary metrics: time-to-value, next-day return, and guided-flow completion. Guardrails: onboarding abandonment, confusion reports, and unsafe first-use outcomes.\n\n### Tradeoffs\nRicher personalization improves relevance but can increase onboarding burden. Minimal setup improves completion but may reduce initial precision.\n\n### Risks & mitigations\nRisk: users don’t understand capabilities; mitigate with explicit examples. Risk: too many steps; mitigate with progressive disclosure. Risk: bad first result erodes trust; mitigate with constrained starter tasks.\n\n### Example\nFor an enterprise writing assistant, onboarding asks role and document type, then guides the user to produce one polished draft in minutes.\n\n### 90-second version\nRedesign onboarding around first-session value. Ask less, guide better, and instrument activation quality so users hit one meaningful success quickly and return.",
+      "followups": {
+        "clarification": [
+          "What exact event marks activation for this product?",
+          "Which onboarding step currently drives the highest drop-off?"
+        ],
+        "depth": [
+          "How would you run an A/B test for intent-based onboarding flows?",
+          "What telemetry would distinguish confusion from normal exploration?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ps_013",
+      "category": "product_sense",
+      "question": "How would you design AI-powered meeting assistants?",
+      "framework": "Workflow Surface Framework",
+      "spoken_answer": "I would design an AI meeting assistant as a workflow product spanning before, during, and after meetings. Before meetings, it should build context briefs and agenda suggestions. During meetings, it should capture key decisions, blockers, and owners in real time. After meetings, it should produce action items and draft follow-up messages with editable confidence labels. The primary metric would be action-item completion rate from AI-generated notes, and a secondary metric would be reduction in manual note-taking time. The explicit tradeoff is coverage versus precision: capturing everything sounds useful, but noisy summaries reduce trust and execution. I would bias toward fewer high-confidence outputs and easy correction controls. For adoption, the assistant must integrate with calendars, docs, and task systems so outputs flow into work, not into yet another disconnected note tool.",
+      "written_answer_md": "### Signal to interviewer\nI can design meeting AI for execution quality, not transcription novelty, by optimizing decision capture and follow-through.\n\n### Clarify\nI would clarify meeting types, participant roles, and compliance constraints around recording and retention.\n\n### Approach\nApply a workflow surface model: pre-meeting prep, in-meeting capture, and post-meeting execution. Each surface has explicit outputs and handoff points.\n\n### Metrics & instrumentation\nPrimary metric: completion rate of AI-captured action items. Secondary metrics: summary edit rate, prep-time reduction, and follow-up turnaround. Guardrails: missed critical decisions, privacy complaints, and incorrect owner assignment.\n\n### Tradeoffs\nBroader capture increases recall but can dilute signal quality. Aggressive automation speeds output but can mis-assign accountability.\n\n### Risks & mitigations\nRisk: overconfident summaries; mitigate with confidence tags and edits. Risk: privacy concerns; mitigate with clear consent and retention controls. Risk: low downstream adoption; mitigate with deep task-system integrations.\n\n### Example\nIn product standups, the assistant turns spoken blockers into assigned Jira follow-ups and flags unresolved decisions for leadership review.\n\n### 90-second version\nDesign meeting AI across the full workflow. Prioritize decision fidelity and action execution, measure downstream completion, and keep controls transparent so teams trust and use the output.",
+      "followups": {
+        "clarification": [
+          "Which meeting type should be the initial launch surface?",
+          "What legal or consent requirements apply to recording and summaries?"
+        ],
+        "depth": [
+          "How would you detect and reduce hallucinated action items?",
+          "What integration architecture is needed for calendar-to-task continuity?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ps_014",
+      "category": "product_sense",
+      "question": "How would you design AI for personal productivity?",
+      "framework": "Outcome Pyramid",
+      "spoken_answer": "For personal productivity AI, I would design around outcomes, not feature count. The base layer is capture: tasks, notes, and commitments from messages, meetings, and documents. The middle layer is planning: prioritize work by urgency, effort, and dependency. The top layer is execution: generate next steps and reduce switching cost across tools. I would measure weekly completed high-priority tasks as the primary metric and track planned-versus-completed alignment as a secondary signal. The tradeoff is autonomy versus user control: fully automated scheduling can save time but may feel intrusive or wrong when personal context is nuanced. I would keep recommendations proactive but approvals explicit. To avoid overwhelm, the assistant should summarize only what is actionable and suppress low-value noise. The product wins if users feel calmer and more effective, not just busier.",
+      "written_answer_md": "### Signal to interviewer\nI can design productivity AI to improve real execution outcomes rather than adding surface-level automation.\n\n### Clarify\nI would clarify target user profile, preferred tools, and whether success is time saved, stress reduction, or throughput quality.\n\n### Approach\nUse an outcome pyramid: capture commitments, prioritize intelligently, then drive execution with focused suggestions and reminders.\n\n### Metrics & instrumentation\nPrimary metric: completion of high-priority tasks per active week. Secondary metrics: plan adherence, context-switch reduction, and recommendation acceptance. Guardrails: reminder fatigue, reschedule churn, and user override frequency.\n\n### Tradeoffs\nMore automation can reduce planning effort but may reduce perceived agency. More control improves trust but can lower speed gains.\n\n### Risks & mitigations\nRisk: recommendation overload; mitigate with strict ranking thresholds. Risk: wrong prioritization; mitigate with quick feedback loops. Risk: fragmented context; mitigate with selective integrations and recency weighting.\n\n### Example\nFor consultants, the assistant consolidates client deliverables, drafts a daily plan, and proposes focus windows around deadline-critical work.\n\n### 90-second version\nBuild personal productivity AI as an outcome engine: capture, prioritize, execute. Measure high-priority completion and keep user control explicit so automation feels helpful, not intrusive.",
+      "followups": {
+        "clarification": [
+          "How do you define high-priority work across different user types?",
+          "Which productivity systems should be integrated first to maximize value?"
+        ],
+        "depth": [
+          "How would you model recommendation confidence to avoid overload?",
+          "What evaluation method proves stress reduction, not just activity increase?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ps_015",
+      "category": "product_sense",
+      "question": "How would you improve AI trust and reliability?",
+      "framework": "Trust Stack Model",
+      "spoken_answer": "I would improve AI trust and reliability by treating them as a stack: model behavior, product controls, and operational governance. At the model layer, I’d tighten grounding and uncertainty handling. At the product layer, I’d add source visibility, confidence cues, and low-friction correction flows. At the operations layer, I’d run continuous evals with clear escalation paths when quality drifts. The primary metric would be trusted-task completion rate, where users finish important tasks without manual rework caused by AI mistakes. A key tradeoff is transparency versus simplicity: richer reliability signals improve trust, but too much interface noise can overwhelm users. I’d expose reliability cues progressively based on task risk. Trust improves when users can predict behavior, recover quickly from errors, and see that the system learns from feedback.",
+      "written_answer_md": "### Signal to interviewer\nI can improve trust by aligning technical reliability, UX transparency, and operational response into one measurable system.\n\n### Clarify\nI would define trust failure types: factual errors, inconsistency, unsafe output, and opaque behavior. I would segment by use case risk because trust expectations vary by task.\n\n### Approach\nUse a trust stack model: strengthen grounding and uncertainty, expose clear product controls, and institutionalize quality monitoring with incident response.\n\n### Metrics & instrumentation\nPrimary metric: trusted-task completion without AI-caused rework. Secondary metrics: correction burden, repeat usage after errors, and confidence calibration quality. Guardrails: high-severity incidents, harmful output reports, and regression detection lag.\n\n### Tradeoffs\nMore transparency improves confidence but can clutter UX. Conservative policies reduce harm but may lower perceived usefulness.\n\n### Risks & mitigations\nRisk: hidden quality drift; mitigate with live eval dashboards. Risk: user overtrust; mitigate with uncertainty messaging. Risk: slow recovery from incidents; mitigate with explicit rollback and ownership runbooks.\n\n### Example\nIn a finance assistant, responses include cited policy snippets and confidence levels, with mandatory review for high-impact recommendations.\n\n### 90-second version\nTreat trust as a product system, not a messaging problem. Combine reliable behavior, transparent controls, and fast operational recovery, then measure trusted completion directly.",
+      "followups": {
+        "clarification": [
+          "What user actions best indicate trust versus forced usage?",
+          "Which trust failures are most damaging in your highest-value workflows?"
+        ],
+        "depth": [
+          "How would you design an incident taxonomy for reliability regressions?",
+          "What calibration approach would you use to align confidence with correctness?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_001",
+      "category": "system_design",
+      "question": "Design the architecture for ChatGPT.",
+      "framework": "Layered Capability Architecture",
+      "spoken_answer": "I would design ChatGPT as a layered architecture that separates user interaction, orchestration, intelligence, and governance. The front layer handles session state, multimodal input normalization, and streaming UX. The orchestration layer routes requests based on intent, risk, and latency budget, while managing tool calls, retrieval, and fallbacks. The intelligence layer hosts model endpoints, prompt policies, and response validators. The governance layer enforces safety, abuse prevention, and observability with policy-driven controls. I would track successful task completion as the top metric, paired with end-to-end latency percentile and safety incident rate as critical guardrails. The tradeoff is capability depth versus response speed: richer orchestration improves quality, but every step adds latency and cost. I’d solve this with adaptive routing that uses lightweight paths for simple tasks and deeper pipelines for complex requests.",
+      "written_answer_md": "### Signal to interviewer\nI can design ChatGPT architecture with clear boundaries so capability growth does not break reliability and safety.\n\n### Clarify\nI would clarify workload mix, multimodal scope, enterprise requirements, and global latency targets.\n\n### Approach\nUse layered capability architecture: interaction layer, orchestration layer, model intelligence layer, and governance layer. Each layer has explicit SLAs and failure behavior.\n\n### Metrics & instrumentation\nPrimary metric: successful user task completion. Secondary metrics: tail latency, tool-call success, and retrieval usefulness. Guardrails: policy violation rate, outage impact, and abuse detection precision.\n\n### Tradeoffs\nDeep orchestration improves answer quality but increases latency and complexity. Unified models simplify operations but may underperform on specialized workloads.\n\n### Risks & mitigations\nRisk: cascading failures across tools; mitigate with circuit breakers. Risk: routing drift; mitigate with continuous evaluation. Risk: policy inconsistency across regions; mitigate with centralized policy config and localized enforcement checks.\n\n### Example\nA complex legal query routes through retrieval + reasoning + policy checks, while a simple definition request uses a fast direct model path.\n\n### 90-second version\nDesign ChatGPT in layers with explicit contracts. Route adaptively by task complexity, instrument every stage, and keep governance first-class so performance and safety scale together.",
+      "followups": {
+        "clarification": [
+          "What workload mix assumptions drive your initial routing strategy?",
+          "Which capabilities must be globally consistent versus region-specific?"
+        ],
+        "depth": [
+          "How would you implement fail-open versus fail-closed behavior per layer?",
+          "What telemetry schema would you use to trace end-to-end request outcomes?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_002",
+      "category": "system_design",
+      "question": "Design a scalable AI recommendation system.",
+      "framework": "Candidate-Ranking Pipeline",
+      "spoken_answer": "I would design a recommendation system with a two-stage pipeline: candidate generation followed by ranking and policy filtering. Candidate generation uses embeddings and behavior signals to fetch a broad, personalized set quickly. Ranking then optimizes for relevance, diversity, freshness, and business constraints. A policy layer applies safety rules, content eligibility, and experimentation logic before delivery. I’d measure session-level qualified engagement as the primary metric and track recommendation latency plus long-term retention as supporting metrics. The explicit tradeoff is personalization depth versus exploration breadth: strong personalization boosts short-term clicks, but insufficient exploration can trap users in narrow content loops. I’d include exploration quotas and recency boosts to preserve discovery quality. The system needs offline feature pipelines, nearline updates for freshness, and online serving infrastructure with low-latency feature retrieval.",
+      "written_answer_md": "### Signal to interviewer\nI can design recommendation systems that scale while balancing relevance, diversity, and platform constraints.\n\n### Clarify\nI would clarify recommendation surface, user intent patterns, content safety requirements, and acceptable freshness delay.\n\n### Approach\nUse a candidate-ranking pipeline: generate candidates fast, rank with multi-objective scoring, then apply policy constraints and experimentation controls.\n\n### Metrics & instrumentation\nPrimary metric: qualified engagement per session. Secondary metrics: retention lift, catalog coverage, and cold-start performance. Guardrails: harmful content exposure, creator fairness imbalance, and latency regressions.\n\n### Tradeoffs\nTighter personalization improves near-term engagement but can reduce diversity. Aggressive exploration improves discovery but may lower immediate conversion.\n\n### Risks & mitigations\nRisk: feedback loops amplify narrow preferences; mitigate with exploration caps. Risk: stale recommendations; mitigate with incremental feature refresh. Risk: gaming by content producers; mitigate with integrity scoring.\n\n### Example\nIn a short-video feed, candidate generation uses recent watch signals while ranking enforces diversity and policy-safe filtering before final delivery.\n\n### 90-second version\nBuild a scalable two-stage recommender: fast candidate retrieval, smart ranking, and strict policy controls. Optimize for qualified engagement while protecting diversity and safety.",
+      "followups": {
+        "clarification": [
+          "How do you define qualified engagement beyond click-through?",
+          "What freshness requirement is acceptable for your recommendation surface?"
+        ],
+        "depth": [
+          "How would you design feature stores for low-latency ranking at scale?",
+          "What offline-to-online consistency checks would you enforce?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_003",
+      "category": "system_design",
+      "question": "Design a real-time AI chatbot system.",
+      "framework": "Latency Budget Decomposition",
+      "spoken_answer": "For a real-time chatbot, I would design around a strict latency budget from user input to first streamed token. The request path includes intent parsing, context retrieval, model inference, response moderation, and streaming delivery. Each stage gets a budget with fallback behavior if it exceeds thresholds. I would run asynchronous enrichments for non-critical features so core response speed stays consistent under load. The primary metric is first-token latency percentile, with conversation resolution quality as a paired outcome metric. The key tradeoff is quality versus responsiveness: deeper retrieval and validation improve answers, but too much processing breaks conversational flow. I’d use adaptive depth where low-risk queries take fast paths and complex requests trigger extended pipelines. Operationally, the system needs autoscaling inference pools, queue backpressure control, and regional routing for reliability.",
+      "written_answer_md": "### Signal to interviewer\nI can design real-time AI systems by treating latency as a first-class architectural contract without sacrificing answer quality.\n\n### Clarify\nI would clarify concurrency targets, acceptable response delay, expected request complexity, and moderation requirements.\n\n### Approach\nDecompose latency budget across pipeline stages and define fallback strategies for each stage. Stream responses early while running non-critical enrichments asynchronously.\n\n### Metrics & instrumentation\nPrimary metric: first-token latency percentile. Secondary metrics: turn-completion quality, timeout rate, and handoff success. Guardrails: moderation misses, degraded-region error spikes, and queue saturation.\n\n### Tradeoffs\nStrict latency goals improve UX but can reduce depth of reasoning. Richer context improves quality but increases compute and response delay.\n\n### Risks & mitigations\nRisk: tail latency blowups during spikes; mitigate with admission control and queue shaping. Risk: degraded moderation under load; mitigate with prioritized safety pipeline. Risk: context retrieval timeouts; mitigate with cache-first fallback.\n\n### Example\nIn customer support chat, order lookup uses a fast cache path while long-form troubleshooting invokes deeper retrieval after first response streaming.\n\n### 90-second version\nDesign real-time chat by allocating latency budgets per stage, streaming early, and using adaptive depth. Measure first-token speed and resolution quality together while protecting safety under load.",
+      "followups": {
+        "clarification": [
+          "What latency threshold defines real-time for your target users?",
+          "Which chat intents require deep context versus fast direct answers?"
+        ],
+        "depth": [
+          "How would you implement adaptive routing without unstable oscillation?",
+          "What backpressure strategy would you use during regional traffic spikes?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_004",
+      "category": "system_design",
+      "question": "Design an AI search engine.",
+      "framework": "Retrieval-Augmented Stack",
+      "spoken_answer": "I would design an AI search engine with a retrieval-augmented stack: query understanding, hybrid retrieval, ranking, answer synthesis, and citation validation. Query understanding maps intent and decides whether the user needs navigation, exploration, or direct task resolution. Retrieval combines lexical and vector methods to balance precision and semantic coverage. Ranking optimizes relevance, authority, and freshness before synthesis composes grounded answers with explicit citations. I would track successful task completion after search as the primary metric, with reformulation rate and citation interaction as secondary signals. The tradeoff is recall versus trust: expanding retrieval improves coverage, but weak filtering can degrade answer credibility. I would enforce source-quality thresholds and confidence gating for synthesis. The architecture should also support rapid index updates and drift monitors so search quality remains stable over time.",
+      "written_answer_md": "### Signal to interviewer\nI can design AI search systems that connect retrieval quality directly to user outcomes and trust.\n\n### Clarify\nI would clarify corpus type, update frequency, user intent distribution, and acceptable hallucination risk.\n\n### Approach\nUse a retrieval-augmented stack: intent parsing, hybrid retrieval, reranking, grounded synthesis, and citation checks.\n\n### Metrics & instrumentation\nPrimary metric: task completion after search interaction. Secondary metrics: reformulation reduction, citation click utility, and freshness hit rate. Guardrails: unsupported claims, stale-source usage, and latency regressions.\n\n### Tradeoffs\nHigher recall increases coverage but can reduce precision and trust. Strong filtering improves reliability but may hide relevant long-tail results.\n\n### Risks & mitigations\nRisk: stale index undermines relevance; mitigate with incremental indexing. Risk: synthesis overclaims; mitigate with claim-to-source verification. Risk: retrieval bias toward popular documents; mitigate with diversity-aware reranking.\n\n### Example\nFor enterprise policy search, the engine combines semantic retrieval with policy recency ranking and displays source timestamps in every answer.\n\n### 90-second version\nBuild AI search as a grounded pipeline: understand intent, retrieve broadly, rank carefully, synthesize with citations, and validate claims. Optimize task completion while guarding trust.",
+      "followups": {
+        "clarification": [
+          "What query classes are highest priority for the first launch?",
+          "How strict should citation requirements be before synthesis is shown?"
+        ],
+        "depth": [
+          "How would you evaluate hybrid retrieval contribution by query type?",
+          "What online checks catch unsupported synthesis claims early?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_005",
+      "category": "system_design",
+      "question": "Design AI model routing infrastructure.",
+      "framework": "Policy-Driven Router",
+      "spoken_answer": "I would design model routing as a policy-driven control plane that chooses the best model path per request based on task type, risk, latency budget, and cost constraints. The router should evaluate lightweight classifiers first, then assign requests to specialized models, fallback models, or tool-augmented pipelines. I would include a continuous evaluation service that updates routing policies from live performance signals, not just offline benchmarks. The primary metric would be quality-adjusted cost per successful request, while guardrails include latency percentile and policy compliance errors. The tradeoff is optimization power versus operational complexity: fine-grained routing improves efficiency, but too many branches become hard to debug and govern. I’d enforce policy templates, route explainability logs, and safe defaults. This infrastructure should make model upgrades and rollback decisions faster without destabilizing product behavior.",
+      "written_answer_md": "### Signal to interviewer\nI can design routing infrastructure that balances cost, quality, and safety through explicit policy governance.\n\n### Clarify\nI would clarify workload taxonomy, model inventory, compliance constraints, and SLO priorities across products.\n\n### Approach\nUse a policy-driven router with three planes: request classification, route selection, and post-route evaluation feedback. Support fallback and override paths.\n\n### Metrics & instrumentation\nPrimary metric: quality-adjusted cost per successful request. Secondary metrics: route accuracy, fallback frequency, and model utilization efficiency. Guardrails: latency breaches, policy violations, and degraded-user-impact rate.\n\n### Tradeoffs\nFine-grained routing improves optimization but increases debugging burden. Conservative routing simplifies reliability but may waste compute on easy tasks.\n\n### Risks & mitigations\nRisk: policy drift causing silent quality drops; mitigate with route-level canaries. Risk: black-box decisions reduce trust internally; mitigate with route explanations. Risk: rollback delays during incidents; mitigate with one-click policy rollback.\n\n### Example\nIn a multilingual assistant, low-risk translation routes to efficient models, while regulated finance prompts route to higher-governance models with stricter checks.\n\n### 90-second version\nDesign routing as a policy system, not hardcoded if-else logic. Optimize quality-adjusted cost, keep route decisions observable, and make fallback/rollback safe and fast.",
+      "followups": {
+        "clarification": [
+          "Which request attributes are mandatory for route selection at launch?",
+          "How do you define quality-adjusted success for routing decisions?"
+        ],
+        "depth": [
+          "How would you implement route explainability for debugging and audits?",
+          "What policy rollback mechanism would you use during active incidents?"
+        ]
+      }
+    }
+  ]
+}

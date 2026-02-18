@@ -1,0 +1,184 @@
+{
+  "answers": [
+    {
+      "question_id": "q_tr_002",
+      "category": "tradeoffs",
+      "question": "How do you decide between latency vs accuracy for an AI feature?",
+      "framework": "Latency-Accuracy Pareto Frontier",
+      "spoken_answer": "I decide latency versus accuracy by mapping the Pareto frontier for each user journey, not by picking one global target. First I classify requests by urgency and consequence of error. Real-time flows get tighter latency budgets, while high-stakes flows get stronger accuracy budgets with deeper validation. The primary metric is task completion success under segment-specific latency thresholds. The tradeoff is explicit: pushing latency down too far often strips context and hurts correctness, while maximizing accuracy can degrade responsiveness and abandonment rates. I set operating bands by segment and monitor drift continuously. When user behavior or model performance shifts, I rebalance the frontier. The goal is consistent perceived quality, which is a joint function of speed and correctness.",
+      "written_answer_md": "### Signal to interviewer\nI can resolve latency-accuracy tradeoffs through segmented operating points tied to user outcomes.\n\n### Clarify\nI would clarify request urgency classes, error tolerance by use case, and abandonment sensitivity to delay.\n\n### Approach\nBuild a latency-accuracy Pareto frontier by cohort and choose route-specific operating points instead of a single universal setting.\n\n### Metrics & instrumentation\nPrimary metric: successful task completion within cohort latency budget. Secondary metrics: abandonment by response time, correctness score by route, and fallback frequency. Guardrails: severe error growth and timeout spikes.\n\n### Tradeoffs\nLower latency improves responsiveness but can reduce reasoning depth. Higher accuracy improves trust but can increase wait time and compute cost.\n\n### Risks & mitigations\nRisk: overfitting to average users; mitigate with cohort-level targets. Risk: hidden quality loss in fast path; mitigate with canary audits. Risk: unstable routing behavior; mitigate with policy hysteresis.\n\n### Example\nCustomer support triage uses low-latency quick intents first, then escalates complex policy cases to higher-accuracy routes.\n\n### 90-second version\nChoose latency versus accuracy by segment and task risk. Optimize for successful outcomes under explicit response-time budgets, and continuously rebalance as behavior changes.",
+      "followups": {
+        "clarification": [
+          "Which journeys are most latency-sensitive versus accuracy-sensitive?",
+          "What latency threshold begins to hurt completion materially?"
+        ],
+        "depth": [
+          "How would you implement dynamic routing across urgency classes?",
+          "What monitoring catches silent quality regressions in fast paths?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_tr_003",
+      "category": "tradeoffs",
+      "question": "How do you decide between open-source vs proprietary models?",
+      "framework": "Control-Performance Decision Grid",
+      "spoken_answer": "I decide open-source versus proprietary by scoring control needs against performance, speed, and total cost of ownership. Open-source gives deployment control, customizability, and potential cost benefits in stable workloads. Proprietary models usually provide faster capability gains, operational simplicity, and stronger baseline quality in complex tasks. The primary metric is business outcome per unit operating complexity. The tradeoff is control versus velocity: owning more of the stack increases flexibility but adds infra and talent burden, while proprietary services accelerate delivery but increase dependency risk. I typically use a hybrid strategy, matching model type to workload sensitivity. That keeps strategic optionality while avoiding ideological lock-in.",
+      "written_answer_md": "### Signal to interviewer\nI can make model sourcing decisions with a structured lens on control, performance, and organizational readiness.\n\n### Clarify\nI would clarify compliance constraints, latency/quality targets, internal infra maturity, and vendor dependency tolerance.\n\n### Approach\nUse a control-performance decision grid to assign workloads to open-source, proprietary, or hybrid routes.\n\n### Metrics & instrumentation\nPrimary metric: outcome value delivered per unit operating complexity. Secondary metrics: deployment lead time, model quality delta by task, and platform maintenance load. Guardrails: compliance violations and vendor concentration risk.\n\n### Tradeoffs\nOpen-source improves control and customization but increases operational burden. Proprietary models improve speed and baseline quality but reduce strategic autonomy.\n\n### Risks & mitigations\nRisk: underestimating infra overhead; mitigate with pilot TCO tracking. Risk: vendor lock-in; mitigate with abstraction layers. Risk: quality inconsistency in open models; mitigate with workload-tiered routing.\n\n### Example\nUse proprietary models for advanced reasoning workflows while running open-source models for internal retrieval and predictable extraction tasks.\n\n### 90-second version\nChoose based on workload fit and organizational constraints, not ideology. A hybrid sourcing strategy often maximizes value while controlling dependency and complexity.",
+      "followups": {
+        "clarification": [
+          "Which workloads have strict control requirements today?",
+          "How much vendor concentration risk is acceptable strategically?"
+        ],
+        "depth": [
+          "How would you design an abstraction layer to avoid lock-in?",
+          "What TCO model best compares open versus proprietary options?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_tr_004",
+      "category": "tradeoffs",
+      "question": "When do you choose centralized vs decentralized AI architecture?",
+      "framework": "Federated Platform Boundary Model",
+      "spoken_answer": "I choose centralized versus decentralized architecture based on where consistency and autonomy create more value. Centralized architecture is best when governance, shared tooling, and cross-team standardization are critical. Decentralized architecture is best when teams have distinct domain needs, rapid iteration cycles, or local compliance constraints. The primary metric is delivery throughput with policy compliance maintained. The tradeoff is standardization versus local speed: centralization reduces duplication but can become bottlenecked, while decentralization accelerates teams but risks fragmentation. I usually adopt a federated model with centralized core services and decentralized product logic. That keeps platform leverage while preserving domain agility.",
+      "written_answer_md": "### Signal to interviewer\nI can set architecture boundaries that balance platform consistency with team execution speed.\n\n### Clarify\nI would clarify governance requirements, domain variance across teams, and operational risk from inconsistency.\n\n### Approach\nApply a federated boundary model: centralize shared AI platform primitives, decentralize domain-specific orchestration and product flows.\n\n### Metrics & instrumentation\nPrimary metric: team delivery throughput under policy compliance. Secondary metrics: platform reuse rate, local experiment velocity, and integration defect frequency. Guardrails: duplicated infra spend and governance drift.\n\n### Tradeoffs\nCentralization improves control and reuse but may slow teams. Decentralization increases autonomy but can create incompatible stacks and quality variance.\n\n### Risks & mitigations\nRisk: central team bottlenecks; mitigate with self-service tooling. Risk: architecture drift; mitigate with interface standards. Risk: weak ownership lines; mitigate with clear platform contracts.\n\n### Example\nA global assistant platform centralizes policy enforcement and observability while country teams control language-specific ranking and UX tuning.\n\n### 90-second version\nUse centralized architecture for shared controls and decentralized architecture for domain speed. A federated model typically delivers the best long-term balance.",
+      "followups": {
+        "clarification": [
+          "Which capabilities must be centrally governed versus team-owned?",
+          "How much domain variance exists across product lines?"
+        ],
+        "depth": [
+          "What API contracts prevent drift in decentralized extensions?",
+          "How would you measure when centralization is becoming a bottleneck?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_tr_005",
+      "category": "tradeoffs",
+      "question": "How do you balance safety vs performance in AI products?",
+      "framework": "Risk-Tier Performance Envelope",
+      "spoken_answer": "I balance safety and performance by defining risk-tier envelopes instead of applying one strict policy to every request. High-risk workflows get stronger controls, extra validation, and conservative response policies. Low-risk workflows get lighter controls so performance remains competitive. The primary metric is value delivered within safety-compliant interactions. The tradeoff is straightforward: tighter safeguards reduce harmful outputs but can increase refusal rates and latency, while looser controls boost responsiveness but raise risk exposure. I set non-negotiable safety floors and then optimize performance inside those limits. This preserves trust without freezing product progress.",
+      "written_answer_md": "### Signal to interviewer\nI can align safety and performance with risk-adjusted governance rather than one-size-fits-all controls.\n\n### Clarify\nI would clarify harm classes, regulatory expectations, and acceptable failure boundaries by product flow.\n\n### Approach\nUse risk-tier performance envelopes: define immutable safety floors, then optimize latency and quality within each tier.\n\n### Metrics & instrumentation\nPrimary metric: successful outcomes in safety-compliant sessions. Secondary metrics: refusal calibration quality, response usefulness, and escalation rate. Guardrails: high-severity safety incidents and trust complaints.\n\n### Tradeoffs\nMore safety controls lower risk but can suppress utility. More performance focus raises utility but can increase unsafe behavior probability.\n\n### Risks & mitigations\nRisk: over-blocking useful outputs; mitigate with calibration reviews. Risk: under-detected harmful edge cases; mitigate with red-team coverage. Risk: inconsistent policy execution; mitigate with centralized policy engine.\n\n### Example\nMedical guidance flows use strict verification and handoff prompts, while writing suggestions use lighter moderation and faster generation.\n\n### 90-second version\nSet safety floors first, then optimize performance by risk tier. This approach protects trust while keeping user experience competitive where risk is low.",
+      "followups": {
+        "clarification": [
+          "Which workflows should be classified as high risk immediately?",
+          "What safety floor is non-negotiable for launch readiness?"
+        ],
+        "depth": [
+          "How would you calibrate refusal behavior to avoid over-blocking?",
+          "What governance cadence updates risk tiers as usage evolves?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_tr_006",
+      "category": "tradeoffs",
+      "question": "How do you decide between speed of shipping vs reliability?",
+      "framework": "Reliability Debt Budget",
+      "spoken_answer": "I treat speed versus reliability as a debt budgeting problem. Fast shipping is valuable when uncertainty is high and blast radius is limited. Reliability should dominate when workflows are mission critical or incident costs are compounding. The primary metric is learning velocity adjusted by incident impact. The tradeoff is clear: shipping faster generates earlier signal but can create reliability debt that slows future delivery. I set reliability budgets and if debt exceeds thresholds, release pace automatically slows until remediation catches up. This avoids emotional debates and makes tradeoffs explicit. Teams can move quickly without normalizing instability.",
+      "written_answer_md": "### Signal to interviewer\nI can manage delivery pace with explicit reliability governance, not ad hoc escalation after failures.\n\n### Clarify\nI would clarify incident tolerance, customer criticality, and current reliability debt level.\n\n### Approach\nUse a reliability debt budget: tie release velocity to incident trends, debt backlog, and blast-radius controls.\n\n### Metrics & instrumentation\nPrimary metric: validated learning velocity net of reliability impact. Secondary metrics: incident recurrence, rollback rate, and release success stability. Guardrails: unresolved high-severity defects and customer trust erosion.\n\n### Tradeoffs\nFaster shipping increases discovery speed but raises failure risk. Reliability-first pacing reduces incidents but can delay feature opportunity capture.\n\n### Risks & mitigations\nRisk: debt budget ignored under pressure; mitigate with automated gates. Risk: over-conservative slowdown; mitigate with risk-tiered rollout paths. Risk: poor incident attribution; mitigate with stronger postmortem tagging.\n\n### Example\nA collaboration assistant keeps weekly releases for low-risk UI improvements while gating model-routing changes behind stricter reliability thresholds.\n\n### 90-second version\nBalance speed and reliability through an explicit debt budget. Move fast where risk is bounded, and slow down automatically when reliability debt threatens customer trust.",
+      "followups": {
+        "clarification": [
+          "What reliability debt signal should trigger release throttling?",
+          "Which change types qualify for fast-track rollout?"
+        ],
+        "depth": [
+          "How would you automate release gating based on debt budgets?",
+          "What dashboard best communicates speed-reliability balance to leadership?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_tr_007",
+      "category": "tradeoffs",
+      "question": "How do you balance customization vs scalability in AI solutions?",
+      "framework": "Configurable Core Pattern",
+      "spoken_answer": "I balance customization and scalability by building a configurable core with bounded extension points. The platform should cover common workflows with opinionated defaults, then allow controlled customization where customer differentiation matters. The primary metric is percentage of customer needs met without bespoke engineering. The tradeoff is flexibility versus operational simplicity: deep customization improves fit for large accounts but increases maintenance and slows roadmap velocity. I use tiered customization levels, reserving heavy customization for strategic accounts with clear return. This approach protects platform scalability while still winning high-value use cases.",
+      "written_answer_md": "### Signal to interviewer\nI can design product architecture that supports enterprise variability without collapsing into custom services work.\n\n### Clarify\nI would clarify customization requests by frequency, business value, and impact on shared platform complexity.\n\n### Approach\nUse a configurable core pattern: strong defaults, policy-driven configuration, and limited extension APIs for edge requirements.\n\n### Metrics & instrumentation\nPrimary metric: customer fit achieved through configuration versus custom code. Secondary metrics: implementation cycle time, upgrade compatibility, and support cost per deployment. Guardrails: bespoke branch proliferation and degraded release velocity.\n\n### Tradeoffs\nMore customization improves enterprise fit but hurts scalability and maintainability. More standardization scales efficiently but may reduce enterprise win rates.\n\n### Risks & mitigations\nRisk: customization sprawl; mitigate with extension governance. Risk: insufficient flexibility for strategic deals; mitigate with premium extension tier. Risk: version fragmentation; mitigate with compatibility contracts.\n\n### Example\nAn AI support platform exposes configurable intent policies and escalation rules while keeping model orchestration and observability centralized.\n\n### 90-second version\nScale with a configurable core: default paths for most customers, controlled extensions for high-value exceptions. This protects platform velocity while enabling differentiated customer outcomes.",
+      "followups": {
+        "clarification": [
+          "Which customization requests are most common across customers?",
+          "What criteria qualify an exception for deeper customization?"
+        ],
+        "depth": [
+          "How would you govern extension APIs to prevent sprawl?",
+          "What pricing model aligns heavy customization with platform cost?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_tr_008",
+      "category": "tradeoffs",
+      "question": "How do you balance generalization vs specialization for models and UX?",
+      "framework": "Core-General Plus Specialist Lanes",
+      "spoken_answer": "I balance generalization and specialization with a layered strategy: one strong general core and specialist lanes for high-value domains. The general layer handles broad intent coverage and consistent UX primitives. Specialist lanes add domain prompts, retrieval, and policy logic where precision requirements are higher. The primary metric is weighted task success across broad and domain-specific journeys. The tradeoff is breadth versus depth: pure generalization scales quickly but can underperform in complex domains, while heavy specialization improves outcomes but fragments product experience. I keep the user experience unified and switch specialization underneath as needed. That gives users consistency while preserving domain excellence.",
+      "written_answer_md": "### Signal to interviewer\nI can design AI product strategy that scales broadly without sacrificing domain-level performance where it matters.\n\n### Clarify\nI would clarify which domains drive the most value and where general models fail materially.\n\n### Approach\nAdopt a core-general plus specialist-lanes architecture, with shared UX shell and domain-specific intelligence modules.\n\n### Metrics & instrumentation\nPrimary metric: weighted success rate across general and specialized workflows. Secondary metrics: lane adoption mix, domain error reduction, and UX consistency score. Guardrails: fragmentation in interaction patterns and maintenance overhead growth.\n\n### Tradeoffs\nGeneralization improves scalability and consistency but may lower domain precision. Specialization improves precision but can increase complexity and roadmap fragmentation.\n\n### Risks & mitigations\nRisk: over-specialization bloat; mitigate with strict lane qualification. Risk: weak domain outcomes in core path; mitigate with adaptive routing. Risk: inconsistent UX; mitigate with shared design system constraints.\n\n### Example\nA productivity assistant uses general writing for common tasks and specialized legal drafting lane for compliance-sensitive documents.\n\n### 90-second version\nUse a general core for scale and specialist lanes for high-value domains. Keep UX unified while routing complexity to domain-specific intelligence layers.",
+      "followups": {
+        "clarification": [
+          "Which domains justify specialization based on business impact?",
+          "How much UX divergence is acceptable across specialist lanes?"
+        ],
+        "depth": [
+          "How would you route users between core and specialist paths?",
+          "What maintenance model prevents specialist lane sprawl?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_tr_009",
+      "category": "tradeoffs",
+      "question": "How do you balance automation vs human oversight?",
+      "framework": "Confidence-Calibrated Human-in-the-Loop",
+      "spoken_answer": "I balance automation and human oversight by calibrating intervention to confidence and consequence. Low-risk, high-confidence actions can run automatically with audit trails. High-risk or low-confidence outputs should require human review before execution. The primary metric is autonomous completion quality without incident escalation. The tradeoff is throughput versus control: more automation improves speed and cost, but reduced oversight can amplify silent errors. I design clear escalation boundaries and make uncertainty visible to reviewers. Over time, as model confidence proves reliable in specific classes, we can expand automation safely. Human oversight should be targeted and leverage-aware, not blanket friction.",
+      "written_answer_md": "### Signal to interviewer\nI can design operating models that scale automation while preserving accountability in risk-sensitive workflows.\n\n### Clarify\nI would clarify risk classes, required approval points, and tolerance for false automation.\n\n### Approach\nImplement confidence-calibrated human-in-the-loop controls with explicit thresholds for auto-execute, review, and block states.\n\n### Metrics & instrumentation\nPrimary metric: correct autonomous completion rate. Secondary metrics: reviewer intervention efficiency, escalation frequency, and throughput gains. Guardrails: high-severity automation errors and reviewer overload.\n\n### Tradeoffs\nHigher automation increases productivity but can reduce control. More human oversight improves assurance but slows execution and raises cost.\n\n### Risks & mitigations\nRisk: poor confidence calibration; mitigate with periodic calibration checks. Risk: reviewer fatigue; mitigate with prioritization queues. Risk: unclear accountability; mitigate with decision logs and owner mapping.\n\n### Example\nInvoice reconciliation runs auto-approval for low-variance matches, while anomalous entries route to finance reviewers with highlighted uncertainty.\n\n### 90-second version\nAutomate where confidence and risk profile allow, and require human review where consequences are high. Scale oversight intelligently through calibrated thresholds and transparent escalation.",
+      "followups": {
+        "clarification": [
+          "Which decisions are safe for fully autonomous execution?",
+          "What confidence threshold should trigger mandatory human review?"
+        ],
+        "depth": [
+          "How would you detect calibration drift over time?",
+          "What workflow design keeps reviewers focused on highest-risk cases?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_tr_010",
+      "category": "tradeoffs",
+      "question": "How do you balance innovation vs stability in production AI?",
+      "framework": "Dual-Track Release Governance",
+      "spoken_answer": "I balance innovation and stability with a dual-track release model. One track is exploratory, where teams can test new model behaviors in controlled environments. The second track is production-hardening, where only validated changes with rollback plans move forward. The primary metric is innovation throughput adjusted by production stability impact. The tradeoff is novelty versus reliability: aggressive innovation can unlock breakthroughs but destabilize trusted workflows, while extreme stability can stall competitiveness. I keep experimentation fast but isolate it from core production until evidence is strong. This lets teams innovate continuously while protecting customer trust in live systems.",
+      "written_answer_md": "### Signal to interviewer\nI can structure organizational and release processes that preserve both innovation velocity and production reliability.\n\n### Clarify\nI would clarify competitive urgency, stability requirements, and acceptable risk bands for production workflows.\n\n### Approach\nUse dual-track release governance: rapid experimentation track plus gated production track with explicit validation criteria.\n\n### Metrics & instrumentation\nPrimary metric: net innovation throughput after stability adjustments. Secondary metrics: experiment conversion to production, rollback frequency, and customer trust indicators. Guardrails: incident spikes and unresolved regression backlog.\n\n### Tradeoffs\nFast innovation improves strategic learning but raises production volatility. Stability-first releases reduce risk but can miss market windows.\n\n### Risks & mitigations\nRisk: experimentation bleed into production; mitigate with strict environment boundaries. Risk: innovation bottlenecks at review gates; mitigate with standardized validation packs. Risk: stale core stack; mitigate with scheduled modernization windows.\n\n### Example\nA recommendation engine tests new ranking models in shadow mode and promotes only those that outperform with no safety regressions.\n\n### 90-second version\nSeparate exploratory innovation from production reliability through dual tracks. Move fast in experiments, move safely in production, and connect them with clear promotion criteria.",
+      "followups": {
+        "clarification": [
+          "What risk band should define production promotion readiness?",
+          "How frequently should exploratory track outcomes be reviewed?"
+        ],
+        "depth": [
+          "What validation pack is required before production promotion?",
+          "How do you prevent dual-track process overhead from slowing teams?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_tr_011",
+      "category": "tradeoffs",
+      "question": "How do you balance experimentation vs predictability for stakeholders?",
+      "framework": "Expectation-Bound Experiment Portfolio",
+      "spoken_answer": "I balance experimentation and predictability by separating committed outcomes from exploratory bets in planning. Stakeholders get a clear baseline roadmap with reliable deliverables, plus a bounded experiment portfolio with explicit uncertainty. The primary metric is committed delivery reliability while experiments produce decision-quality learning. The tradeoff is certainty versus upside: too much predictability limits breakthrough discovery, while too much experimentation erodes trust in planning. I publish decision checkpoints and expected variance ranges so surprises are reduced. This creates transparency without killing innovation. Stakeholders can back experiments when the downside is bounded and the learning value is explicit.",
+      "written_answer_md": "### Signal to interviewer\nI can align leadership trust with innovation by making uncertainty explicit and governable.\n\n### Clarify\nI would clarify planning expectations, tolerance for roadmap variance, and which outcomes are contractual versus optional.\n\n### Approach\nUse an expectation-bound experiment portfolio: protect committed roadmap capacity while reserving bounded capacity for high-value experiments.\n\n### Metrics & instrumentation\nPrimary metric: committed milestone reliability. Secondary metrics: experiment learning yield, pivot speed, and stakeholder confidence trend. Guardrails: missed commitments and unplanned scope churn.\n\n### Tradeoffs\nHigher predictability improves stakeholder trust but can reduce exploratory learning. More experimentation increases upside potential but introduces planning uncertainty.\n\n### Risks & mitigations\nRisk: experiments consuming committed capacity; mitigate with capacity ringfencing. Risk: low-value experiments; mitigate with pre-defined decision criteria. Risk: stakeholder confusion; mitigate with transparent portfolio reporting.\n\n### Example\nA platform commits core reliability milestones while running controlled experiments on new multimodal capabilities under fixed resource caps.\n\n### 90-second version\nProtect predictable commitments and bound experimentation separately. Make uncertainty visible, decisions time-boxed, and learning accountable so stakeholders support innovation without losing confidence.",
+      "followups": {
+        "clarification": [
+          "Which roadmap commitments are truly non-negotiable to stakeholders?",
+          "How much capacity should be ringfenced for experiments?"
+        ],
+        "depth": [
+          "How would you score experiment learning yield objectively?",
+          "What reporting format keeps uncertainty clear without creating alarm?"
+        ]
+      }
+    }
+  ]
+}

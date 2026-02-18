@@ -1,0 +1,22 @@
+{
+  "answers": [
+    {
+      "question_id": "q_tr_012",
+      "category": "tradeoffs",
+      "question": "How do you scale while maintaining control and governance?",
+      "framework": "Scaled Governance by Design",
+      "spoken_answer": "I scale with control by embedding governance into platform primitives rather than adding manual approvals everywhere. As volume grows, governance has to become automated, auditable, and risk-tiered. I’d standardize policy enforcement, access controls, and monitoring as shared services so teams can ship quickly without bypassing controls. The primary metric is compliant delivery velocity across teams. The tradeoff is autonomy versus uniformity: too much centralized control slows innovation, while too little control creates fragmentation and risk exposure. I’d keep immutable global controls for high-risk areas and allow local flexibility for low-risk workflows. Governance should feel like guardrails that enable scale, not bureaucracy that blocks it.",
+      "written_answer_md": "### Signal to interviewer\nI can scale organizations and systems while preserving governance through architecture and operating model design.\n\n### Clarify\nI would clarify regulatory obligations, risk tiers, current governance pain points, and team autonomy requirements.\n\n### Approach\nImplement scaled governance by design: centralize control-plane capabilities, automate policy checks, and decentralize execution within approved boundaries.\n\n### Metrics & instrumentation\nPrimary metric: compliant delivery velocity. Secondary metrics: policy exception rate, audit readiness lead time, and incident containment effectiveness. Guardrails: unauthorized changes, control bypass frequency, and governance-induced delivery stalls.\n\n### Tradeoffs\nTighter centralized governance improves consistency but can reduce local velocity. Greater decentralization increases speed but raises control variance and risk.\n\n### Risks & mitigations\nRisk: governance bottlenecks; mitigate with self-service policy tooling. Risk: inconsistent local interpretations; mitigate with codified standards. Risk: audit overload at scale; mitigate with automated evidence collection.\n\n### Example\nA multi-team AI platform uses centralized access and policy engines while allowing product squads to iterate rapidly inside pre-approved risk envelopes.\n\n### 90-second version\nScale safely by making governance part of the platform foundation. Centralize critical controls, automate compliance, and grant teams bounded autonomy to maintain both speed and accountability.",
+      "followups": {
+        "clarification": [
+          "Which controls must remain globally immutable as scale increases?",
+          "Where can teams have local policy flexibility without elevated risk?"
+        ],
+        "depth": [
+          "How would you design a control plane that supports self-service governance?",
+          "What telemetry proves governance is enabling scale rather than blocking it?"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "answers": [
+    {
+      "question_id": "q_ex_006",
+      "category": "execution",
+      "question": "How would you improve overall AI response quality systematically?",
+      "framework": "Quality Control Tower",
+      "spoken_answer": "I would improve quality with a control-tower model that continuously measures, diagnoses, and fixes response failures. First, I’d define a quality taxonomy covering factuality, instruction following, completeness, tone, and safety. Then I’d instrument production traffic so every answer can be scored through user feedback, reviewer audits, and automated checks. I would prioritize fixes by user harm and recurrence, not by whichever issue is loudest that week. The primary metric would be weighted quality score by critical journey, with guardrails on latency and refusal balance. The tradeoff is depth versus speed: stricter checks improve quality but can slow responses and increase cost. I’d use adaptive evaluation intensity so high-risk contexts get deeper validation while low-risk paths stay fast. This makes quality improvement a repeatable operating system instead of ad hoc tuning.",
+      "written_answer_md": "### Signal to interviewer\nI can operationalize quality as a system with ownership, instrumentation, and recurring improvement loops.\n\n### Clarify\nI would clarify which response failures matter most to users, what quality dimensions define success, and where current complaints are concentrated.\n\n### Approach\nStand up a quality control tower: taxonomy definition, production scoring, root-cause triage, fix backlog, and post-fix verification.\n\n### Metrics & instrumentation\nPrimary metric: weighted quality score on critical user journeys. Secondary metrics: issue recurrence rate, evaluator agreement, and remediation cycle time. Guardrails: latency inflation, cost blowout, and over-refusal growth.\n\n### Tradeoffs\nHeavy evaluation improves trust but adds overhead. Lightweight checks preserve speed but can miss subtle failure modes.\n\n### Risks & mitigations\nRisk: noisy quality signals; mitigate with calibrated rubric and dual-source labels. Risk: team fatigue from too many issues; mitigate with severity tiers. Risk: local optimizations hurt global quality; mitigate with portfolio-level score tracking.\n\n### Example\nIn a travel planning assistant, quality tower surfaces recurrent itinerary hallucinations and prioritizes retrieval freshness and citation grounding fixes.\n\n### 90-second version\nBuild a quality operating loop, not one-off patches. Score production responses by failure type, prioritize by user harm, and close the loop with targeted fixes and guardrails.",
+      "followups": {
+        "clarification": [
+          "Which quality dimensions should be weighted highest for this product?",
+          "How do you separate cosmetic issues from high-harm failures?"
+        ],
+        "depth": [
+          "How would you design the scoring pipeline for live traffic?",
+          "What ownership model keeps quality backlog moving every sprint?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_007",
+      "category": "execution",
+      "question": "How would you design and run AI experiments safely?",
+      "framework": "Safety-Gated Experiment Ladder",
+      "spoken_answer": "I’d run AI experiments through a safety-gated ladder rather than a single launch test. Stage one is offline and synthetic evaluation for obvious policy and quality failures. Stage two is internal dogfooding with strict logging and red-team probes. Stage three is constrained external rollout using low-risk cohorts and clear rollback triggers. The primary metric would be validated learning per experiment, while guardrails track harmful output incidents and escalation volume. The tradeoff is speed versus exposure risk: broad experiments generate faster signal but can create trust damage if controls are weak. I’d enforce preflight checklists, blast-radius limits, and automated kill switches. Each experiment should answer one decision clearly and include a predefined action if results are positive, neutral, or negative. Safe experimentation is disciplined learning, not cautious stagnation.",
+      "written_answer_md": "### Signal to interviewer\nI can design experimentation systems that produce reliable product learning without exposing users to unmanaged AI risk.\n\n### Clarify\nI would clarify experiment objective, risk class of the feature, affected user segments, and acceptable downside.\n\n### Approach\nUse a safety-gated experiment ladder: offline validation, internal exposure, constrained external canary, then broader rollout only after guardrails hold.\n\n### Metrics & instrumentation\nPrimary metric: decision-grade learning signal per experiment. Secondary metrics: effect size confidence, cohort stability, and remediation turnaround. Guardrails: harmful output rate, policy-violation alerts, and support escalations.\n\n### Tradeoffs\nWider exposure accelerates learning but raises potential harm. Tight gates reduce risk but can slow iteration.\n\n### Risks & mitigations\nRisk: false confidence from narrow test sets; mitigate with diverse eval cohorts. Risk: guardrail blind spots; mitigate with adversarial probes. Risk: delayed rollback during incidents; mitigate with auto-stop thresholds.\n\n### Example\nFor AI drafting in a messaging app, start with internal usage, then launch to opt-in users with toxicity and privacy guardrails before broader release.\n\n### 90-second version\nTreat AI experiments as staged risk management. Progress only when safety and quality thresholds pass, and tie every test to a clear decision and next action.",
+      "followups": {
+        "clarification": [
+          "What risk class should determine experiment rollout depth?",
+          "Which user cohorts are safest for first external exposure?"
+        ],
+        "depth": [
+          "How would you implement automated kill switches in practice?",
+          "What experiment review ritual ensures lessons are reused?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_008",
+      "category": "execution",
+      "question": "How would you monitor AI performance and detect regressions?",
+      "framework": "Regression Sentinel Stack",
+      "spoken_answer": "I would monitor AI performance with a sentinel stack that combines real-time telemetry, benchmark canaries, and user outcome tracking. Every request should emit route, latency, confidence, policy flags, and downstream user actions. I’d maintain fixed regression canaries that replay representative tasks whenever prompts, models, or retrieval indexes change. The primary metric would be task success stability over time, with guardrails on safety incidents and complaint spikes. The tradeoff is sensitivity versus noise: aggressive alerting catches regressions faster but can overwhelm teams with false positives. I’d use multi-signal thresholds and severity tiers so only meaningful regressions page on-call. Monitoring should map directly to user harm, not just model internals. If a change hurts user outcomes, we need fast rollback and root-cause tagging before the next deploy.",
+      "written_answer_md": "### Signal to interviewer\nI can design regression detection that is user-impact aware and operationally actionable.\n\n### Clarify\nI would clarify which outcomes define performance, how often systems change, and what rollback latency is acceptable.\n\n### Approach\nBuild a regression sentinel stack: live telemetry, scheduled canary evals, and change-linked diff analysis for every model or prompt update.\n\n### Metrics & instrumentation\nPrimary metric: task success stability index by journey. Secondary metrics: canary drift score, complaint conversion after responses, and anomaly detection precision. Guardrails: high-severity incident spikes, safety-policy breach growth, and delayed rollback.\n\n### Tradeoffs\nLower alert thresholds increase recall but create alert fatigue. Higher thresholds reduce noise but can miss early regressions.\n\n### Risks & mitigations\nRisk: hidden regressions in niche flows; mitigate with stratified canaries. Risk: metric gaming; mitigate with multi-metric dashboards. Risk: rollback hesitation; mitigate with pre-approved rollback playbooks.\n\n### Example\nIn an enterprise assistant, each retrieval update triggers canary replay across legal, finance, and HR tasks before full release.\n\n### 90-second version\nMonitor AI with user-centered signals plus change-aware canaries. Detect meaningful regressions quickly, route to owners, and make rollback a standard fast path.",
+      "followups": {
+        "clarification": [
+          "Which user journey should anchor the primary regression metric?",
+          "How quickly must severe regressions be detected and rolled back?"
+        ],
+        "depth": [
+          "How would you stratify canaries to cover long-tail workflows?",
+          "What data model links regressions back to exact change events?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_009",
+      "category": "execution",
+      "question": "How would you reduce AI inference cost sustainably?",
+      "framework": "Unit Economics Optimization Loop",
+      "spoken_answer": "I’d cut inference cost through a unit-economics loop rather than one-time optimization projects. First, I’d decompose spend by journey, model route, token profile, and business value created. Then I’d apply levers in sequence: prompt compression, retrieval precision, adaptive model routing, caching, and response truncation where quality is unaffected. The primary metric would be cost per successful task, not raw cost per call. The tradeoff is obvious: aggressive cost cuts can degrade quality and user trust if applied blindly. I’d protect quality with guardrails on task success, escalation rate, and repeat usage. Sustainable savings come from product and platform decisions together, including nudging users toward high-efficiency workflows. Cost management should behave like continuous performance engineering, not periodic finance intervention.",
+      "written_answer_md": "### Signal to interviewer\nI can reduce inference costs while preserving outcomes by tying optimization to value and quality signals.\n\n### Clarify\nI would clarify cost pressure horizon, margin goals, quality floors, and which workloads are economically misaligned.\n\n### Approach\nRun a unit-economics optimization loop: measure cost-to-value, prioritize high-burn low-value flows, and deploy routing/caching/prompt controls iteratively.\n\n### Metrics & instrumentation\nPrimary metric: cost per successful task completion. Secondary metrics: route efficiency, cache hit value, and token waste ratio. Guardrails: task success decline, user churn, and increased support handoffs.\n\n### Tradeoffs\nCheaper routing lowers spend but can underperform on hard tasks. Premium routing raises quality but may break margin discipline.\n\n### Risks & mitigations\nRisk: hidden quality decay from cost cuts; mitigate with paired quality monitors. Risk: optimization debt accumulation; mitigate with monthly burn-down reviews. Risk: user behavior shifts increase spend; mitigate with UX nudges and defaults.\n\n### Example\nA support copilot routes simple account queries to lightweight models and escalates only unresolved cases to higher-cost reasoning routes.\n\n### 90-second version\nOptimize inference cost as a continuous loop anchored on cost per successful outcome. Apply routing and efficiency levers while protecting quality and retention guardrails.",
+      "followups": {
+        "clarification": [
+          "Which workflows currently have the worst cost-to-value ratio?",
+          "What quality floor is non-negotiable during cost optimization?"
+        ],
+        "depth": [
+          "How would you design adaptive routing policies by request complexity?",
+          "What governance cadence keeps cost and quality balanced over time?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_010",
+      "category": "execution",
+      "question": "How would you improve AI onboarding to increase activation?",
+      "framework": "Activation Pathway Mapping",
+      "spoken_answer": "I’d improve AI onboarding by mapping the activation pathway from signup to first meaningful win. Most onboarding fails because users see features before they see value. I would segment users by job-to-be-done and create guided starter flows with prefilled prompts, relevant examples, and immediate feedback on output quality. The primary metric would be activated users who complete a meaningful task in early sessions. The tradeoff is guided simplicity versus flexibility: tighter onboarding improves activation but may feel restrictive to advanced users. I’d use progressive disclosure so novices get scaffolding while power users can skip ahead. I’d also instrument drop-off points and replay friction sessions weekly. Onboarding should feel like assisted success in context, not a generic product tour disconnected from real work.",
+      "written_answer_md": "### Signal to interviewer\nI can convert onboarding from feature exposure to value realization by designing around activation moments.\n\n### Clarify\nI would clarify activation definition, user personas, first-session intent, and where current funnel abandonment occurs.\n\n### Approach\nUse activation pathway mapping: identify first-value tasks, build persona-specific guided flows, and iterate using drop-off diagnostics.\n\n### Metrics & instrumentation\nPrimary metric: activation rate defined by completion of first meaningful task. Secondary metrics: time-to-first-value, onboarding completion quality, and early retention. Guardrails: tutorial fatigue, low-confidence outputs, and support requests during setup.\n\n### Tradeoffs\nHighly guided onboarding boosts activation but may reduce exploration. Flexible onboarding supports experts but can overwhelm new users.\n\n### Risks & mitigations\nRisk: generic onboarding misses user intent; mitigate with persona branching. Risk: over-scaffolding creates dependency; mitigate with gradual independence cues. Risk: misleading first outputs; mitigate with curated starter templates.\n\n### Example\nA writing assistant asks users to choose goal type, generates an editable draft, and highlights why suggestions were made.\n\n### 90-second version\nIncrease activation by guiding users to first-value outcomes quickly. Segment onboarding by intent, reduce friction, and iterate on measurable drop-off signals.",
+      "followups": {
+        "clarification": [
+          "What exact event should count as activation for this AI product?",
+          "Which user persona has the largest onboarding drop-off today?"
+        ],
+        "depth": [
+          "How would you design progressive disclosure for novice versus expert users?",
+          "What instrumentation best explains why users abandon onboarding?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_011",
+      "category": "execution",
+      "question": "How would you improve adoption of an AI feature inside a company?",
+      "framework": "Internal Adoption Flywheel",
+      "spoken_answer": "I’d drive internal adoption with a flywheel that combines workflow integration, champion networks, and proof of value. Employees don’t adopt AI because it exists; they adopt when it removes friction in daily tasks. I would start with a few high-frequency workflows, embed the feature directly where work happens, and train local champions inside each function. The primary metric would be weekly active usage in target workflows, with guardrails on misuse and low-quality outputs. The tradeoff is breadth versus depth: broad rollout creates visibility, but focused rollout creates real habit change. I’d prioritize depth first, capture outcome wins, and then scale with social proof and peer-led enablement. Adoption improves fastest when usage is tied to measurable productivity gains and managers reinforce the new behavior.",
+      "written_answer_md": "### Signal to interviewer\nI can grow enterprise AI adoption by coupling change management with product integration and measurable workflow outcomes.\n\n### Clarify\nI would clarify target teams, mandatory versus optional usage context, current process pain, and leadership sponsorship level.\n\n### Approach\nBuild an internal adoption flywheel: embed in core workflows, activate champions, share wins, and iterate enablement by function.\n\n### Metrics & instrumentation\nPrimary metric: weekly active adoption in prioritized workflows. Secondary metrics: repeat usage depth, task completion acceleration, and champion-driven expansion rate. Guardrails: policy violations, low-trust feedback, and support burden per active team.\n\n### Tradeoffs\nWide launch increases awareness but can create shallow usage. Focused launch improves depth but may appear slow to stakeholders.\n\n### Risks & mitigations\nRisk: tool switching friction; mitigate with native integration. Risk: manager skepticism; mitigate with team-level ROI snapshots. Risk: abandoned pilots; mitigate with adoption milestones and ownership.\n\n### Example\nIn finance operations, AI is embedded in month-end variance analysis with champions sharing before/after cycle-time improvements.\n\n### 90-second version\nImprove company adoption by anchoring AI in real workflows, proving value with measurable outcomes, and scaling through local champions rather than top-down mandates.",
+      "followups": {
+        "clarification": [
+          "Which internal workflow should be the first adoption beachhead?",
+          "How will you define meaningful active usage versus superficial clicks?"
+        ],
+        "depth": [
+          "How would you design a champion program that scales across departments?",
+          "What telemetry proves adoption is driving productivity, not novelty?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_012",
+      "category": "execution",
+      "question": "How would you debug and fix recurring AI failures?",
+      "framework": "Recurring Failure Eradication",
+      "spoken_answer": "I’d treat recurring AI failures as a systems problem, not a ticket queue. First, I’d build a failure registry that clusters incidents by root cause, context, and user impact. Then I’d prioritize the top recurring classes and assign explicit owners across product, model, and platform teams. Each fix should include prevention controls such as tests, monitoring rules, and rollout gates so the same issue cannot reappear silently. The primary metric would be recurrence reduction for high-severity failure classes. The tradeoff is short-term patching versus durable remediation: quick patches reduce immediate pain, but without structural fixes, recurrence continues. I’d enforce a policy where repeated classes trigger deeper design changes. Recurring failures decline only when ownership, prevention, and learning loops are institutionalized.",
+      "written_answer_md": "### Signal to interviewer\nI can eliminate recurring failures by combining root-cause discipline with preventive engineering controls.\n\n### Clarify\nI would clarify which failures recur most, their user impact, and current ownership and escalation gaps.\n\n### Approach\nUse recurring failure eradication: classify repeat issues, prioritize by harm, implement durable fixes, and add prevention checks.\n\n### Metrics & instrumentation\nPrimary metric: recurrence rate for high-severity failure classes. Secondary metrics: time-to-permanent-fix, post-fix escape rate, and owner accountability completion. Guardrails: temporary patch backlog, unresolved critical clusters, and trust decline in affected cohorts.\n\n### Tradeoffs\nRapid patching restores service quickly but can entrench technical debt. Deeper redesign lowers recurrence but requires more coordination and time.\n\n### Risks & mitigations\nRisk: shallow root-cause analysis; mitigate with structured post-incident review templates. Risk: ownership ambiguity; mitigate with clear RACI mapping. Risk: prevention checks become stale; mitigate with periodic verification.\n\n### Example\nA document assistant repeatedly mishandles citations, so team adds citation consistency tests and pre-deploy quality gates tied to that class.\n\n### 90-second version\nStop recurring AI failures by turning incidents into preventable classes with clear owners, durable fixes, and enforcement via tests and monitoring.",
+      "followups": {
+        "clarification": [
+          "Which recurring failure class has the highest user harm today?",
+          "What threshold should trigger mandatory deep remediation?"
+        ],
+        "depth": [
+          "How would you structure failure clustering for mixed model and product causes?",
+          "What governance ensures prevention checks remain effective over time?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_st_001",
+      "category": "strategy",
+      "question": "Should an AI company prioritize cost reduction or capability improvement over the next 12 months?",
+      "framework": "Dual Horizon Allocation",
+      "spoken_answer": "I would not pick a single winner between cost reduction and capability improvement; I’d run a dual-horizon strategy with explicit allocation rules. Near-term, cost efficiency protects margin, expands reachable segments, and improves resilience. Mid-term, capability gains are what sustain differentiation and pricing power. The primary metric would be contribution margin growth adjusted for capability adoption in premium workflows. The tradeoff is immediate profitability versus future moat: over-indexing on cost can commoditize the product, while over-indexing on frontier capability can delay payback. I’d allocate more funding to whichever side produces stronger evidence quarter by quarter, using milestone gates rather than fixed annual commitments. Strategy should remain adaptive to competitor movement and customer willingness to pay. The right answer is disciplined portfolio management, not ideological commitment.",
+      "written_answer_md": "### Signal to interviewer\nI can make strategy choices under uncertainty by structuring portfolio decisions with explicit evidence gates.\n\n### Clarify\nI would clarify current margin pressure, differentiation risk, customer segment mix, and competitive time horizon.\n\n### Approach\nApply dual horizon allocation: dedicate one track to cost efficiency and another to capability differentiation, with quarterly reallocation based on evidence.\n\n### Metrics & instrumentation\nPrimary metric: margin-adjusted growth tied to high-value use-case adoption. Secondary metrics: premium expansion, retention in price-sensitive cohorts, and capability utilization depth. Guardrails: quality erosion from cost cuts and overspend on low-adoption frontier work.\n\n### Tradeoffs\nCost focus improves short-term economics but may weaken moat. Capability focus strengthens differentiation but increases investment risk.\n\n### Risks & mitigations\nRisk: strategy drift without clear gates; mitigate with milestone reviews. Risk: internal resource conflict; mitigate with shared roadmap governance. Risk: misread customer demand; mitigate with segment-level experiments.\n\n### Example\nA platform lowers cost for support automation while investing capability in high-complexity planning assistants where buyers pay for quality.\n\n### 90-second version\nPrioritize both through a gated portfolio. Protect near-term economics with cost work and preserve long-term advantage with targeted capability bets, reallocating by evidence each quarter.",
+      "followups": {
+        "clarification": [
+          "Which customer segments are most sensitive to cost versus capability shifts?",
+          "What evidence threshold should trigger reallocation between the two tracks?"
+        ],
+        "depth": [
+          "How would you structure quarterly decision gates for portfolio changes?",
+          "What org design avoids cost and capability teams working at cross purposes?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_st_002",
+      "category": "strategy",
+      "question": "Should frontier AI models be open sourced?",
+      "framework": "Controlled Openness Strategy",
+      "spoken_answer": "I’d approach frontier model openness with controlled release rather than absolute open or closed doctrine. Open sourcing can accelerate ecosystem adoption, external innovation, and trust through transparency. But unconstrained release can increase misuse risk and erode defensible advantage. The primary metric would be ecosystem value created per release, balanced against measurable safety and abuse exposure. The tradeoff is innovation velocity versus controllability: broader openness grows reach, but governance complexity and competitive leakage also rise. I’d segment artifacts by risk and strategic sensitivity: release tools, evals, and smaller models openly, while gating highest-risk capabilities with licensing and access controls. This gives developers meaningful openness without surrendering safety or strategic leverage. The decision should be revisited as safeguards, regulation, and threat models evolve.",
+      "written_answer_md": "### Signal to interviewer\nI can make nuanced platform strategy decisions that balance ecosystem growth, safety, and competitive position.\n\n### Clarify\nI would clarify release goals, threat model maturity, regulatory environment, and where openness creates strategic value.\n\n### Approach\nUse controlled openness: classify assets by risk and moat sensitivity, then choose open, limited, or gated release paths accordingly.\n\n### Metrics & instrumentation\nPrimary metric: ecosystem value contribution from released assets. Secondary metrics: developer adoption quality, downstream innovation rate, and partner trust. Guardrails: abuse incident growth, compliance exposure, and margin dilution from leakage.\n\n### Tradeoffs\nOpen releases improve ecosystem momentum but reduce control. Closed releases preserve control but can slow external innovation and trust.\n\n### Risks & mitigations\nRisk: misuse amplification; mitigate with usage policies and monitoring. Risk: commoditization; mitigate with differentiated product layer. Risk: governance overhead; mitigate with release playbooks and review boards.\n\n### Example\nRelease evaluation suites and lightweight models publicly, while gating frontier weights behind vetted access and contractual safeguards.\n\n### 90-second version\nDo not treat open source as binary. Use controlled openness that maximizes ecosystem upside while managing safety and strategic risk through tiered release policies.",
+      "followups": {
+        "clarification": [
+          "Which model artifacts create the highest ecosystem benefit at lowest risk?",
+          "How should success be measured for a controlled openness program?"
+        ],
+        "depth": [
+          "What governance process determines release tier for each artifact?",
+          "How would you monitor and respond to downstream misuse signals?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_st_003",
+      "category": "strategy",
+      "question": "How should an AI platform compete with Google over the next 2 years?",
+      "framework": "Focused Wedge Competition",
+      "spoken_answer": "Competing with Google over two years requires focus, not breadth matching. I’d pick wedges where speed, product experience, and developer love can beat incumbent distribution. The strategy is to win specific high-intent workflows, then expand adjacent capabilities once trust and usage density are established. The primary metric would be share gain in targeted workflow categories, with guardrails on burn efficiency and customer retention quality. The tradeoff is concentration versus optionality: focused bets create momentum but reduce coverage across many segments. I’d accept that tradeoff and build tight product loops, faster release cadence, and better integration depth for chosen wedges. Distribution partnerships and community-led developer adoption should amplify that wedge strategy. You do not out-Google Google by copying; you win by being sharply better in places users care about most.",
+      "written_answer_md": "### Signal to interviewer\nI can define competitive strategy against a large incumbent by selecting winnable wedges and sequencing expansion.\n\n### Clarify\nI would clarify target customer segments, current strengths versus Google, distribution constraints, and time-to-impact expectations.\n\n### Approach\nUse focused wedge competition: pick specific workflows with high pain and high willingness to switch, win deeply, then expand adjacencies.\n\n### Metrics & instrumentation\nPrimary metric: workflow-level share gain in priority wedges. Secondary metrics: switching conversion, expansion within accounts, and developer advocacy. Guardrails: unsustainable acquisition spend, churn after trial, and roadmap diffusion.\n\n### Tradeoffs\nFocused strategy drives depth but limits surface area. Broad strategy improves coverage but weakens differentiation and execution speed.\n\n### Risks & mitigations\nRisk: wedge too narrow for growth; mitigate with adjacency roadmap. Risk: incumbent response pressure; mitigate with rapid iteration cycles. Risk: partner dependence; mitigate with direct product-led channels.\n\n### Example\nWin in enterprise knowledge automation with superior retrieval reliability and workflow integration, then extend into adjacent decision-support tasks.\n\n### 90-second version\nCompete by choosing winnable wedges and executing faster with better UX and integration depth. Expand only after clear category-level traction and retention are established.",
+      "followups": {
+        "clarification": [
+          "Which wedge has the highest switch potential in the next year?",
+          "What customer proof points would confirm wedge-market fit?"
+        ],
+        "depth": [
+          "How would you defend the wedge once Google responds aggressively?",
+          "What expansion sequence prevents roadmap dilution after initial win?"
+        ]
+      }
+    }
+  ]
+}

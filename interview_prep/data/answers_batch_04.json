@@ -1,0 +1,184 @@
+{
+  "answers": [
+    {
+      "question_id": "q_apd_001",
+      "category": "ai_product_design",
+      "question": "Design AI features for Gmail (drafting, triage, and search).",
+      "framework": "Workday Workflow Trident",
+      "spoken_answer": "I would design Gmail AI around three daily jobs: drafting, triage, and retrieval. Drafting should start with intent presets like follow-up, escalation, and summary reply, then generate editable drafts with tone and risk hints. Triage should cluster inbox items by actionability and deadline risk, not only by topic. Search should return direct grounded answers with linked source messages and thread context. My primary metric would be time-to-inbox-zero for active professionals, with guardrails on mis-triage rate and factual errors in generated drafts. The clear tradeoff is automation speed versus user control: one-tap actions feel fast, but incorrect automation causes trust collapse. I would require lightweight confirmations for high-impact actions and use correction signals to improve models weekly. This keeps Gmail productive without hiding critical context from users.",
+      "written_answer_md": "### Signal to interviewer\nI can turn broad AI ideas into role-aligned workflow features with measurable business and trust outcomes.\n\n### Clarify\nI would clarify user segments, message volume patterns, and risk sensitivity for automated actions.\n\n### Approach\nUse a workflow trident: drafting assistant, triage engine, and grounded semantic search, all connected by shared context and feedback loops.\n\n### Metrics & instrumentation\nPrimary metric: reduction in time-to-inbox-zero. Secondary metrics: draft acceptance, triage correction rate, and search task completion. Guardrails: wrong-priority classification, unsafe auto-actions, and hallucinated summaries.\n\n### Tradeoffs\nMore automation reduces effort but can hide critical context. More confirmations increase trust but add interaction friction.\n\n### Risks & mitigations\nRisk: bad triage on urgent emails; mitigate with confidence thresholds. Risk: overconfident drafts; mitigate with source-backed facts. Risk: noisy labels; mitigate with user correction capture.\n\n### Example\nFor sales users, AI drafts renewal replies, flags at-risk accounts, and surfaces contract threads instantly during response composition.\n\n### 90-second version\nDesign Gmail AI around drafting, triage, and search together. Optimize time saved while preserving control, traceability, and correction-driven learning.",
+      "followups": {
+        "clarification": [
+          "Which inbox persona should be first: executives, sales, or support?",
+          "What actions require confirmation versus safe auto-execution?"
+        ],
+        "depth": [
+          "How would you architect shared context between drafting and search?",
+          "What online metrics detect triage regressions fastest?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_002",
+      "category": "ai_product_design",
+      "question": "Design AI features for Google Docs (writing, reviewing, and summarization).",
+      "framework": "Document Lifecycle Loop",
+      "spoken_answer": "I’d design Docs AI around the document lifecycle: create, review, and distill. For writing, AI should help with structure-first outlines, argument completeness, and style consistency. For review, it should provide change suggestions tied to rationale so collaborators can accept, reject, or refine quickly. For summarization, it should produce audience-specific versions, like executive brief, action list, or onboarding note, each grounded in document sections. The primary metric would be completion velocity for collaborative docs, with guardrails on misleading summaries and over-aggressive edits. The tradeoff is assistant proactivity versus author voice: heavy suggestions speed drafting but can flatten original tone. I’d offer adjustable guidance levels and preserve clear authorship controls. The system should feel like a co-editor that accelerates quality, not a ghostwriter that reduces ownership.",
+      "written_answer_md": "### Signal to interviewer\nI can design AI that supports collaboration quality, not just single-user drafting speed.\n\n### Clarify\nI would clarify document types, collaboration patterns, and whether users optimize for speed, quality, or governance.\n\n### Approach\nUse a lifecycle loop: guided writing, rationale-based review, and intent-specific summarization with source anchoring.\n\n### Metrics & instrumentation\nPrimary metric: time to collaboration-ready draft. Secondary metrics: suggestion acceptance, comment resolution speed, and summary usefulness ratings. Guardrails: incorrect factual rewrites, voice drift complaints, and review churn.\n\n### Tradeoffs\nStronger auto-rewrite can improve speed but reduce authorship confidence. Strict safeguards improve trust but may lower perceived intelligence.\n\n### Risks & mitigations\nRisk: summary distortion; mitigate with citation links. Risk: reviewer overload; mitigate with priority-ranked suggestions. Risk: style mismatch; mitigate with customizable tone profiles.\n\n### Example\nIn policy drafting, AI flags ambiguous clauses, proposes alternatives with legal tone, and generates executive and implementation summaries from one source doc.\n\n### 90-second version\nDesign Docs AI as a lifecycle partner for writing, review, and summarization with grounded suggestions, configurable control, and collaboration-aware metrics.",
+      "followups": {
+        "clarification": [
+          "Which document category should launch first: strategy, legal, or ops?",
+          "How will you define summary quality for different audiences?"
+        ],
+        "depth": [
+          "How would you preserve author voice while applying structural edits?",
+          "What evaluation framework compares review-assist quality over time?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_003",
+      "category": "ai_product_design",
+      "question": "Design AI features for YouTube (discovery, creators, and moderation).",
+      "framework": "Marketplace Balance Matrix",
+      "spoken_answer": "I’d design YouTube AI with a marketplace balance lens: viewers, creators, and platform safety must all win. Discovery should personalize with diversity constraints to prevent repetitive content tunnels. Creator tools should help with thumbnail ideation, title testing, and script feedback while preserving originality signals. Moderation should combine automated risk scoring with human escalation for borderline cases. The primary metric would be quality watch-time per session, with guardrails on policy violation exposure and creator fairness drift. The key tradeoff is engagement optimization versus ecosystem health: maximizing short-term watch-time can hurt trust and content diversity long term. I’d use balanced ranking objectives and creator feedback channels to detect unintended suppression. AI should increase satisfaction and creator success without compromising safety standards.",
+      "written_answer_md": "### Signal to interviewer\nI can design platform AI using multi-sided incentives instead of single-metric optimization.\n\n### Clarify\nI would clarify product priorities across viewer retention, creator growth, and moderation risk tolerance.\n\n### Approach\nApply a balance matrix: discovery ranking, creator copilot features, and safety moderation integrated through shared policy and feedback loops.\n\n### Metrics & instrumentation\nPrimary metric: quality-adjusted watch-time. Secondary metrics: creator growth consistency, recommendation diversity, and moderation precision/recall. Guardrails: harmful exposure rate, creator fairness imbalance, and false takedown volume.\n\n### Tradeoffs\nAggressive personalization boosts engagement but narrows exploration. Strict moderation lowers risk but can suppress legitimate content.\n\n### Risks & mitigations\nRisk: recommendation echo chambers; mitigate with diversity quotas. Risk: creator distrust in moderation; mitigate with explainable decisions. Risk: abusive content evasion; mitigate with adaptive classifiers plus human review.\n\n### Example\nFor educational channels, AI boosts discoverability through topic-intent matching while moderation distinguishes expert critique from harmful misinformation patterns.\n\n### 90-second version\nDesign YouTube AI as a balanced ecosystem engine: optimize discovery, empower creators, and enforce safety with transparent guardrails and multi-objective metrics.",
+      "followups": {
+        "clarification": [
+          "Which side of the marketplace is currently most constrained?",
+          "How should quality watch-time be adjusted for low-value engagement loops?"
+        ],
+        "depth": [
+          "How would you build creator fairness monitoring into ranking?",
+          "What escalation policy handles moderation gray-zone content?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_004",
+      "category": "ai_product_design",
+      "question": "Design AI features for LinkedIn (job search, feed, and messaging).",
+      "framework": "Career Intent Graph",
+      "spoken_answer": "I would design LinkedIn AI around a career intent graph that connects skills, goals, and opportunities. In job search, AI should translate user goals into dynamic role matching and targeted gap analysis. In feed, it should prioritize relevance to career trajectory, not just generic engagement. In messaging, it should suggest context-aware outreach drafts and follow-up timing based on professional norms. The primary metric would be qualified opportunity conversion, with guardrails on spam-like messaging and recommendation bias. The explicit tradeoff is personalization depth versus fairness: strong matching can improve outcomes, but poorly calibrated models can narrow candidate visibility. I’d include transparent relevance explanations and user-controlled preference tuning. Done right, the system helps users progress professionally while keeping trust high for recruiters and candidates.",
+      "written_answer_md": "### Signal to interviewer\nI can design AI features that align platform growth with meaningful professional outcomes.\n\n### Clarify\nI would clarify target personas, industry segments, and quality definitions for jobs, feed value, and messaging effectiveness.\n\n### Approach\nBuild a career intent graph and use it across search ranking, feed personalization, and outreach assistance.\n\n### Metrics & instrumentation\nPrimary metric: qualified opportunity conversion. Secondary metrics: response rate quality, skill-gap completion actions, and recruiter satisfaction. Guardrails: outreach spam reports, demographic bias in recommendations, and irrelevant feed fatigue.\n\n### Tradeoffs\nDeeper intent modeling improves relevance but increases sensitivity around inferred attributes. Conservative models reduce risk but may under-serve niche candidates.\n\n### Risks & mitigations\nRisk: over-filtered opportunities; mitigate with exploration toggles. Risk: messaging automation abuse; mitigate with send-rate and quality controls. Risk: trust erosion from opaque rankings; mitigate with explanation UI.\n\n### Example\nA transitioning product manager gets role recommendations tied to adjacent skills and receives AI-drafted outreach to relevant hiring managers with personalized context.\n\n### 90-second version\nUnify job, feed, and messaging AI around career intent. Optimize for qualified opportunity outcomes while enforcing fairness, anti-spam controls, and user transparency.",
+      "followups": {
+        "clarification": [
+          "How do you define a qualified opportunity versus a simple application click?",
+          "Which user controls should tune career intent recommendations?"
+        ],
+        "depth": [
+          "How would you audit fairness across job and feed ranking together?",
+          "What anti-spam architecture is required for AI-assisted messaging?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_005",
+      "category": "ai_product_design",
+      "question": "Design AI features for WhatsApp (support, safety, and productivity).",
+      "framework": "Conversation Utility Triangle",
+      "spoken_answer": "For WhatsApp, I would design AI features around a utility triangle: support efficiency, user safety, and personal productivity. Support flows should let businesses automate common requests while preserving fast human handoff for complex issues. Safety should detect scam patterns, suspicious links, and coercive messaging signals with privacy-respecting safeguards. Productivity should include thread summarization, action extraction, and multilingual translation for practical day-to-day use. The primary metric would be resolved-help interactions without repeat contact, while guardrails include false scam flags and privacy trust decline. The tradeoff is safety sensitivity versus false positives: strict detection reduces harm but can frustrate legitimate conversations. I’d use risk-tiered interventions and explainable warnings rather than hard blocks for borderline cases. This keeps utility high while protecting users in a trust-critical communication environment.",
+      "written_answer_md": "### Signal to interviewer\nI can design messaging AI that delivers utility while respecting safety and privacy constraints at scale.\n\n### Clarify\nI would clarify regional usage patterns, privacy expectations, business messaging policies, and high-risk abuse vectors.\n\n### Approach\nUse a utility triangle: support automation with escalation, safety risk detection with proportional intervention, and productivity assist for everyday conversations.\n\n### Metrics & instrumentation\nPrimary metric: first-contact support resolution in messaging workflows. Secondary metrics: warning effectiveness, summary usage, and translation satisfaction. Guardrails: false abuse flags, privacy complaint volume, and delayed urgent response incidents.\n\n### Tradeoffs\nStronger safety models reduce fraud but can over-interrupt legitimate chats. Rich productivity features help users but can increase perception of surveillance if not transparent.\n\n### Risks & mitigations\nRisk: scam adaptation; mitigate with continuously updated detection. Risk: mistrust in interventions; mitigate with clear rationale and controls. Risk: poor escalation experience; mitigate with context-preserving handoff.\n\n### Example\nIn merchant support chats, AI handles return-status queries, flags suspicious payment links, and summarizes unresolved issues before a human agent joins.\n\n### 90-second version\nDesign WhatsApp AI around support, safety, and productivity together. Measure resolved outcomes, apply risk-tiered protections, and keep privacy trust central to every feature decision.",
+      "followups": {
+        "clarification": [
+          "What safety interventions are acceptable without violating user trust?",
+          "Which support journeys should be fully automated first?"
+        ],
+        "depth": [
+          "How would you deploy scam detection while preserving end-user privacy?",
+          "What escalation contract ensures human handoff quality in business chats?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_006",
+      "category": "ai_product_design",
+      "question": "Design AI features for Slack (knowledge, search, and automation).",
+      "framework": "Workspace Memory System",
+      "spoken_answer": "I’d design Slack AI as a workspace memory system that turns fragmented chat into reliable operational knowledge. Search should answer questions with citations from channels, docs, and prior decisions. Knowledge features should generate durable summaries per project thread and keep them refreshed as conversations evolve. Automation should create workflows from recurring patterns, like incident updates or onboarding checklists. The primary metric would be reduction in repeated question volume per team, with guardrails on stale-answer incidents and permission leaks. The key tradeoff is convenience versus confidentiality: broad retrieval boosts usefulness, but over-broad access can violate trust instantly. I’d enforce strict permission-aware retrieval and visible source controls. Slack AI should reduce coordination overhead while preserving organizational boundaries and decision traceability.",
+      "written_answer_md": "### Signal to interviewer\nI can design enterprise collaboration AI that improves knowledge flow without compromising permission integrity.\n\n### Clarify\nI would clarify workspace size, tool integrations, access model, and which coordination pain points are highest priority.\n\n### Approach\nBuild a workspace memory system: permission-scoped search, thread-to-knowledge summarization, and workflow automation templates.\n\n### Metrics & instrumentation\nPrimary metric: repeat-question reduction in active teams. Secondary metrics: answer citation usage, automation adoption, and time-to-context for new members. Guardrails: permission violations, stale knowledge responses, and workflow misfires.\n\n### Tradeoffs\nBroader indexing improves answer coverage but raises confidentiality risk. More automation increases efficiency but can create brittle workflow dependencies.\n\n### Risks & mitigations\nRisk: stale context in summaries; mitigate with freshness triggers. Risk: access leaks; mitigate with strict ACL enforcement. Risk: low trust in AI outputs; mitigate with mandatory citations.\n\n### Example\nIn engineering incident channels, AI summarizes root-cause updates, suggests postmortem tasks, and answers recurring stakeholder questions with source links.\n\n### 90-second version\nDesign Slack AI as permission-safe organizational memory. Optimize repeated-question reduction and workflow acceleration while preserving access boundaries and source transparency.",
+      "followups": {
+        "clarification": [
+          "Which workspace use case has the highest cost from repeated questions?",
+          "How should permission boundaries be exposed to users in AI answers?"
+        ],
+        "depth": [
+          "How would you keep thread summaries fresh without excessive compute?",
+          "What ACL checks must run in retrieval and response synthesis layers?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_007",
+      "category": "ai_product_design",
+      "question": "Design AI to streamline healthcare workflows in hospitals.",
+      "framework": "Clinical Throughput Grid",
+      "spoken_answer": "I would design hospital workflow AI around bottleneck reduction in admission, care coordination, and discharge. The system should summarize patient context for clinicians, suggest missing orders based on protocol, and coordinate task handoffs across nursing, pharmacy, and case management teams. For discharge, it should generate patient-ready instructions and identify blockers early. The primary metric would be reduction in avoidable care delays, with guardrails on clinical safety events and documentation error rates. The tradeoff is protocol automation versus clinician autonomy: rigid workflows improve consistency, but medicine needs contextual judgment. I’d keep recommendations advisory with clear evidence and escalation paths. Integration with EHR systems and role-based views is critical so the AI reduces administrative friction without adding another disconnected interface for already overloaded hospital staff.",
+      "written_answer_md": "### Signal to interviewer\nI can design healthcare workflow AI that improves operational throughput while preserving clinical safety and accountability.\n\n### Clarify\nI would clarify target departments, existing EHR stack, bottleneck stages, and constraints around compliance and auditability.\n\n### Approach\nUse a clinical throughput grid: admission intelligence, intra-care coordination assist, and discharge orchestration with blocker prediction.\n\n### Metrics & instrumentation\nPrimary metric: reduction in avoidable workflow delays. Secondary metrics: handoff completion timeliness, discharge turnaround, and clinician admin time saved. Guardrails: clinical safety incident rate, documentation inaccuracies, and recommendation override spikes.\n\n### Tradeoffs\nHigher automation boosts flow but risks overstandardization in nuanced cases. More clinician control preserves trust but may reduce speed gains.\n\n### Risks & mitigations\nRisk: recommendation misuse; mitigate with evidence-linked suggestions. Risk: integration latency with EHR; mitigate with resilient sync strategies. Risk: workflow disruption; mitigate with phased rollout by unit.\n\n### Example\nIn emergency-to-inpatient transfer, AI preps admission summaries, highlights pending diagnostics, and coordinates bed, pharmacy, and follow-up tasks in one view.\n\n### 90-second version\nDesign hospital AI around throughput bottlenecks with advisory recommendations, deep system integration, and strict safety guardrails to improve flow without compromising care quality.",
+      "followups": {
+        "clarification": [
+          "Which workflow stage currently drives the largest patient delays?",
+          "What clinician roles should receive recommendations first?"
+        ],
+        "depth": [
+          "How would you architect safe EHR integration with role-based controls?",
+          "What evaluation plan proves delay reduction without safety tradeoffs?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_008",
+      "category": "ai_product_design",
+      "question": "Design AI for ecommerce search and product discovery.",
+      "framework": "Intent-to-Catalog Engine",
+      "spoken_answer": "I’d design ecommerce AI discovery as an intent-to-catalog engine that understands shopper goals, then maps them to relevant products with clear rationale. Search should support natural language constraints like budget, style, and delivery urgency. Discovery should blend relevance with exploration to surface alternatives users may not explicitly request. Product pages should include AI-generated comparison highlights and fit guidance tied to verified attributes. The primary metric would be qualified purchase conversion from AI-assisted sessions, with guardrails on return rate and dissatisfaction signals. The tradeoff is conversion optimization versus consumer trust: aggressive ranking can maximize short-term sales, but if recommendations feel biased or misleading, long-term loyalty drops. I would keep recommendation reasoning visible and separate sponsored influence clearly. The system should help users choose confidently, not just click faster.",
+      "written_answer_md": "### Signal to interviewer\nI can design AI commerce discovery that improves both conversion and shopper confidence.\n\n### Clarify\nI would clarify catalog structure, shopper intent patterns, and business constraints around merchandising and sponsorship.\n\n### Approach\nBuild an intent-to-catalog engine: semantic query parsing, relevance + exploration ranking, and decision-assist content on product detail pages.\n\n### Metrics & instrumentation\nPrimary metric: qualified conversion from AI-assisted journeys. Secondary metrics: add-to-cart quality, browse depth efficiency, and assisted comparison usage. Guardrails: return rate increase, sponsored-result confusion, and recommendation complaint volume.\n\n### Tradeoffs\nHigher personalization improves conversion but risks filter bubbles. Merchandising pressure can increase revenue but may reduce perceived fairness.\n\n### Risks & mitigations\nRisk: inaccurate product attribute inference; mitigate with source validation. Risk: overfitting to historical clicks; mitigate with exploration controls. Risk: trust loss from opaque ranking; mitigate with recommendation explanations.\n\n### Example\nFor home appliances, AI narrows options by kitchen size, energy preference, and delivery window, then surfaces tradeoff comparisons across shortlisted products.\n\n### 90-second version\nDesign ecommerce AI around intent clarity and confident decisions. Optimize qualified conversion while guarding transparency, post-purchase satisfaction, and fair ranking behavior.",
+      "followups": {
+        "clarification": [
+          "How do you define qualified conversion beyond immediate checkout?",
+          "What transparency is required for sponsored versus organic recommendations?"
+        ],
+        "depth": [
+          "How would you integrate structured catalog attributes with semantic search?",
+          "What online tests validate exploration without harming conversion efficiency?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_009",
+      "category": "ai_product_design",
+      "question": "Design AI for an education platform to improve learning outcomes.",
+      "framework": "Mastery Progression Engine",
+      "spoken_answer": "I would design education AI as a mastery progression engine that diagnoses gaps, adapts practice, and verifies retention over time. The system should build a learner profile from attempts, misconceptions, and confidence patterns, then generate targeted exercises and explanations. It should also schedule spaced reinforcement so knowledge sticks beyond one session. The primary metric would be mastery attainment rate for defined competencies, with guardrails on frustration-driven dropout and hint overreliance. The tradeoff is personalization intensity versus learner independence: stronger guidance improves near-term performance, but too much can reduce self-solving ability. I’d tune support by learner stage and gradually reduce scaffolding as proficiency improves. Teachers should get insight dashboards so human instruction and AI guidance reinforce each other instead of operating in parallel silos.",
+      "written_answer_md": "### Signal to interviewer\nI can design education AI for durable learning outcomes, not short-term engagement spikes.\n\n### Clarify\nI would clarify target age group, subject domain, assessment model, and teacher involvement in the learning loop.\n\n### Approach\nUse a mastery progression engine: diagnostic assessment, adaptive practice sequencing, and spaced reinforcement with progression gates.\n\n### Metrics & instrumentation\nPrimary metric: competency mastery attainment. Secondary metrics: retention check pass rates, session completion quality, and remediation efficiency. Guardrails: learner frustration spikes, excessive hint dependency, and confidence miscalibration.\n\n### Tradeoffs\nMore personalization improves efficiency but can reduce challenge resilience. Stronger pacing controls improve completion but may feel restrictive to advanced learners.\n\n### Risks & mitigations\nRisk: shallow memorization; mitigate with transfer tasks. Risk: model bias in difficulty assignment; mitigate with periodic calibration. Risk: teacher displacement concerns; mitigate with educator-facing controls.\n\n### Example\nIn math learning, AI identifies recurring fraction errors, assigns targeted problem sets, and rechecks transfer through mixed-concept quizzes after delay.\n\n### 90-second version\nDesign education AI around measurable mastery progression, adaptive support, and retention checks. Balance personalization with independence so learners build durable capability.",
+      "followups": {
+        "clarification": [
+          "Which competencies should define mastery for first release?",
+          "How will teachers interact with AI recommendations in the classroom workflow?"
+        ],
+        "depth": [
+          "How would you model and detect hint dependency over time?",
+          "What evaluation design proves long-term retention gains versus baseline?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_010",
+      "category": "ai_product_design",
+      "question": "Design AI for enterprise productivity (docs, meetings, and tasks).",
+      "framework": "Cross-Surface Execution Graph",
+      "spoken_answer": "I would design enterprise productivity AI as a cross-surface execution graph connecting docs, meetings, and tasks into one operational flow. The AI should convert meeting decisions into actionable tasks, link tasks to relevant documents, and keep status summaries continuously updated for teams. Instead of isolated assistants in each tool, I’d use shared project context and role-aware action recommendations. The primary metric would be reduction in coordination lag between decision and execution, with guardrails on incorrect task assignment and stale status propagation. The tradeoff is centralization versus flexibility: unified context improves execution speed, but over-centralization can limit team-specific workflows. I’d keep modular integrations and allow teams to customize action rules. This approach turns collaboration artifacts into execution outcomes and reduces lost context across enterprise tools.",
+      "written_answer_md": "### Signal to interviewer\nI can design enterprise AI that closes the gap between collaboration artifacts and execution outcomes.\n\n### Clarify\nI would clarify tool stack, workflow ownership models, and where handoff delays currently create the most business drag.\n\n### Approach\nUse a cross-surface execution graph: map decisions from docs/meetings to tasks, maintain context links, and automate progress synthesis.\n\n### Metrics & instrumentation\nPrimary metric: decision-to-action lead time reduction. Secondary metrics: task completion reliability, meeting follow-through rate, and context switch reduction. Guardrails: wrong-owner assignments, stale project states, and notification overload.\n\n### Tradeoffs\nUnified orchestration improves throughput but can constrain team-specific practices. High automation reduces admin burden but risks brittle workflow assumptions.\n\n### Risks & mitigations\nRisk: integration fragility across tools; mitigate with resilient connectors. Risk: low trust in automated assignments; mitigate with approval controls. Risk: action overload; mitigate with priority-aware batching.\n\n### Example\nFor product launches, AI maps roadmap docs and launch meetings into owner-tagged tasks, then updates weekly executive status summaries from completed milestones.\n\n### 90-second version\nDesign enterprise productivity AI as a shared execution graph across docs, meetings, and tasks. Optimize decision-to-action speed while preserving role clarity and workflow flexibility.",
+      "followups": {
+        "clarification": [
+          "Which handoff point causes the largest execution delay today?",
+          "What level of automation is acceptable for task assignment?"
+        ],
+        "depth": [
+          "How would you represent cross-tool context links in a scalable graph model?",
+          "What governance prevents stale or conflicting status updates across surfaces?"
+        ]
+      }
+    }
+  ]
+}

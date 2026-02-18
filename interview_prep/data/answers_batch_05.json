@@ -1,0 +1,184 @@
+{
+  "answers": [
+    {
+      "question_id": "q_apd_011",
+      "category": "ai_product_design",
+      "question": "Design an AI copilot for data analysts.",
+      "framework": "Query-to-Insight Assembly",
+      "spoken_answer": "I would design an analyst copilot around a query-to-insight assembly flow. It should translate business questions into verifiable SQL, run safe previews, and then generate chart-ready narratives with assumptions clearly stated. The copilot must expose lineage so analysts can trace every metric to source tables and filters. My primary metric would be time from question to validated insight, with guardrails on incorrect query logic and misleading summaries. The tradeoff is automation speed versus analytical rigor: fully automated narratives are fast, but if analysts cannot inspect joins or definitions, trust collapses quickly. I would require transparent intermediate steps, editable query plans, and mandatory validation checkpoints for high-impact reports. The product should make analysts faster and sharper, not hide the reasoning chain behind a black box.",
+      "written_answer_md": "### Signal to interviewer\nI can design analyst AI that accelerates insight generation while preserving data correctness and trust.\n\n### Clarify\nI would clarify analyst persona, data stack, governance requirements, and common analysis workflows.\n\n### Approach\nBuild a query-to-insight assembly: intent parsing, SQL generation with safety checks, result validation, and narrative/chart synthesis.\n\n### Metrics & instrumentation\nPrimary metric: time-to-validated-insight. Secondary metrics: query correction rate, reusable analysis templates, and dashboard publishing velocity. Guardrails: semantic SQL errors, metric-definition drift, and unsupported narrative claims.\n\n### Tradeoffs\nMore automation reduces manual effort but can increase hidden analytical mistakes. More transparency improves confidence but adds extra interaction steps.\n\n### Risks & mitigations\nRisk: wrong joins or filters; mitigate with schema-aware planners. Risk: hallucinated narrative claims; mitigate with source-linked statements. Risk: overreliance by junior analysts; mitigate with explainable reasoning panels.\n\n### Example\nFor revenue analysis, AI proposes SQL for cohort retention, flags missing date filters, and generates annotated charts tied to validated result sets.\n\n### 90-second version\nDesign analyst copilots for speed plus verifiability. Keep SQL and assumptions inspectable, enforce guardrails, and measure validated insight throughput as the core outcome.",
+      "followups": {
+        "clarification": [
+          "Which analyst workflow is highest leverage for first release?",
+          "What counts as a validated insight in your organization?"
+        ],
+        "depth": [
+          "How would you implement semantic checks for generated SQL?",
+          "What lineage model links narratives back to query outputs?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_012",
+      "category": "ai_product_design",
+      "question": "Design an AI copilot for developers beyond code completion.",
+      "framework": "Engineering Lifecycle Copilot",
+      "spoken_answer": "I would design this copilot across the full engineering lifecycle, not just inside the editor. It should help with requirement breakdown, architecture alternatives, test strategy, debugging, and release readiness. For implementation, it can still suggest code, but with rationale, tradeoff notes, and linked documentation. For debugging, it should correlate logs, traces, and recent commits to propose likely root causes. The primary metric would be cycle-time reduction from ticket start to safe production release, with guardrails on defect escape and security regressions. The tradeoff is convenience versus code ownership: more automation speeds delivery, but weak understanding increases long-term maintenance risk. I’d emphasize explainability and review checkpoints. This makes the copilot a systems-thinking partner, not just an autocomplete engine.",
+      "written_answer_md": "### Signal to interviewer\nI can expand developer AI from coding assistance to end-to-end delivery acceleration with quality controls.\n\n### Clarify\nI would clarify team maturity, toolchain, service complexity, and where engineering time is currently lost.\n\n### Approach\nUse an engineering lifecycle copilot: planning support, implementation guidance, test generation, incident debugging, and release checklists.\n\n### Metrics & instrumentation\nPrimary metric: cycle time to production-ready change. Secondary metrics: review turnaround, incident recovery speed, and test coverage quality. Guardrails: security defect introduction, rollback rate, and unresolved code ownership issues.\n\n### Tradeoffs\nBroader copilot scope increases value but requires deeper integration complexity. Strict review controls improve safety but can reduce perceived speed.\n\n### Risks & mitigations\nRisk: shallow understanding from overautomation; mitigate with rationale-first outputs. Risk: insecure patches; mitigate with policy-aware scanners. Risk: integration fatigue; mitigate with phased rollout by workflow.\n\n### Example\nIn a microservices team, AI proposes architecture options, drafts migration tests, and links deployment checks to recent incident learnings before release.\n\n### 90-second version\nDesign developer AI as a lifecycle copilot. Optimize end-to-end delivery velocity while preserving review quality, security, and long-term code ownership.",
+      "followups": {
+        "clarification": [
+          "Which lifecycle stage has the biggest bottleneck today?",
+          "How much autonomy is acceptable before mandatory human review?"
+        ],
+        "depth": [
+          "How would you integrate traces and commits for root-cause suggestions?",
+          "What release gate policies should AI enforce automatically?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_013",
+      "category": "ai_product_design",
+      "question": "Design an AI assistant for students to study and practice.",
+      "framework": "Practice-Adaptive Tutor Loop",
+      "spoken_answer": "I would design this assistant as a practice-adaptive tutor, not a homework answer engine. It should diagnose current understanding, then offer targeted exercises, hint ladders, and spaced reviews tuned to student performance. Explanations should be level-aware and include misconception correction, not just final answers. I would measure improvement in practice accuracy over repeated sessions as the primary metric, with guardrails on hint overuse and disengagement after difficult modules. The tradeoff is support intensity versus productive struggle: more hints improve short-term completion, but too much guidance weakens long-term retention. I’d gradually fade assistance as competence rises and keep reflection prompts after each session. The assistant should help students build confidence through mastery steps, not dependency through instant solutions.",
+      "written_answer_md": "### Signal to interviewer\nI can design student AI for learning efficacy and retention, not shortcut-driven completion.\n\n### Clarify\nI would clarify grade level, subject scope, exam goals, and teacher/parent involvement expectations.\n\n### Approach\nImplement a practice-adaptive tutor loop: diagnose, assign targeted practice, deliver tiered hints, and schedule spaced reinforcement.\n\n### Metrics & instrumentation\nPrimary metric: session-over-session accuracy improvement on target skills. Secondary metrics: retention checkpoint pass rates, completion consistency, and confidence calibration. Guardrails: hint dependency, frustration drop-off, and shallow answer copying.\n\n### Tradeoffs\nRicher tutoring support accelerates progress but may reduce independent problem-solving if overused. Lower guidance preserves struggle but can increase drop-off.\n\n### Risks & mitigations\nRisk: answer farming behavior; mitigate with attempt-gated hints. Risk: misleveled content; mitigate with adaptive difficulty calibration. Risk: low transfer to exams; mitigate with mixed-context practice.\n\n### Example\nFor chemistry prep, AI detects stoichiometry errors, delivers focused drills, and later tests transfer through multi-step reaction problems.\n\n### 90-second version\nDesign the assistant as a mastery coach with adaptive practice and fading support. Optimize long-term learning gains while controlling hint dependency and dropout.",
+      "followups": {
+        "clarification": [
+          "Which learner cohort should be prioritized for launch?",
+          "How will you define mastery thresholds for each topic?"
+        ],
+        "depth": [
+          "How would you detect and reduce unproductive hint dependency?",
+          "What experiment design validates retention gains versus baseline study tools?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_014",
+      "category": "ai_product_design",
+      "question": "Design an AI assistant for sales teams (research, outreach, CRM).",
+      "framework": "Revenue Motion Copilot",
+      "spoken_answer": "I would design a sales AI assistant around the revenue motion: account research, personalized outreach, and CRM execution. For research, it should summarize account context, buying signals, and stakeholder maps. For outreach, it should generate role-specific drafts with compliance-safe language and testable variants. For CRM, it should auto-update fields, suggest next best actions, and flag stalled deals with reasons. The primary metric would be qualified pipeline progression, with guardrails on spam complaints and CRM data integrity errors. The tradeoff is productivity versus authenticity: high automation increases rep throughput, but generic AI messaging can damage trust and response quality. I’d keep personalization controls explicit and require editable recommendations. This assistant should remove admin burden while helping reps run smarter, higher-quality deal cycles.",
+      "written_answer_md": "### Signal to interviewer\nI can design sales AI that improves pipeline outcomes while preserving brand, compliance, and relationship quality.\n\n### Clarify\nI would clarify sales segment, deal cycle length, CRM stack, and legal constraints on outreach personalization.\n\n### Approach\nBuild a revenue motion copilot across research, outreach, and CRM updates with role-aware recommendations and quality checks.\n\n### Metrics & instrumentation\nPrimary metric: qualified pipeline progression rate. Secondary metrics: outreach response quality, CRM update completeness, and rep time saved on admin. Guardrails: spam/unsubscribe signals, compliance violations, and inaccurate CRM auto-writes.\n\n### Tradeoffs\nMore automation increases volume but can degrade authenticity. Tight compliance controls reduce risk but may limit creative personalization.\n\n### Risks & mitigations\nRisk: low-trust generic outreach; mitigate with context grounding. Risk: CRM corruption from bad automation; mitigate with approval rules. Risk: overtargeting sensitive signals; mitigate with policy filters.\n\n### Example\nFor mid-market SaaS, AI prepares account briefs, drafts segmented outreach, and updates opportunity stages after call transcripts with rep confirmation.\n\n### 90-second version\nDesign sales AI as an end-to-end motion copilot. Optimize qualified pipeline movement and rep leverage while enforcing message quality, compliance, and CRM reliability.",
+      "followups": {
+        "clarification": [
+          "What stage of the sales funnel has the highest leverage for AI support?",
+          "Which CRM fields can be auto-updated versus approval-only?"
+        ],
+        "depth": [
+          "How would you measure outreach quality beyond open and reply rates?",
+          "What architecture ensures compliance checks before outbound messaging?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_apd_015",
+      "category": "ai_product_design",
+      "question": "Design an AI assistant for knowledge workers (search, writing, automation).",
+      "framework": "Knowledge Work Operating Layer",
+      "spoken_answer": "I would design this assistant as an operating layer across search, writing, and workflow automation. Search should be context-aware and citation-backed so users can trust answers quickly. Writing assistance should help structure, summarize, and rewrite with audience-specific tone controls. Automation should trigger repetitive tasks like status updates, meeting recaps, and doc routing based on intent and approvals. The primary metric would be reduction in time spent on low-leverage knowledge work, with guardrails on factual errors and accidental workflow actions. The tradeoff is speed versus verification: automating too aggressively saves time but increases costly mistakes. I’d keep high-impact actions approval-based and show source provenance for generated claims. The assistant should make professionals faster without reducing decision quality or accountability.",
+      "written_answer_md": "### Signal to interviewer\nI can design cross-functional AI that compounds productivity while preserving trust and execution quality.\n\n### Clarify\nI would clarify user roles, tool ecosystem, top repetitive tasks, and risk tolerance for automated actions.\n\n### Approach\nCreate a knowledge work operating layer unifying grounded search, guided writing, and approval-aware automation flows.\n\n### Metrics & instrumentation\nPrimary metric: time reduced on repetitive low-leverage tasks. Secondary metrics: search success, writing acceptance, and automation completion reliability. Guardrails: hallucinated content incidents, misfired automations, and user override spikes.\n\n### Tradeoffs\nMore automation boosts throughput but raises verification burden. More review controls increase trust but can reduce speed gains.\n\n### Risks & mitigations\nRisk: incorrect generated claims; mitigate with citations. Risk: workflow misfires; mitigate with staged approvals. Risk: fragmented context across tools; mitigate with shared workspace memory.\n\n### Example\nFor operations teams, AI answers policy questions with sources, drafts stakeholder updates, and routes approvals for recurring weekly reports.\n\n### 90-second version\nDesign the assistant as a unified productivity layer for search, writing, and automation. Optimize reclaimed focus time while keeping verification and control explicit.",
+      "followups": {
+        "clarification": [
+          "Which low-leverage tasks should be automated in phase one?",
+          "What actions require explicit approval before execution?"
+        ],
+        "depth": [
+          "How would you share context safely across multiple work tools?",
+          "What instrumentation quantifies reclaimed time without harming quality?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_001",
+      "category": "execution",
+      "question": "How would you launch a new AI feature end-to-end?",
+      "framework": "Launch Readiness Flywheel",
+      "spoken_answer": "I would launch an AI feature through a readiness flywheel: define outcome, validate quality, run staged rollout, then harden operations. First, I’d align on one user problem and one primary success metric to prevent scope drift. Then I’d run offline and limited live evaluations to verify reliability, safety, and usability before broad exposure. Rollout should be phased by segment with clear stop conditions and rollback paths. The primary metric would be task success uplift in the target cohort, with guardrails on latency, incident volume, and support burden. The tradeoff is launch speed versus confidence: shipping early accelerates learning, but weak safeguards can create trust debt fast. I’d bias toward fast constrained launches with strong telemetry and correction loops. Launch is complete only when monitoring and ownership are stable in production.",
+      "written_answer_md": "### Signal to interviewer\nI can run end-to-end AI launches that balance speed, safety, and measurable customer value.\n\n### Clarify\nI would clarify target cohort, core user problem, launch constraints, and non-negotiable guardrails.\n\n### Approach\nUse a launch readiness flywheel: scope definition, quality validation, staged exposure, and post-launch hardening.\n\n### Metrics & instrumentation\nPrimary metric: task success uplift for target users. Secondary metrics: adoption quality, time-to-value, and correction loop velocity. Guardrails: latency regressions, severe incidents, and support ticket spikes.\n\n### Tradeoffs\nFaster launch increases learning speed but can raise reliability risk. Stricter gating improves trust but delays feedback cycles.\n\n### Risks & mitigations\nRisk: unnoticed regressions; mitigate with canary cohorts. Risk: unclear ownership; mitigate with runbook assignments. Risk: launch hype without value; mitigate with objective success criteria.\n\n### Example\nFor an AI summary feature, launch first to internal teams, then selected customers, then broader rollout after guardrails remain stable.\n\n### 90-second version\nLaunch AI features with phased exposure and strict guardrails. Optimize for validated user outcome, rapid learning, and operational stability before full-scale release.",
+      "followups": {
+        "clarification": [
+          "What is the single primary metric for this launch?",
+          "Which user segment should receive the first external rollout?"
+        ],
+        "depth": [
+          "How would you define stop/rollback thresholds during ramp?",
+          "What post-launch ownership model ensures fast incident response?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_002",
+      "category": "execution",
+      "question": "How would you improve AI accuracy in production?",
+      "framework": "Production Error Reduction Loop",
+      "spoken_answer": "I would improve production accuracy with a closed-loop system: detect, classify, fix, and verify. First, I’d instrument outputs with confidence and source signals, then sample failures using user feedback and targeted audits. Next, I’d bucket errors by root cause such as retrieval miss, reasoning mistake, or policy mismatch. Fixes should be prioritized by impact and frequency, then validated in offline and live shadow tests before release. The primary metric would be production verified-correct response rate, with guardrails on latency and refusal quality. The tradeoff is precision versus responsiveness: adding more validation improves correctness but can slow responses and increase cost. I’d apply adaptive depth so only risky cases trigger heavier checks. Accuracy improves fastest when teams own explicit error classes with recurring review cadence.",
+      "written_answer_md": "### Signal to interviewer\nI can improve AI accuracy systematically by tying quality work to production telemetry and root-cause ownership.\n\n### Clarify\nI would clarify what accuracy means for the product, which cohorts are highest risk, and acceptable latency/cost impact.\n\n### Approach\nRun a production error reduction loop: detect failures, classify root causes, ship targeted fixes, and validate with shadow/live checks.\n\n### Metrics & instrumentation\nPrimary metric: verified correctness rate in production samples. Secondary metrics: error recurrence, correction turnaround time, and confidence calibration quality. Guardrails: latency drift, over-refusal rate, and unresolved severe failure buckets.\n\n### Tradeoffs\nHeavier validation increases correctness but adds latency and spend. Faster response paths improve UX but can miss subtle errors.\n\n### Risks & mitigations\nRisk: noisy feedback signals; mitigate with weighted labeling. Risk: overfitting to known errors; mitigate with rotating eval sets. Risk: ownership gaps; mitigate with root-cause SLAs.\n\n### Example\nIn a policy assistant, retrieval-related inaccuracies are tracked as a separate class with dedicated freshness and citation fixes.\n\n### 90-second version\nImprove production accuracy through a root-cause loop, not one-off tuning. Measure verified correctness, assign ownership by error class, and balance validation depth with latency constraints.",
+      "followups": {
+        "clarification": [
+          "How is verified correctness measured for your product domain?",
+          "Which error class currently causes the most user harm?"
+        ],
+        "depth": [
+          "How would you design shadow validation before production fixes?",
+          "What ownership SLAs should each error category carry?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_003",
+      "category": "execution",
+      "question": "How would you reduce AI latency without hurting quality?",
+      "framework": "Adaptive Depth Serving",
+      "spoken_answer": "I’d reduce latency by separating requests into fast-path and deep-path serving based on risk and complexity. Fast-path requests get lightweight retrieval and efficient models with streaming enabled. Deep-path requests trigger richer context, stronger validation, and specialist models only when needed. I’d also optimize infrastructure with cache layers, warm pools, and concurrency tuning to remove avoidable overhead. The primary metric would be first-token latency percentile while maintaining task success as a co-equal quality metric. The tradeoff is straightforward: aggressive simplification improves speed but can hurt response fidelity on nuanced tasks. I’d avoid one-size-fits-all shortcuts and instead apply adaptive depth with quality-aware routing. This keeps common flows snappy while preserving strong outcomes for difficult queries.",
+      "written_answer_md": "### Signal to interviewer\nI can optimize latency with architectural strategy while preserving quality through risk-aware serving decisions.\n\n### Clarify\nI would clarify latency targets, workload mix, acceptable quality variance, and cost constraints.\n\n### Approach\nUse adaptive depth serving: classify requests, route simple ones to fast paths, and reserve deep pipelines for high-complexity or high-risk cases.\n\n### Metrics & instrumentation\nPrimary metric: first-token latency percentile. Secondary metrics: end-to-end response time, cache contribution, and route distribution. Guardrails: task success drop, confidence miscalibration, and quality complaints.\n\n### Tradeoffs\nUniform fast paths reduce latency but can underperform on complex requests. Rich pipelines improve quality but increase delay and cost.\n\n### Risks & mitigations\nRisk: route misclassification; mitigate with fallback checks. Risk: cache staleness; mitigate with invalidation policies. Risk: hidden quality drift in fast paths; mitigate with cohort-level monitoring.\n\n### Example\nIn a help assistant, FAQ queries use cached fast responses while troubleshooting requests invoke deeper retrieval and validation pipelines.\n\n### 90-second version\nCut latency with adaptive routing, not blanket simplification. Protect quality by reserving deep inference where needed and tracking latency-quality balance continuously.",
+      "followups": {
+        "clarification": [
+          "Which latency metric matters most to users in this product?",
+          "How do you define complexity thresholds for deep-path routing?"
+        ],
+        "depth": [
+          "How would you validate fast-path quality against deep-path baseline?",
+          "What caching strategy avoids stale high-impact responses?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_004",
+      "category": "execution",
+      "question": "How would you improve AI reliability and reduce incidents?",
+      "framework": "Reliability SRE Loop",
+      "spoken_answer": "I would improve AI reliability using an SRE-style loop tailored to model-driven systems. First, define reliability budgets for availability, quality regressions, and safety incidents. Then instrument request traces, model-route outcomes, and user-impact signals so failures are detectable quickly. Incidents should be classified by root cause with runbooks that include rollback, policy hotfix, and communication playbooks. The primary metric would be incident-free user sessions, with guardrails on mean time to detect and mean time to recover. The tradeoff is innovation velocity versus operational stability: rapid changes can unlock value, but unmanaged release cadence increases incident probability. I’d use canary ramps, blast-radius controls, and change freezes when reliability debt grows. Reliability improves when engineering and product share accountability for both performance and user trust outcomes.",
+      "written_answer_md": "### Signal to interviewer\nI can reduce AI incidents by operationalizing reliability with budgets, ownership, and disciplined change management.\n\n### Clarify\nI would clarify incident taxonomy, severity thresholds, release cadence, and cross-team response responsibilities.\n\n### Approach\nRun a reliability SRE loop: define budgets, monitor proactively, respond with runbooks, and feed postmortem learnings into release controls.\n\n### Metrics & instrumentation\nPrimary metric: incident-free session rate. Secondary metrics: mean time to detect, mean time to recover, and recurrence rate. Guardrails: unresolved sev-critical backlog, rollback delay, and user trust deterioration.\n\n### Tradeoffs\nFaster releases increase feature velocity but can raise incident frequency. Conservative release gates improve stability but slow innovation.\n\n### Risks & mitigations\nRisk: unclear ownership in incidents; mitigate with on-call mapping. Risk: repeated failure modes; mitigate with mandatory postmortem actions. Risk: hidden blast radius; mitigate with granular rollout segmentation.\n\n### Example\nFor an AI assistant, route-level canaries and automatic rollback prevent widespread quality regressions after model updates.\n\n### 90-second version\nTreat AI reliability like a product SRE discipline. Define budgets, enforce staged changes, and close the loop from incident response to release governance.",
+      "followups": {
+        "clarification": [
+          "Which incident types should consume reliability budget first?",
+          "What change cadence is acceptable given current reliability debt?"
+        ],
+        "depth": [
+          "How would you design canary blast-radius controls for model updates?",
+          "What postmortem governance ensures actions are actually completed?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_ex_005",
+      "category": "execution",
+      "question": "How would you scale AI systems from 10k to 10M users?",
+      "framework": "Scale Stage-Gate Blueprint",
+      "spoken_answer": "To scale from 10k to 10M users, I’d use stage gates across architecture, operations, and product quality. At each stage, we need capacity planning, reliability targets, and cost controls that match projected demand. Infrastructure should evolve from monolithic serving into segmented traffic classes, regional failover, and queue-based smoothing. Product-side, I’d tighten onboarding, feedback loops, and self-serve recovery flows so support load doesn’t grow linearly. The primary metric would be successful requests at target SLO under peak load, with guardrails on cost per active user and critical incident rate. The tradeoff is platform robustness versus shipping speed: over-engineering too early slows growth, but under-investing creates painful outages later. I’d scale in deliberate milestones tied to observed demand and risk signals.",
+      "written_answer_md": "### Signal to interviewer\nI can scale AI platforms with phased architecture and operational discipline instead of reactive firefighting.\n\n### Clarify\nI would clarify growth forecast, regional mix, workload complexity, and non-functional SLO requirements.\n\n### Approach\nUse a stage-gate blueprint: capacity milestones, reliability controls, cost optimization checkpoints, and support scalability planning.\n\n### Metrics & instrumentation\nPrimary metric: successful request volume at SLO during peak conditions. Secondary metrics: autoscale efficiency, support-to-user ratio, and onboarding throughput quality. Guardrails: cost blowout, severe incident frequency, and latency degradation under burst.\n\n### Tradeoffs\nEarly heavy investment improves resilience but can slow feature delivery. Lean infrastructure accelerates growth but risks instability at inflection points.\n\n### Risks & mitigations\nRisk: sudden traffic spikes overwhelm services; mitigate with queue buffering and admission control. Risk: rising unit economics; mitigate with route optimization. Risk: support bottlenecks; mitigate with in-product recovery and tooling.\n\n### Example\nA consumer writing app scales by splitting free versus paid traffic classes, adding regional replicas, and introducing adaptive model routing as demand grows.\n\n### 90-second version\nScale AI systems with stage-gated infrastructure and product operations. Align each growth step with SLO, cost, and incident controls so expansion remains stable and sustainable.",
+      "followups": {
+        "clarification": [
+          "Which SLO must remain stable as user count scales most aggressively?",
+          "What growth milestone should trigger the next infrastructure stage?"
+        ],
+        "depth": [
+          "How would you design traffic segmentation for paid versus free users?",
+          "What forecasting and load-testing loop supports proactive capacity planning?"
+        ]
+      }
+    }
+  ]
+}

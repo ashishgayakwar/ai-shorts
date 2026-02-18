@@ -1,0 +1,184 @@
+{
+  "answers": [
+    {
+      "question_id": "q_sd_006",
+      "category": "system_design",
+      "question": "Design AI inference scaling architecture.",
+      "framework": "Capacity Cell Architecture",
+      "spoken_answer": "I would design inference scaling around capacity cells that can be expanded independently by region, model family, and workload class. Each cell contains request admission control, model serving replicas, feature caches, and health-aware routing. The router should classify requests by latency tolerance and quality requirements, then assign them to the right cell with spillover fallback. I’d track successful responses per compute dollar as the primary metric, while watching tail latency and error rate as hard guardrails. The explicit tradeoff is utilization versus resilience: pushing utilization too high lowers cost but raises failure risk during traffic spikes. I would keep reserved headroom for high-priority traffic and use autoscaling based on queue depth plus model throughput signals. This architecture keeps performance predictable while allowing controlled cost optimization at scale.",
+      "written_answer_md": "### Signal to interviewer\nI can design inference systems that scale elastically while preserving reliability under bursty, heterogeneous workloads.\n\n### Clarify\nI would clarify request volume shape, latency tiers, model sizes, regional compliance, and traffic criticality classes.\n\n### Approach\nUse capacity cell architecture: isolate serving pools by workload class, route by policy, and provide spillover to adjacent cells when pressure rises.\n\n### Metrics & instrumentation\nPrimary metric: successful responses per compute dollar. Secondary metrics: queue wait time, autoscale reaction latency, and GPU utilization quality. Guardrails: tail-latency violations, dropped-request rate, and hotspot saturation.\n\n### Tradeoffs\nHigher utilization cuts cost but reduces buffer for sudden spikes. Aggressive autoscaling improves elasticity but may introduce cold-start delays.\n\n### Risks & mitigations\nRisk: regional imbalance during incidents; mitigate with cross-cell overflow limits. Risk: noisy-neighbor model contention; mitigate with workload isolation. Risk: unstable scaling loops; mitigate with hysteresis and rate limits.\n\n### Example\nFor a global writing assistant, low-latency interactive prompts stay in premium cells while background summarization routes to cost-efficient batch-oriented cells.\n\n### 90-second version\nScale inference by capacity cells, route requests by SLO class, and protect reliability with admission control plus reserved headroom. Optimize cost without sacrificing burst resilience.",
+      "followups": {
+        "clarification": [
+          "Which workload classes should get dedicated capacity cells first?",
+          "What reserve headroom policy would you set for priority traffic?"
+        ],
+        "depth": [
+          "How would you tune autoscaling to avoid oscillation under spiky demand?",
+          "What telemetry is required to detect contention between model workloads?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_007",
+      "category": "system_design",
+      "question": "Design an AI training pipeline.",
+      "framework": "Data-to-Model Conveyor",
+      "spoken_answer": "I would design the training pipeline as a controlled conveyor from data intake to model promotion, with quality gates at every stage. Raw data ingestion should enforce schema contracts, privacy filters, and provenance tags before feature generation. Training orchestration then runs reproducible jobs with versioned datasets, configs, and checkpoints. Evaluation gates should block promotion unless quality, safety, and robustness thresholds pass. I’d use model promotion lead time as a primary execution metric and pair it with post-release regression rate as a guardrail. The tradeoff is speed versus rigor: shipping models faster helps iteration, but weak gating causes expensive reliability failures later. I would automate as much validation as possible while keeping human review for high-risk domains. This pipeline makes experimentation fast without sacrificing governance and reproducibility.",
+      "written_answer_md": "### Signal to interviewer\nI can build training infrastructure that accelerates iteration while maintaining reproducibility, governance, and deployment confidence.\n\n### Clarify\nI would clarify data sources, retraining cadence, domain risk level, and expected model release frequency.\n\n### Approach\nUse a data-to-model conveyor with stages: ingestion and filtering, feature/build prep, training orchestration, evaluation gates, and promotion workflow.\n\n### Metrics & instrumentation\nPrimary metric: model promotion lead time. Secondary metrics: pipeline failure recovery time, training resource efficiency, and experiment throughput. Guardrails: post-release regressions, lineage gaps, and policy non-compliance events.\n\n### Tradeoffs\nTighter validation improves reliability but slows iteration. More frequent retraining improves freshness but increases operational complexity.\n\n### Risks & mitigations\nRisk: data leakage into training; mitigate with strict split policies. Risk: non-reproducible runs; mitigate with immutable artifacts. Risk: silent quality drift; mitigate with continuous benchmark backtesting.\n\n### Example\nIn a fraud detection system, daily data snapshots feed automated retraining, but promotion requires both offline robustness checks and shadow-online stability before rollout.\n\n### 90-second version\nDesign training as a gated conveyor with full lineage and reproducible artifacts. Optimize release speed, but never bypass evaluation and governance gates.",
+      "followups": {
+        "clarification": [
+          "What promotion criteria are non-negotiable in your domain?",
+          "How frequently should retraining occur given data volatility?"
+        ],
+        "depth": [
+          "How would you enforce dataset-version immutability across teams?",
+          "What shadow validation strategy would you use before model promotion?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_008",
+      "category": "system_design",
+      "question": "Design AI evaluation infrastructure.",
+      "framework": "Eval Fabric Framework",
+      "spoken_answer": "I would design evaluation infrastructure as an eval fabric that serves both offline benchmarking and online decisioning. The fabric should support curated task suites, adversarial scenarios, and golden datasets with strict version control. Every model or prompt change runs through automated scoring, error bucketing, and comparison against baselines. Online, I’d integrate live sampling and human review queues to catch failures not represented in static datasets. The primary metric would be evaluation coverage across critical use cases, while guardrails include false-confidence launches and unresolved high-severity error clusters. The tradeoff is depth versus velocity: broader eval suites increase confidence, but can slow release cycles. I’d solve this with tiered evaluations—fast pre-merge checks and deeper pre-release suites. This gives teams rapid feedback without compromising release safety.",
+      "written_answer_md": "### Signal to interviewer\nI can design evaluation infrastructure that turns model quality into a continuous operational signal, not a one-time benchmark report.\n\n### Clarify\nI would clarify quality dimensions, release cadence, domain risk, and who consumes evaluation outputs for decisions.\n\n### Approach\nBuild an eval fabric with reusable test suites, baseline management, failure taxonomy, and online sampling loops tied to incident workflows.\n\n### Metrics & instrumentation\nPrimary metric: critical-use-case coverage by automated evaluations. Secondary metrics: eval runtime, detected-regression precision, and human-review agreement. Guardrails: escaped critical failures, stale benchmark usage, and unresolved severe buckets.\n\n### Tradeoffs\nDeeper evaluation increases confidence but adds release latency. Lightweight checks are fast but may miss edge-case regressions.\n\n### Risks & mitigations\nRisk: benchmark overfitting; mitigate with rotating hidden sets. Risk: evaluation blind spots; mitigate with production sampling. Risk: inconsistent scoring across teams; mitigate with centralized metric definitions.\n\n### Example\nFor a customer support assistant, every release is scored on policy adherence, hallucination resilience, and escalation correctness before production exposure.\n\n### 90-second version\nCreate an eval fabric that combines fast gating and deep validation. Use shared metrics, live sampling, and failure taxonomies so release quality stays measurable and actionable.",
+      "followups": {
+        "clarification": [
+          "Which quality dimensions must be blocked at pre-merge time versus pre-release?",
+          "How do you define critical-use-case coverage in practice?"
+        ],
+        "depth": [
+          "How would you design hidden test sets to resist overfitting?",
+          "What data model would connect eval failures to production incidents?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_009",
+      "category": "system_design",
+      "question": "Design AI monitoring systems.",
+      "framework": "Observability Spine",
+      "spoken_answer": "I would design AI monitoring as an observability spine that tracks request flow, model behavior, and user outcomes in one connected system. At ingestion, each request gets trace metadata for model route, context sources, and policy checks. At output, I’d capture confidence signals, latency breakdown, and post-response feedback events. The primary metric would be mean time to detect quality regressions, with guardrails on unresolved critical alerts and false alarm load. The key tradeoff is signal richness versus operational noise: collecting every metric improves diagnosis, but too many low-value alerts burn teams out. I’d use layered alerting with high-severity paging and lower-severity trend dashboards. Monitoring should support root-cause analysis fast enough to trigger rollback, patch, or policy updates before trust damage spreads.",
+      "written_answer_md": "### Signal to interviewer\nI can design monitoring systems that make AI quality and reliability observable, actionable, and tied to user impact.\n\n### Clarify\nI would clarify incident severity model, response ownership, latency SLOs, and quality failure classes to detect.\n\n### Approach\nImplement an observability spine: request tracing, model outcome telemetry, quality drift detection, and policy-violation monitors with linked remediation playbooks.\n\n### Metrics & instrumentation\nPrimary metric: mean time to detect regressions. Secondary metrics: mean time to recover, alert precision, and incident recurrence rate. Guardrails: unresolved critical alerts, paging fatigue, and blind-spot coverage gaps.\n\n### Tradeoffs\nMore telemetry improves diagnostics but increases storage and alert complexity. Tighter thresholds catch issues early but can produce noisy false positives.\n\n### Risks & mitigations\nRisk: fragmented dashboards obscure root causes; mitigate with unified trace IDs. Risk: delayed human review on sensitive failures; mitigate with priority queues. Risk: silent drift in low-traffic segments; mitigate with cohort-aware anomaly detection.\n\n### Example\nFor an enterprise assistant, monitoring correlates retrieval freshness drops with rising hallucination complaints, triggering automated rollback of stale index shards.\n\n### 90-second version\nBuild AI monitoring around unified tracing and prioritized alerts. Optimize for fast detection and recovery, not dashboard volume, and tie signals directly to user-facing impact.",
+      "followups": {
+        "clarification": [
+          "Which failure types require immediate paging versus trend monitoring?",
+          "What incident severity model will your teams standardize on?"
+        ],
+        "depth": [
+          "How would you correlate user feedback with model-route telemetry?",
+          "What anomaly detection strategy works for low-volume but high-risk cohorts?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_010",
+      "category": "system_design",
+      "question": "Design AI personalization infrastructure.",
+      "framework": "Profile-Context Fusion",
+      "spoken_answer": "I would design personalization infrastructure around profile-context fusion, combining long-term user preferences with session intent and recent behavior. The system should maintain a privacy-safe profile store, real-time context features, and a decision service that scores candidate responses or recommendations. I’d separate feature computation from serving so offline profile updates and online session signals can be merged efficiently. The primary metric would be personalized outcome lift versus non-personalized baseline, while guardrails include privacy policy violations and fairness degradation across cohorts. The tradeoff is relevance versus privacy risk: deeper personalization improves utility, but over-collection can erode trust and increase compliance complexity. I would enforce data minimization, user controls, and explicit preference reset flows. Personalization should feel adaptive without becoming opaque or intrusive.",
+      "written_answer_md": "### Signal to interviewer\nI can design personalization systems that raise relevance while preserving user trust, privacy, and governance constraints.\n\n### Clarify\nI would clarify personalization surfaces, consent boundaries, retention rules, and expected adaptation speed.\n\n### Approach\nUse profile-context fusion: combine persistent preference vectors, short-term behavioral context, and task intent in a serving decision layer.\n\n### Metrics & instrumentation\nPrimary metric: outcome lift versus generic baseline. Secondary metrics: repeat engagement, recommendation acceptance, and preference-edit usage. Guardrails: consent violations, fairness skew across cohorts, and profile staleness errors.\n\n### Tradeoffs\nRicher profiles improve relevance but raise privacy burden. Strong minimization improves trust but may reduce personalization quality.\n\n### Risks & mitigations\nRisk: stale profiles produce bad personalization; mitigate with decay functions. Risk: hidden bias amplification; mitigate with cohort-level fairness checks. Risk: user discomfort with opaque adaptation; mitigate with transparent controls.\n\n### Example\nIn a learning app, personalization blends long-term topic interests with current session goals to reorder lesson suggestions in real time.\n\n### 90-second version\nDesign personalization as controlled fusion of profile and context. Measure true lift, enforce privacy constraints, and provide clear user controls to sustain trust.",
+      "followups": {
+        "clarification": [
+          "Which user controls are mandatory for personalization transparency?",
+          "How quickly should personalization adapt to session-level intent changes?"
+        ],
+        "depth": [
+          "How would you architect real-time feature serving with consent enforcement?",
+          "What fairness checks would you run to detect personalization bias drift?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_011",
+      "category": "system_design",
+      "question": "Design multi-model orchestration systems.",
+      "framework": "Specialist Ensemble Router",
+      "spoken_answer": "I would design multi-model orchestration as a specialist ensemble where each model handles tasks it performs best on, coordinated by a routing and aggregation layer. The orchestrator should classify request intent, select candidate models, run parallel or staged execution, and reconcile outputs with consistency checks. For complex tasks, I’d chain specialist models with explicit contracts between steps. The primary metric would be task success uplift over single-model baseline, and I’d monitor orchestration overhead latency as a guardrail. The tradeoff is quality gain versus operational burden: orchestration improves capability breadth, but increases complexity in debugging, observability, and rollback. I’d keep route policies transparent and versioned, with clear fallbacks to a stable default path. This ensures multi-model benefits are real and manageable in production.",
+      "written_answer_md": "### Signal to interviewer\nI can design orchestration systems that exploit model specialization without creating unmanageable operational complexity.\n\n### Clarify\nI would clarify task taxonomy, model strengths, latency constraints, and failure tolerance for chained execution.\n\n### Approach\nUse a specialist ensemble router: classify task, dispatch to best-fit models, aggregate outputs, and apply consistency validation before response.\n\n### Metrics & instrumentation\nPrimary metric: success uplift versus single-model path. Secondary metrics: route confidence accuracy, aggregation correction rate, and orchestration latency overhead. Guardrails: failed-chain rate, inconsistent outputs, and rollback frequency.\n\n### Tradeoffs\nMore specialists increase potential quality but also coordination complexity. Parallel execution improves robustness but can increase cost.\n\n### Risks & mitigations\nRisk: conflicting outputs across models; mitigate with reconciliation policy. Risk: route misclassification; mitigate with fallback to general model. Risk: hard-to-debug incidents; mitigate with end-to-end traceability.\n\n### Example\nA product assistant routes data extraction to a parser model, reasoning to a planner model, and final tone shaping to a communication model.\n\n### 90-second version\nOrchestrate multiple models only where specialization delivers measurable uplift. Keep routing explicit, fallback safe, and tracing complete to control complexity.",
+      "followups": {
+        "clarification": [
+          "Which tasks justify specialist orchestration versus a single-model path?",
+          "How do you define acceptable overhead latency from orchestration?"
+        ],
+        "depth": [
+          "How would you reconcile conflicting outputs from specialist models?",
+          "What rollout strategy would you use to validate new routes safely?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_012",
+      "category": "system_design",
+      "question": "Design AI safety systems.",
+      "framework": "Defense-in-Depth Safety Mesh",
+      "spoken_answer": "I would design AI safety as a defense-in-depth mesh spanning input controls, model-time safeguards, and output enforcement. Input filtering should detect prompt injection, policy-sensitive requests, and abuse patterns early. At model time, I’d apply policy-conditioned prompting and risk-aware routing. On output, I’d run moderation classifiers, citation checks for sensitive claims, and escalation triggers for uncertain high-risk responses. The primary metric would be high-severity harm prevention rate, while guardrails include overblocking and user trust decline. The tradeoff is strictness versus usefulness: tighter controls reduce harmful outputs but can frustrate legitimate users if false positives rise. I’d tune policies by risk tier and continuously calibrate with red-team feedback. Safety has to be measurable, adaptive, and built into core architecture rather than bolted on.",
+      "written_answer_md": "### Signal to interviewer\nI can design safety systems as an integrated architecture with measurable controls, not isolated moderation endpoints.\n\n### Clarify\nI would clarify risk domains, policy boundaries, legal requirements, and acceptable false-positive tolerance.\n\n### Approach\nImplement a defense-in-depth safety mesh: pre-input screening, model-time policy conditioning, post-output moderation, and escalation pathways.\n\n### Metrics & instrumentation\nPrimary metric: prevention rate for high-severity harms. Secondary metrics: false-positive moderation rate, escalation resolution time, and policy consistency score. Guardrails: overblocking, bypass attempts, and safety regression recurrence.\n\n### Tradeoffs\nStronger restrictions increase safety but can reduce utility for benign edge cases. Faster responses improve UX but may weaken safety review depth.\n\n### Risks & mitigations\nRisk: adversarial prompt evolution; mitigate with continuous red teaming. Risk: policy drift across features; mitigate with centralized policy service. Risk: opaque user experience; mitigate with transparent refusal rationale.\n\n### Example\nFor a public assistant, health-related responses require grounded sources and trigger human escalation when confidence is low and potential harm is high.\n\n### 90-second version\nDesign safety as layered controls across the full request lifecycle. Measure severe harm prevention, tune by risk tier, and continuously update defenses against evolving misuse.",
+      "followups": {
+        "clarification": [
+          "Which risk tiers should trigger mandatory escalation by default?",
+          "How do you define acceptable overblocking for your use case?"
+        ],
+        "depth": [
+          "How would you structure a centralized policy service across products?",
+          "What red-team process would you use to continuously update safeguards?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_013",
+      "category": "system_design",
+      "question": "Design AI data pipelines.",
+      "framework": "Contract-First Dataflow",
+      "spoken_answer": "I would design AI data pipelines with a contract-first approach so every stage enforces schema, quality, and lineage before data moves forward. Ingestion should validate source reliability and assign provenance metadata. Transformation layers should apply deduplication, normalization, and policy filters with versioned jobs. Feature outputs then flow into both training and serving stores with freshness guarantees tailored to each use case. The primary metric would be pipeline data quality pass rate, while guardrails include lineage gaps and stale-data incidents in production. The tradeoff is flexibility versus reliability: allowing ad hoc transformations speeds experimentation, but breaks consistency and governance. I’d provide self-serve templates with strict contracts so teams move fast safely. A robust pipeline should make downstream model behavior more predictable and easier to audit.",
+      "written_answer_md": "### Signal to interviewer\nI can design data pipelines that scale experimentation while preserving quality, lineage, and compliance.\n\n### Clarify\nI would clarify source systems, freshness requirements, privacy constraints, and downstream consumers for training and serving.\n\n### Approach\nUse contract-first dataflow: enforce schema and policy at ingestion, run versioned transforms, and publish validated artifacts to feature stores.\n\n### Metrics & instrumentation\nPrimary metric: data quality pass rate across pipeline stages. Secondary metrics: freshness SLA adherence, transform failure recovery time, and duplicate reduction effectiveness. Guardrails: lineage breaks, policy filter misses, and stale-serving incidents.\n\n### Tradeoffs\nLooser contracts improve speed for new experiments but increase downstream instability. Strong contracts improve trust but require stricter onboarding for data producers.\n\n### Risks & mitigations\nRisk: hidden schema drift; mitigate with contract checks. Risk: inconsistent transformations by teams; mitigate with reusable templates. Risk: delayed freshness under load; mitigate with priority scheduling.\n\n### Example\nFor retail demand forecasting, transactional and inventory feeds are normalized nightly, while nearline updates refresh key availability features for serving.\n\n### 90-second version\nBuild AI data pipelines around enforced contracts and lineage. Optimize for dependable data quality and freshness so model outputs remain stable and auditable.",
+      "followups": {
+        "clarification": [
+          "Which datasets require the strictest lineage guarantees first?",
+          "What freshness SLA is critical for your highest-impact features?"
+        ],
+        "depth": [
+          "How would you enforce schema contracts across independent producer teams?",
+          "What fallback strategy handles delayed upstream feeds without breaking serving?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_014",
+      "category": "system_design",
+      "question": "Design AI experiment infrastructure.",
+      "framework": "Experiment Control Tower",
+      "spoken_answer": "I would design AI experiment infrastructure as a control tower that manages experiment setup, exposure rules, metric definitions, and analysis workflows in one platform. Teams should register hypotheses, target cohorts, and guardrail thresholds before launch. Runtime controls should support ramp policies, kill switches, and holdout logic for reliable comparisons. I’d make primary metrics and guardrails standardized to avoid conflicting interpretations across teams. The key metric for the platform is experiment cycle time from proposal to decision, while guardrails include invalid experiment rates and rollback delay. The tradeoff is autonomy versus consistency: fully self-serve tools increase velocity, but without strong templates, experimental quality degrades. I’d enforce preflight checks and statistical sanity validations so teams can move fast without compromising decision integrity.",
+      "written_answer_md": "### Signal to interviewer\nI can design experiment infrastructure that scales learning velocity while protecting decision quality and operational safety.\n\n### Clarify\nI would clarify experiment volume, decision owners, acceptable risk during ramp, and baseline metric standards.\n\n### Approach\nBuild an experiment control tower with registration, cohort assignment, guardrail configuration, rollout controls, and decision dashboards.\n\n### Metrics & instrumentation\nPrimary metric: cycle time from experiment proposal to actionable decision. Secondary metrics: experiment success rate, analysis rework frequency, and ramp completion reliability. Guardrails: invalid-test launches, guardrail threshold breaches, and delayed rollbacks.\n\n### Tradeoffs\nMore self-serve capability boosts speed but can reduce methodological rigor. Centralized review improves quality but can become a bottleneck.\n\n### Risks & mitigations\nRisk: conflicting metric definitions; mitigate with shared metric registry. Risk: unsafe ramps; mitigate with staged rollout gates. Risk: incorrect causal conclusions; mitigate with automated validity checks.\n\n### Example\nFor a summarization feature, teams register treatment cohorts, define trust guardrails, and use staged traffic ramps with automated stop conditions.\n\n### 90-second version\nDesign experiment infrastructure as a control tower: standardize setup, enforce safety checks, and shorten the path from hypothesis to confident decision.",
+      "followups": {
+        "clarification": [
+          "Which guardrails must be mandatory before any experiment can launch?",
+          "How do you standardize metric definitions across product teams?"
+        ],
+        "depth": [
+          "How would you implement staged ramps with automatic stop triggers?",
+          "What preflight checks catch invalid experiment designs early?"
+        ]
+      }
+    },
+    {
+      "question_id": "q_sd_015",
+      "category": "system_design",
+      "question": "Design AI cost optimization infrastructure.",
+      "framework": "Cost Efficiency Flywheel",
+      "spoken_answer": "I would design cost optimization infrastructure as a flywheel that continuously measures, prioritizes, and executes savings without harming user outcomes. First, we need transparent unit economics at request, feature, and customer-segment levels. Next, a policy engine should apply optimization levers like model tiering, caching, batching, and prompt compression based on quality thresholds. Finally, an optimization backlog ranks opportunities by projected savings versus user impact risk. The primary metric is cost per successful outcome, with guardrails on task success, latency, and trust incidents. The tradeoff is obvious: aggressive cost cutting can degrade quality if controls are weak. I’d require every cost lever to pass A/B quality checks before broad rollout. Cost optimization should be ongoing governance, not one-time firefighting during budget pressure.",
+      "written_answer_md": "### Signal to interviewer\nI can design cost systems that reduce spend sustainably while preserving product quality and reliability.\n\n### Clarify\nI would clarify cost hotspots, quality thresholds, workload segmentation, and which teams own optimization levers.\n\n### Approach\nBuild a cost efficiency flywheel: granular observability, policy-driven optimization levers, and prioritized execution backlog with impact validation.\n\n### Metrics & instrumentation\nPrimary metric: cost per successful outcome. Secondary metrics: cache hit contribution, model-tier routing mix, and optimization cycle throughput. Guardrails: quality regression rate, latency drift, and support escalation increase.\n\n### Tradeoffs\nMore aggressive optimization reduces spend but can erode user trust if quality drops. Conservative changes protect quality but slow savings realization.\n\n### Risks & mitigations\nRisk: local cost wins harm global experience; mitigate with outcome-level guardrails. Risk: opaque cost attribution; mitigate with request-level cost tracing. Risk: optimization fatigue across teams; mitigate with centralized prioritization.\n\n### Example\nFor an enterprise assistant, low-complexity prompts route to smaller models with caching, while high-stakes financial queries keep premium paths and strict validation.\n\n### 90-second version\nTreat cost optimization as a continuous flywheel: observe unit economics, apply policy-driven levers, and validate every saving against outcome quality before scaling.",
+      "followups": {
+        "clarification": [
+          "Which cost segments should be optimized first for fastest safe savings?",
+          "What quality thresholds are non-negotiable during optimization?"
+        ],
+        "depth": [
+          "How would you implement request-level cost attribution across model routes?",
+          "What governance cadence keeps optimization backlog aligned with product priorities?"
+        ]
+      }
+    }
+  ]
+}
