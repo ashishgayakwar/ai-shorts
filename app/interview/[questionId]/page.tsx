@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import type { ReactElement } from "react";
 import questionsData from "../../../interview_prep/data/questions.json";
 import answersData from "../../../interview_prep/data/answers_master.json";
 
@@ -44,7 +45,7 @@ function deriveSpokenText(markdownLike: string): string {
   return `${words.slice(0, 150).join(" ")}...`;
 }
 
-function renderMarkdownLike(markdown: string): JSX.Element {
+function renderMarkdownLike(markdown: string): ReactElement {
   const lines = markdown.split("\n");
   return (
     <div className="space-y-2">
