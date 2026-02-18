@@ -55,9 +55,6 @@ export default function BasicsPage() {
           <Link href="/case-study-generator" className="ai-header-pill">
             Case Study
           </Link>
-          <Link href="/interview" className="ai-header-pill">
-            Interview
-          </Link>
           <Link href="/" className="ai-header-pill">
             Home
           </Link>
@@ -70,7 +67,6 @@ export default function BasicsPage() {
             <Link href="/swipe?mode=visualize" className="ai-header-pill">Visualize</Link>
             <span className="ai-header-pill ai-header-pill-active">Basics</span>
             <Link href="/case-study-generator" className="ai-header-pill">Case Study</Link>
-            <Link href="/interview" className="ai-header-pill">Interview</Link>
             <Link href="/" className="ai-header-pill">Home</Link>
           </div>
         </details>

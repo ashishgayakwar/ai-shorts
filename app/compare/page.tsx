@@ -254,9 +254,6 @@ export default function ComparePage() {
             Visualize
           </Link>
           <span className="ai-header-pill ai-header-pill-active">Compare</span>
-          <Link href="/interview" className="ai-header-pill">
-            Interview
-          </Link>
           <Link href="/" className="ai-header-pill">
             Home
           </Link>
@@ -268,7 +265,6 @@ export default function ComparePage() {
             <Link href="/swipe" className="ai-header-pill">Cards</Link>
             <Link href="/swipe?mode=visualize" className="ai-header-pill">Visualize</Link>
             <span className="ai-header-pill ai-header-pill-active">Compare</span>
-            <Link href="/interview" className="ai-header-pill">Interview</Link>
             <Link href="/" className="ai-header-pill">Home</Link>
           </div>
         </details>
