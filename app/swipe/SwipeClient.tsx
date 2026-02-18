@@ -348,10 +348,17 @@ export default function SwipeClient(
           <div className="ai-shorts-desktop-actions">
             <button
               type="button"
-              className="ai-header-pill ai-header-pill-active"
+              className="ai-header-pill"
               onClick={() => setMode("cards")}
             >
               Cards
+            </button>
+            <button
+              type="button"
+              className="ai-header-pill ai-header-pill-active"
+              onClick={() => setMode("quiz")}
+            >
+              Quiz
             </button>
             <button
               type="button"
@@ -376,10 +383,17 @@ export default function SwipeClient(
             <div className="ai-shorts-mobile-menu-panel">
               <button
                 type="button"
-                className="ai-header-pill ai-header-pill-active"
+                className="ai-header-pill"
                 onClick={() => setMode("cards")}
               >
                 Cards
+              </button>
+              <button
+                type="button"
+                className="ai-header-pill ai-header-pill-active"
+                onClick={() => setMode("quiz")}
+              >
+                Quiz
               </button>
               <button
                 type="button"
@@ -572,6 +586,13 @@ export default function SwipeClient(
           </button>
           <button
             type="button"
+            className="ai-header-pill"
+            onClick={() => setMode("quiz")}
+          >
+            Quiz
+          </button>
+          <button
+            type="button"
             className="ai-header-pill ai-header-pill-active"
             onClick={() => setMode("visualize")}
           >
@@ -593,6 +614,9 @@ export default function SwipeClient(
           <div className="ai-shorts-mobile-menu-panel">
             <button type="button" className="ai-header-pill" onClick={() => setMode("cards")}>
               Cards
+            </button>
+            <button type="button" className="ai-header-pill" onClick={() => setMode("quiz")}>
+              Quiz
             </button>
             <button type="button" className="ai-header-pill ai-header-pill-active" onClick={() => setMode("visualize")}>
               Visualize
@@ -772,6 +796,13 @@ export default function SwipeClient(
           <button
             type="button"
             className="ai-header-pill"
+            onClick={() => setMode("quiz")}
+          >
+            Quiz
+          </button>
+          <button
+            type="button"
+            className="ai-header-pill"
             onClick={() => setMode("visualize")}
           >
             Visualize
@@ -796,6 +827,9 @@ export default function SwipeClient(
               onClick={() => setMode("cards")}
             >
               Cards
+            </button>
+            <button type="button" className="ai-header-pill" onClick={() => setMode("quiz")}>
+              Quiz
             </button>
             <button type="button" className="ai-header-pill" onClick={() => setMode("visualize")}>
               Visualize

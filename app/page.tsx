@@ -20,16 +20,31 @@ const learningTracks = [
     accent: "from-emerald-400/20 to-cyan-500/5",
   },
   {
+    title: "AI Quiz",
+    href: "/swipe?mode=quiz",
+    tag: "Quiz",
+    desc: "Level-based checks to test concept clarity fast.",
+    accent: "from-sky-400/20 to-cyan-500/5",
+  },
+  {
     title: "Case Studio",
     href: "/case-study-generator",
     tag: "Practice",
     desc: "Generate interview-ready AI PM case simulations.",
     accent: "from-amber-300/20 to-orange-500/5",
   },
+  {
+    title: "Topic QnA",
+    href: "/qna",
+    tag: "QnA",
+    desc: "Browse AI PM interview questions by topic.",
+    accent: "from-violet-300/20 to-cyan-500/5",
+  },
 ];
 
 const headerLinks = [
   { label: "Cards", href: "/swipe" },
+  { label: "Quiz", href: "/swipe?mode=quiz" },
   { label: "Visualize", href: "/swipe?mode=visualize" },
   { label: "Compare", href: "/compare" },
   { label: "Interview", href: "/interview" },
@@ -134,7 +149,7 @@ export default async function Home() {
             </p>
           </section>
 
-          <section className="mt-10 grid gap-4 md:grid-cols-3">
+          <section className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {learningTracks.map((track) => (
               <Link
                 key={track.href}
