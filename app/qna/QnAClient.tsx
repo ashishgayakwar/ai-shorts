@@ -57,7 +57,7 @@ export default function QnAClient({ title, topics, selectedSlug, restoreLastTopi
         </div>
       </header>
 
-      <div className="ai-shorts-hero">
+      <div className="ai-shorts-hero qna-hero">
         <h1 className="ai-shorts-hero-title">{title || "Topic QnA"}</h1>
         <p className="ai-shorts-hero-sub">Explore topic-wise interview questions and answers.</p>
       </div>
@@ -68,13 +68,13 @@ export default function QnAClient({ title, topics, selectedSlug, restoreLastTopi
             No topics found in <code>interview_prep/data/ai_interview_questions.json</code>.
           </div>
         ) : (
-          <div className="mx-auto w-full max-w-7xl">
-            <div className="flex flex-col gap-6 md:flex-row md:items-start">
-              <div className="md:w-[300px] md:shrink-0 md:border-r md:border-white/10 md:pr-6">
+          <div className="w-full px-4 sm:px-6 lg:px-8">
+            <div className="qna-layout">
+              <aside className="qna-sidebar hidden lg:block" aria-label="QnA topics">
                 <TopicSidebar topics={topics} activeSlug={active.slug} />
-              </div>
+              </aside>
 
-              <section className="min-w-0 flex-1 md:pl-2">
+              <section className="qna-content min-w-0">
                 <TopicDropdown
                   value={active.slug}
                   options={topics}

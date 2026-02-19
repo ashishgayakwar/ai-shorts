@@ -49,7 +49,7 @@ export default function QuestionCard({ index, question, answer }: QuestionCardPr
         QUESTION {String(index + 1).padStart(2, "0")}
       </div>
 
-      <h3 className="mt-2 text-sm font-medium leading-7 text-slate-100 sm:text-base">{question}</h3>
+      <h3 className="mt-2 text-base font-medium leading-8 text-slate-100 sm:text-lg">{question}</h3>
 
       <div className="mt-3 rounded-xl border border-white/10 bg-slate-950/35 px-3 py-2 text-sm text-slate-300">
         {answer ? (

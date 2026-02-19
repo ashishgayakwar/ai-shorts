@@ -2,6 +2,17 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Node.js version
+
+This app requires Node.js `>=20.9.0` (Next.js 16 requirement).
+
+If you use `nvm`:
+
+```bash
+nvm install
+nvm use
+```
+
 First, run the development server:
 
 ```bash

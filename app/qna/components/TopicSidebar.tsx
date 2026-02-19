@@ -8,20 +8,19 @@ type TopicSidebarProps = {
 
 export default function TopicSidebar({ topics, activeSlug }: TopicSidebarProps) {
   return (
-    <aside className="hidden h-full md:block">
-      <div className="rounded-2xl border border-white/12 bg-slate-950/55 p-3">
-        <div className="mb-2 px-2 text-[11px] font-semibold tracking-[0.22em] text-cyan-200/85">
-          TOPICS
-        </div>
+    <aside>
+      <div className="flex flex-col rounded-2xl border border-white/12 bg-slate-950/55 p-3">
+        <div className="mb-2 shrink-0 px-2 text-[11px] font-semibold tracking-[0.22em] text-cyan-200/85">TOPICS</div>
 
-        <div className="max-h-[calc(100vh-220px)] space-y-2 overflow-y-auto pr-1">
+        <div className="max-h-[calc(100vh-112px)] space-y-2 overflow-y-auto pr-1 lg:max-h-[calc(100vh-116px)]">
           {topics.map((topic) => {
             const isActive = topic.slug === activeSlug;
             return (
               <Link
                 key={topic.id}
                 href={`/qna/${topic.slug}`}
-                className={`relative flex items-center gap-3 rounded-xl border px-3 py-2.5 transition ${
+                title={topic.topic}
+                className={`relative flex items-start gap-3 rounded-xl border px-3 py-2.5 transition ${
                   isActive
                     ? "border-cyan-300/55 bg-cyan-300/14 text-cyan-100"
                     : "border-white/12 bg-white/[0.02] text-slate-100 hover:-translate-y-[1px] hover:border-cyan-300/35 hover:bg-white/[0.05]"
@@ -34,11 +33,13 @@ export default function TopicSidebar({ topics, activeSlug }: TopicSidebarProps) 
                   aria-hidden
                 />
 
-                <span className={`flex-1 truncate text-sm ${isActive ? "font-semibold" : "font-medium"}`}>
+                <span
+                  className={`flex-1 whitespace-normal break-words text-sm leading-5 ${isActive ? "font-semibold" : "font-medium"}`}
+                >
                   {topic.topic}
                 </span>
 
-                <span className="rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-[10px] tracking-wide text-slate-300">
+                <span className="shrink-0 rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-[10px] tracking-wide text-slate-300">
                   {topic.questions.length} Qs
                 </span>
 
