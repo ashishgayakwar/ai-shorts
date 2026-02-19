@@ -5,6 +5,10 @@ export type QnATopic = {
   id: number;
   topic: string;
   questions: string[];
+  answers?: Array<{
+    q: string;
+    a: string;
+  }>;
 };
 
 export type QnATopicWithSlug = QnATopic & {
@@ -50,16 +54,19 @@ export function getAllTopics(): QnATopicWithSlug[] {
 
   return questionData.topics.map((topic) => {
     const answerTopic = answerTopicById.get(topic.id);
-    const byQuestion = new Map(
-      (answerTopic?.qas ?? []).map((qa) => [qa.q.trim(), qa.a])
-    );
+    const inlineAnswers = Array.isArray(topic.answers) ? topic.answers : [];
+
+    const inlineByQuestion = new Map(inlineAnswers.map((qa) => [qa.q.trim(), qa.a]));
+    const fileByQuestion = new Map((answerTopic?.qas ?? []).map((qa) => [qa.q.trim(), qa.a]));
 
     const qas = topic.questions.map((q, index) => {
-      const direct = byQuestion.get(q.trim());
-      const byIndex = answerTopic?.qas?.[index]?.a;
+      const directInline = inlineByQuestion.get(q.trim());
+      const byIndexInline = inlineAnswers[index]?.a;
+      const directFile = fileByQuestion.get(q.trim());
+      const byIndexFile = answerTopic?.qas?.[index]?.a;
       return {
         q,
-        a: direct ?? byIndex,
+        a: directInline ?? byIndexInline ?? directFile ?? byIndexFile,
       };
     });
 

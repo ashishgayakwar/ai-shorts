@@ -9,12 +9,13 @@ type TopicSidebarProps = {
 export default function TopicSidebar({ topics, activeSlug }: TopicSidebarProps) {
   return (
     <aside>
-      <div className="flex flex-col rounded-2xl border border-white/12 bg-slate-950/55 p-3">
+      <div className="flex h-[calc(100vh-132px)] flex-col rounded-2xl border border-white/12 bg-slate-950/55 p-3">
         <div className="mb-2 shrink-0 px-2 text-[11px] font-semibold tracking-[0.22em] text-cyan-200/85">TOPICS</div>
 
-        <div className="max-h-[calc(100vh-112px)] space-y-2 overflow-y-auto pr-1 lg:max-h-[calc(100vh-116px)]">
-          {topics.map((topic) => {
+        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
+          {topics.map((topic, idx) => {
             const isActive = topic.slug === activeSlug;
+            const sNo = String(idx + 1).padStart(2, "0");
             return (
               <Link
                 key={topic.id}
@@ -26,21 +27,14 @@ export default function TopicSidebar({ topics, activeSlug }: TopicSidebarProps) 
                     : "border-white/12 bg-white/[0.02] text-slate-100 hover:-translate-y-[1px] hover:border-cyan-300/35 hover:bg-white/[0.05]"
                 }`}
               >
-                <span
-                  className={`h-1.5 w-1.5 rounded-full ${
-                    isActive ? "bg-cyan-300" : "bg-white/35"
-                  }`}
-                  aria-hidden
-                />
+                <span className={`shrink-0 text-[11px] font-semibold tracking-[0.08em] ${isActive ? "text-cyan-200" : "text-slate-400"}`}>
+                  {sNo}
+                </span>
 
                 <span
                   className={`flex-1 whitespace-normal break-words text-sm leading-5 ${isActive ? "font-semibold" : "font-medium"}`}
                 >
                   {topic.topic}
-                </span>
-
-                <span className="shrink-0 rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-[10px] tracking-wide text-slate-300">
-                  {topic.questions.length} Qs
                 </span>
 
                 {isActive ? (
