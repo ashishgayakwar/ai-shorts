@@ -55,6 +55,18 @@ export default function QnAClient({ title, topics, selectedSlug, restoreLastTopi
           <span className="ai-header-pill ai-header-pill-active">QnA</span>
           <Link href="/" className="ai-header-pill">Home</Link>
         </div>
+
+        <details className="ai-shorts-mobile-menu">
+          <summary>Menu</summary>
+          <div className="ai-shorts-mobile-menu-panel">
+            <Link href="/swipe" className="ai-header-pill">Cards</Link>
+            <Link href="/swipe?mode=visualize" className="ai-header-pill">Visualize</Link>
+            <Link href="/compare" className="ai-header-pill">Compare</Link>
+            <Link href="/interview" className="ai-header-pill">Interview</Link>
+            <span className="ai-header-pill ai-header-pill-active">QnA</span>
+            <Link href="/" className="ai-header-pill">Home</Link>
+          </div>
+        </details>
       </header>
 
       <div className="ai-shorts-hero qna-hero">
