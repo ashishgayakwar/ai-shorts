@@ -44,41 +44,61 @@ export default function QuestionCard({ index, question, answer }: QuestionCardPr
   const hasStructuredSections = sections.some((section) => section.heading);
 
   return (
-    <article className="rounded-2xl border border-white/12 bg-white/[0.04] p-4 sm:p-5">
-      <div className="text-xs font-semibold tracking-[0.16em] text-cyan-200">
-        QUESTION {String(index + 1).padStart(2, "0")}
-      </div>
-
-      <h3 className="mt-2 text-base font-medium leading-8 text-slate-100 sm:text-lg">{question}</h3>
-
-      <div className="mt-3 rounded-xl border border-white/10 bg-slate-950/35 px-3 py-2 text-sm text-slate-300">
-        {answer ? (
-          hasStructuredSections ? (
-            <div className="space-y-4">
-              {sections.map((section, idx) => (
-                <section key={`${idx}-${section.heading.slice(0, 20)}`} className="space-y-2">
-                  {section.heading ? (
-                    <h4 className="text-sm font-semibold tracking-[0.06em] text-cyan-100">
-                      {section.heading}
-                    </h4>
-                  ) : null}
-                  {section.body ? (
-                    <div className="prose prose-invert prose-sm max-w-none">
-                      <ReactMarkdown>{section.body}</ReactMarkdown>
-                    </div>
-                  ) : null}
-                </section>
-              ))}
+    <article className="border-b border-white/10 py-4 sm:py-5">
+      <details className="group">
+        <summary className="cursor-pointer list-none">
+          <div className="flex items-start justify-between gap-2">
+            <div className="text-xs font-semibold tracking-[0.16em] text-cyan-200">
+              QUESTION {String(index + 1).padStart(2, "0")}
             </div>
+            <span
+              className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-cyan-200/70 bg-cyan-300/10 text-cyan-100 transition-transform group-open:rotate-180"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none">
+                <path
+                  d="M5 8l5 5 5-5"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </div>
+          <h3 className="mt-2 text-base font-medium leading-8 text-slate-100 sm:text-lg">{question}</h3>
+          <div className="mt-1 text-xs text-slate-400">Tap to expand</div>
+        </summary>
+
+        <div className="mt-3 rounded-xl border border-white/10 bg-slate-950/35 px-3 py-2 text-sm text-slate-300">
+          {answer ? (
+            hasStructuredSections ? (
+              <div className="space-y-4">
+                {sections.map((section, idx) => (
+                  <section key={`${idx}-${section.heading.slice(0, 20)}`} className="space-y-2">
+                    {section.heading ? (
+                      <h4 className="text-sm font-semibold tracking-[0.06em] text-cyan-100">
+                        {section.heading}
+                      </h4>
+                    ) : null}
+                    {section.body ? (
+                      <div className="prose prose-invert prose-sm max-w-none">
+                        <ReactMarkdown>{section.body}</ReactMarkdown>
+                      </div>
+                    ) : null}
+                  </section>
+                ))}
+              </div>
+            ) : (
+              <div className="prose prose-invert prose-sm max-w-none">
+                <ReactMarkdown>{answer}</ReactMarkdown>
+              </div>
+            )
           ) : (
-            <div className="prose prose-invert prose-sm max-w-none">
-              <ReactMarkdown>{answer}</ReactMarkdown>
-            </div>
-          )
-        ) : (
-          <span className="text-slate-400">Answer coming soon</span>
-        )}
-      </div>
+            <span className="text-slate-400">Answer coming soon</span>
+          )}
+        </div>
+      </details>
     </article>
   );
 }
