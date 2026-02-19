@@ -67,7 +67,6 @@ export default function QuestionCard({ index, question, answer }: QuestionCardPr
             </span>
           </div>
           <h3 className="mt-2 text-base font-medium leading-8 text-slate-100 sm:text-lg">{question}</h3>
-          <div className="mt-1 text-xs text-slate-400">Tap to expand</div>
         </summary>
 
         <div className="mt-3 rounded-xl border border-white/10 bg-slate-950/35 px-3 py-2 text-sm text-slate-300">
