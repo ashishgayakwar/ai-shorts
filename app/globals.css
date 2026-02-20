@@ -234,6 +234,10 @@ body {
   .ai-shorts-shell > .ai-shorts-topbar-full + * {
     margin-top: 110px !important;
   }
+
+  .ai-shorts-shell > .ai-shorts-topbar-full + .ai-shorts-hero.ai-shorts-hero-compact {
+    margin-top: 82px !important;
+  }
 }
 
 .ai-shorts-brand-title {
@@ -1111,6 +1115,28 @@ body {
     padding: 8px 12px 20px;
   }
 
+  .ai-shorts-hero.ai-shorts-hero-compact {
+    margin-top: 0;
+    padding-top: 6px;
+    padding-bottom: 4px;
+  }
+
+  .swipe-card {
+    display: block;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .swipe-card-inner {
+    flex: none;
+    overflow-y: visible;
+  }
+
+  .swipe-card-header {
+    position: static;
+  }
+
   .swipe-card,
   .quiz-card {
     max-height: 100%;
@@ -1119,8 +1145,8 @@ body {
 
 @media (max-width: 640px) {
   .swipe-card {
-    min-height: 74vh;
-    height: 74vh;
+    min-height: 0;
+    height: auto;
     border-radius: 20px;
   }
 

@@ -95,9 +95,6 @@ export default function QnAClient({ title, topics, selectedSlug, restoreLastTopi
 
                 <div className="mb-6 mt-4 md:mt-0">
                   <h2 className="text-2xl font-semibold text-white sm:text-3xl md:text-4xl">{active.topic}</h2>
-                  <p className="mt-2 text-sm text-slate-300 sm:text-base">
-                    {active.questions.length} questions. Answers will appear as they are added.
-                  </p>
                 </div>
 
                 <div className="grid max-w-[900px] gap-3 sm:gap-4">

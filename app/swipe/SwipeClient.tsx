@@ -672,9 +672,6 @@ export default function SwipeClient(
                     <div className="swipe-card-header">
                       <div className="swipe-card-meta-row">
                         <span className="swipe-card-tag">Today’s visual</span>
-                        <span className="swipe-card-count">
-                          {visualIndex + 1} / {visualTotal}
-                        </span>
                       </div>
 
                       <div className="swipe-card-title">{visualTopic.title}</div>
@@ -768,12 +765,6 @@ export default function SwipeClient(
     .replace("· foundation topic", "")
     .trim();
 
-  const currentModule = conceptData.module;
-  const currentModuleName =
-    currentModule && MODULE_META_TYPED[currentModule]
-      ? MODULE_META_TYPED[currentModule]
-      : undefined;
-
   return (
     <div className="ai-shorts-shell">
       {/* HEADER */}
@@ -842,7 +833,7 @@ export default function SwipeClient(
       </header>
 
       {/* HERO */}
-      <div className="ai-shorts-hero">
+      <div className="ai-shorts-hero ai-shorts-hero-compact">
         <h1 className="ai-shorts-hero-title">AI Concepts</h1>
         <p className="ai-shorts-hero-sub">Learn one swipe at a time</p>
       </div>
@@ -852,7 +843,6 @@ export default function SwipeClient(
         <div className="ai-shorts-main">
           <div className="module-filter-bar">
             <label className="module-filter-label">
-              Jump to module:
               <div className="module-filter-wrapper">
                 <select
                   className="module-filter-select"
@@ -889,27 +879,6 @@ export default function SwipeClient(
             >
               <div className="swipe-card-inner">
                 <div className="swipe-card-header">
-                  <div className="flex justify-between">
-                    {/* MODULE PILL */}
-                    {currentModule && (
-                      <div className="swipe-card-meta-row">
-                        <span className="ai-shorts-chip">
-                          <span className="ai-shorts-chip-dot" />
-                          <span>
-                            Module {currentModule}
-                            {currentModuleName ? `: ${currentModuleName}` : ""}
-                          </span>
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="swipe-card-meta-row">
-                      <span className="swipe-card-count">
-                        {index + 1} / {total}
-                      </span>
-                    </div>
-                  </div>
-
                   <div className="swipe-card-title">{cleanTitle}</div>
                 </div>
 
