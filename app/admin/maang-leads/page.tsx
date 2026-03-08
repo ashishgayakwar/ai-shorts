@@ -1,15 +1,16 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
+import LeadsTable from "./LeadsTable";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import UsersTable from "./UsersTable";
 
-export default async function UsersPage() {
+export default async function MaangLeadsPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
-    redirect("/api/auth/signin?callbackUrl=/admin/users");
+    redirect("/api/auth/signin?callbackUrl=/admin/maang-leads");
   }
 
   const adminEmails = (process.env.ADMIN_EMAILS || "")
@@ -21,32 +22,32 @@ export default async function UsersPage() {
     redirect("/");
   }
 
-  const users = await prisma.user.findMany({
+  const leads = await prisma.maangLead.findMany({
     orderBy: { createdAt: "desc" },
   });
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
       <div className="mx-auto max-w-7xl px-6 py-10">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold">Users</h1>
+            <h1 className="text-2xl font-semibold">MAANG Leads</h1>
             <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-              {users.length} total
+              {leads.length} total captured leads
             </p>
           </div>
-          <a
-            href="/admin/maang-leads"
+          <Link
+            href="/admin/users"
             className="rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm font-semibold transition hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
           >
-            View MAANG Leads
-          </a>
+            View Users
+          </Link>
         </div>
 
-        <UsersTable
-          users={users.map((u) => ({
-            ...u,
-            createdAt: u.createdAt.toISOString(),
+        <LeadsTable
+          leads={leads.map((item) => ({
+            ...item,
+            createdAt: item.createdAt.toISOString(),
           }))}
         />
       </div>

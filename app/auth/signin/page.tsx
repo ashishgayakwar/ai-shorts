@@ -86,10 +86,6 @@ export default function SignInPage() {
             </div>
           </div>
         </main>
-
-        <footer className="text-xs text-white/35">
-          Need help? Contact support at hello@aipmworld.com
-        </footer>
       </div>
     </div>
   );

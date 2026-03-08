@@ -82,3 +82,16 @@ model GenerationLog {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@index([userId, createdAt])
 }
+
+model MaangLead {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  email     String
+  role      String
+  source    String?  @default("maang_interview_series")
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([createdAt])
+}

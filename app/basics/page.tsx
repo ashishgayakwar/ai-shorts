@@ -194,7 +194,7 @@ export default function BasicsPage() {
         </main>
 
         {/* NAVIGATION */}
-        <footer className="fixed bottom-0 left-0 right-0 z-20 border-t border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80">
+        <footer className="sticky bottom-0 z-20 mt-8 border-t border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80">
           <div className="mx-auto flex max-w-3xl justify-between px-6 py-4">
             <button
               onClick={prev}

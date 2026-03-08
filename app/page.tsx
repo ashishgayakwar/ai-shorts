@@ -40,6 +40,14 @@ const learningTracks = [
     desc: "Browse AI PM interview questions by topic.",
     accent: "from-violet-300/20 to-cyan-500/5",
   },
+  {
+    title: "M-A-A-N-G Interview Series",
+    href: "/maang-interview-series",
+    tag: "PDF Guide",
+    desc: "Download the MAANG prep PDF.",
+    descClassName: "text-xs leading-5",
+    accent: "from-fuchsia-300/20 to-rose-500/5",
+  },
 ];
 
 const headerLinks = [
@@ -54,6 +62,11 @@ const headerLinks = [
 export default async function Home() {
   const session = await getServerSession(authOptions);
   const userLabel = session?.user?.name || session?.user?.email;
+  const adminEmails = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+  const isAdmin = !!session?.user?.email && adminEmails.includes(session.user.email.toLowerCase());
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#040b18] text-slate-100">
@@ -95,14 +108,16 @@ export default async function Home() {
                   <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-slate-300">
                     {userLabel}
                   </span>
+                  {isAdmin ? (
+                    <Link
+                      href="/admin/users"
+                      className="rounded-full border border-white/25 px-3 py-1 text-xs text-slate-100 transition hover:bg-white/10"
+                    >
+                      Admin
+                    </Link>
+                  ) : null}
                   <Link
-                    href="/admin/users"
-                    className="rounded-full border border-white/25 px-3 py-1 text-xs text-slate-100 transition hover:bg-white/10"
-                  >
-                    Admin
-                  </Link>
-                  <Link
-                    href="/api/auth/signout?callbackUrl=/"
+                    href="/auth/signout?callbackUrl=/"
                     className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900 transition hover:bg-cyan-100"
                   >
                     Sign out
@@ -162,7 +177,9 @@ export default async function Home() {
                     {track.tag}
                   </span>
                   <h2 className="mt-3 text-xl font-semibold text-white">{track.title}</h2>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">{track.desc}</p>
+                  <p className={`mt-2 text-slate-300 ${track.descClassName || "text-sm leading-6"}`}>
+                    {track.desc}
+                  </p>
                   <div className="mt-4 flex justify-end">
                     <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-cyan-200/40 bg-cyan-300/15 text-base font-semibold text-cyan-100 transition group-hover:translate-x-0.5 group-hover:bg-cyan-300/25 group-hover:text-cyan-50">
                       ›
@@ -174,13 +191,6 @@ export default async function Home() {
           </section>
 
         </main>
-
-        <footer className="border-t border-white/10 pt-5 text-xs text-slate-400">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <span>© {new Date().getFullYear()} AI PM World</span>
-            <span>Basics · Swipe · Compare · Case Studio</span>
-          </div>
-        </footer>
       </div>
     </div>
   );

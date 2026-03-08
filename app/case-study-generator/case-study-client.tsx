@@ -111,12 +111,16 @@ function safeArr<T>(v: unknown): T[] {
   return Array.isArray(v) ? (v as T[]) : [];
 }
 
-function isCaseType(v: any): v is CaseType {
-  return CASE_TYPES.includes(v);
+function asObj(v: unknown): Record<string, unknown> {
+  return v && typeof v === "object" ? (v as Record<string, unknown>) : {};
 }
 
-function isDifficulty(v: any): v is Difficulty {
-  return DIFFICULTY.includes(v);
+function isCaseType(v: unknown): v is CaseType {
+  return typeof v === "string" && CASE_TYPES.includes(v as CaseType);
+}
+
+function isDifficulty(v: unknown): v is Difficulty {
+  return typeof v === "string" && DIFFICULTY.includes(v as Difficulty);
 }
 
 // snake_case -> CamelCase (for dropdown display)
@@ -129,93 +133,110 @@ function toCamelCaseLabel(value: string) {
 }
 
 // Best-effort “schema” normalization so the UI doesn’t crash if LLM returns odd shapes.
-function normalizePacket(raw: any): CasePacket | null {
-  if (!raw || typeof raw !== "object") return null;
+function normalizePacket(raw: unknown): CasePacket | null {
+  const rawObj = asObj(raw);
+  if (!Object.keys(rawObj).length) return null;
 
-  const difficulty = isDifficulty(raw.difficulty) ? raw.difficulty : "medium";
-  const case_type = isCaseType(raw.case_type) ? raw.case_type : "product_design";
+  const difficulty = isDifficulty(rawObj.difficulty) ? rawObj.difficulty : "medium";
+  const case_type = isCaseType(rawObj.case_type) ? rawObj.case_type : "product_design";
 
   const packet: CasePacket = {
-    title: safeStr(raw.title),
-    company: safeStr(raw.company),
-    industry: safeStr(raw.industry),
+    title: safeStr(rawObj.title),
+    company: safeStr(rawObj.company),
+    industry: safeStr(rawObj.industry),
     difficulty,
     case_type,
 
-    interviewer_prompt: safeStr(raw.interviewer_prompt),
-    problem_statement: safeStr(raw.problem_statement),
+    interviewer_prompt: safeStr(rawObj.interviewer_prompt),
+    problem_statement: safeStr(rawObj.problem_statement),
 
     recent_change: {
-      what_changed: safeStr(raw?.recent_change?.what_changed),
-      when: safeStr(raw?.recent_change?.when),
-      why_it_matters: safeStr(raw?.recent_change?.why_it_matters),
+      what_changed: safeStr(asObj(rawObj.recent_change).what_changed),
+      when: safeStr(asObj(rawObj.recent_change).when),
+      why_it_matters: safeStr(asObj(rawObj.recent_change).why_it_matters),
     },
 
-    context: safeStr(raw.context),
+    context: safeStr(rawObj.context),
 
-    funnel_breakdown: safeArr<FunnelRow>(raw.funnel_breakdown).map((r: any) => ({
-      step: safeStr(r?.step),
-      baseline: safeStr(r?.baseline),
-      current: safeStr(r?.current),
-      delta: safeStr(r?.delta),
-      notes: safeStr(r?.notes),
-    })),
+    funnel_breakdown: safeArr<unknown>(rawObj.funnel_breakdown).map((r) => {
+      const row = asObj(r);
+      return {
+        step: safeStr(row.step),
+        baseline: safeStr(row.baseline),
+        current: safeStr(row.current),
+        delta: safeStr(row.delta),
+        notes: safeStr(row.notes),
+      };
+    }),
 
     economics_snapshot: {
-      unit_economics: safeArr<EconomicsMetric>(raw?.economics_snapshot?.unit_economics).map(
-        (u: any) => ({
-          metric: safeStr(u?.metric),
-          value: safeStr(u?.value),
-          notes: safeStr(u?.notes),
-        })
-      ),
-      why_this_matters: safeStr(raw?.economics_snapshot?.why_this_matters),
+      unit_economics: safeArr<unknown>(asObj(rawObj.economics_snapshot).unit_economics).map((u) => {
+        const metric = asObj(u);
+        return {
+          metric: safeStr(metric.metric),
+          value: safeStr(metric.value),
+          notes: safeStr(metric.notes),
+        };
+      }),
+      why_this_matters: safeStr(asObj(rawObj.economics_snapshot).why_this_matters),
     },
 
-    constraints: safeArr<ConstraintRow>(raw.constraints).map((c: any) => ({
-      constraint: safeStr(c?.constraint),
-      why: safeStr(c?.why),
-    })),
+    constraints: safeArr<unknown>(rawObj.constraints).map((c) => {
+      const row = asObj(c);
+      return {
+        constraint: safeStr(row.constraint),
+        why: safeStr(row.why),
+      };
+    }),
 
-    candidate_tasks: safeArr<string>(raw.candidate_tasks)
-      .map((x: any) => safeStr(x))
+    candidate_tasks: safeArr<unknown>(rawObj.candidate_tasks)
+      .map((x) => safeStr(x))
       .filter(Boolean),
 
-    solution_space: safeArr<SolutionIdea>(raw.solution_space).map((s: any) => ({
-      idea: safeStr(s?.idea),
-      why: safeStr(s?.why),
-      metrics_impacted: safeArr<string>(s?.metrics_impacted)
-        .map((m: any) => safeStr(m))
-        .filter(Boolean),
-      risks: safeArr<string>(s?.risks)
-        .map((r: any) => safeStr(r))
-        .filter(Boolean),
-    })),
+    solution_space: safeArr<unknown>(rawObj.solution_space).map((s) => {
+      const idea = asObj(s);
+      return {
+        idea: safeStr(idea.idea),
+        why: safeStr(idea.why),
+        metrics_impacted: safeArr<unknown>(idea.metrics_impacted)
+          .map((m) => safeStr(m))
+          .filter(Boolean),
+        risks: safeArr<unknown>(idea.risks)
+          .map((r) => safeStr(r))
+          .filter(Boolean),
+      };
+    }),
 
-    interviewer_followups: safeArr<Followup>(raw.interviewer_followups).map((f: any) => ({
-      question: safeStr(f?.question),
-      intent: safeStr(f?.intent),
-      strong_answer: safeStr(f?.strong_answer),
-      weak_answer: safeStr(f?.weak_answer),
-    })),
+    interviewer_followups: safeArr<unknown>(rawObj.interviewer_followups).map((f) => {
+      const follow = asObj(f);
+      return {
+        question: safeStr(follow.question),
+        intent: safeStr(follow.intent),
+        strong_answer: safeStr(follow.strong_answer),
+        weak_answer: safeStr(follow.weak_answer),
+      };
+    }),
 
     mvp: {
-      scope: safeArr<string>(raw?.mvp?.scope)
-        .map((x: any) => safeStr(x))
+      scope: safeArr<unknown>(asObj(rawObj.mvp).scope)
+        .map((x) => safeStr(x))
         .filter(Boolean),
-      out_of_scope: safeArr<string>(raw?.mvp?.out_of_scope)
-        .map((x: any) => safeStr(x))
+      out_of_scope: safeArr<unknown>(asObj(rawObj.mvp).out_of_scope)
+        .map((x) => safeStr(x))
         .filter(Boolean),
     },
 
-    experiment_plan: safeArr<Experiment>(raw.experiment_plan).map((e: any) => ({
-      experiment: safeStr(e?.experiment),
-      primary_metric: safeStr(e?.primary_metric),
-      guardrails: safeArr<string>(e?.guardrails)
-        .map((g: any) => safeStr(g))
-        .filter(Boolean),
-      duration: safeStr(e?.duration),
-    })),
+    experiment_plan: safeArr<unknown>(rawObj.experiment_plan).map((e) => {
+      const exp = asObj(e);
+      return {
+        experiment: safeStr(exp.experiment),
+        primary_metric: safeStr(exp.primary_metric),
+        guardrails: safeArr<unknown>(exp.guardrails)
+          .map((g) => safeStr(g))
+          .filter(Boolean),
+        duration: safeStr(exp.duration),
+      };
+    }),
   };
 
   // Hard minimums for “interviewer-grade packet”
@@ -419,7 +440,11 @@ export default function CaseStudyClient() {
   const [error, setError] = useState<string>("");
 
   const metaBadges = useMemo(() => {
-    const tones: Record<string, any> = { easy: "green", medium: "amber", hard: "red" };
+    const tones: Record<string, "green" | "amber" | "red"> = {
+      easy: "green",
+      medium: "amber",
+      hard: "red",
+    };
     const c = packet?.company || company || "Company";
     const ind = packet?.industry || industry || "Industry";
     const d = packet?.difficulty || difficulty;
@@ -495,8 +520,12 @@ export default function CaseStudyClient() {
 
       setPacket(normalized);
       setRawJson(JSON.stringify(raw, null, 2));
-    } catch (err: any) {
-      setError(err?.message || "Something went wrong");
+    } catch (err: unknown) {
+      setError(
+        typeof err === "object" && err !== null && "message" in err
+          ? String((err as { message?: string }).message || "Something went wrong")
+          : "Something went wrong"
+      );
     } finally {
       setLoading(false);
       globalLoading.stop();

@@ -3,6 +3,7 @@ import { Lexend, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import Providers from "./providers";
+import GlobalFooter from "./GlobalFooter";
 
 const lexend = Lexend({
   variable: "--font-lexend",
@@ -79,7 +80,12 @@ export default function RootLayout({
           />
         </noscript>
 
-        <Providers>{children}</Providers>
+        <div className="flex min-h-screen flex-col">
+          <div className="flex-1">
+            <Providers>{children}</Providers>
+          </div>
+          <GlobalFooter />
+        </div>
       </body>
     </html>
   );

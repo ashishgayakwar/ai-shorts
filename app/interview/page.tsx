@@ -11,7 +11,10 @@ type InterviewQuestion = {
 };
 
 export default function InterviewPage() {
-  const questions = (questionsData.questions ?? []) as InterviewQuestion[];
+  const questions = useMemo(
+    () => (Array.isArray(questionsData.questions) ? (questionsData.questions as InterviewQuestion[]) : []),
+    []
+  );
   const pageSize = 10;
 
   const categories = useMemo(

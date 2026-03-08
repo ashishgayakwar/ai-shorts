@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { ReactElement } from "react";
 import questionsData from "../../../interview_prep/data/questions.json";
@@ -94,12 +94,16 @@ export default function InterviewDetailPage() {
   const { questionId } = useParams() as { questionId: string };
   const id = decodeURIComponent(String(questionId || "")).trim();
 
-  const questions = Array.isArray((questionsData as any).questions)
-    ? ((questionsData as any).questions as InterviewQuestion[])
-    : [];
-  const answers = Array.isArray((answersData as any).answers)
-    ? ((answersData as any).answers as InterviewAnswer[])
-    : [];
+  const questionsDataObj = questionsData as { questions?: InterviewQuestion[] };
+  const answersDataObj = answersData as { answers?: InterviewAnswer[] };
+  const questions = useMemo(
+    () => (Array.isArray(questionsDataObj.questions) ? questionsDataObj.questions : []),
+    [questionsDataObj.questions]
+  );
+  const answers = useMemo(
+    () => (Array.isArray(answersDataObj.answers) ? answersDataObj.answers : []),
+    [answersDataObj.answers]
+  );
 
   const categories = useMemo(
     () => Array.from(new Set(questions.map((q) => q.category))),
@@ -118,10 +122,7 @@ export default function InterviewDetailPage() {
 
   const [selectedCategory, setSelectedCategory] = useState(currentQuestion?.category ?? "all");
   const [answerMode, setAnswerMode] = useState<"spoken" | "written">("written");
-
-  useEffect(() => {
-    if (currentQuestion) setSelectedCategory(currentQuestion.category);
-  }, [currentQuestion?.question_id]);
+  const selectedCategoryValue = currentQuestion?.category ?? selectedCategory;
 
   const writtenRaw =
     currentAnswer?.written_answer_md ?? currentAnswer?.answer_md ?? "Answer not generated yet";
@@ -185,7 +186,7 @@ export default function InterviewDetailPage() {
               <div className="swipe-card-section-title !mb-1">FILTER BY CATEGORY</div>
               <select
                 className="w-full rounded-full border border-white/20 bg-white/[0.04] px-3 py-2 text-sm text-slate-100 outline-none"
-                value={selectedCategory}
+                value={selectedCategoryValue}
                 onChange={(e) => handleCategoryChange(e.target.value)}
               >
                 <option value="all">All categories</option>

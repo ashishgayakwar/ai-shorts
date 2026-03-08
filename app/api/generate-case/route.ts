@@ -21,42 +21,6 @@ const RATE_LIMIT_MAX = 1;
 const RATE_LIMIT_DAILY_MAX = 5;
 const MAX_BODY_BYTES = 100_000;
 
-type RateLimitEntry = { count: number; resetAt: number };
-
-const rateLimitStore: Map<string, RateLimitEntry> =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (globalThis as any).__rateLimitStore || new Map();
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(globalThis as any).__rateLimitStore = rateLimitStore;
-
-function getClientIp(req: Request) {
-  const xff = req.headers.get("x-forwarded-for");
-  if (xff) return xff.split(",")[0].trim();
-  const xri = req.headers.get("x-real-ip");
-  if (xri) return xri.trim();
-  return "unknown";
-}
-
-function checkRateLimit(key: string) {
-  const now = Date.now();
-  const entry = rateLimitStore.get(key);
-
-  if (!entry || now > entry.resetAt) {
-    const resetAt = now + RATE_LIMIT_WINDOW_MS;
-    const next = { count: 1, resetAt };
-    rateLimitStore.set(key, next);
-    return { allowed: true, remaining: RATE_LIMIT_MAX - 1, resetAt };
-  }
-
-  if (entry.count >= RATE_LIMIT_MAX) {
-    return { allowed: false, remaining: 0, resetAt: entry.resetAt };
-  }
-
-  entry.count += 1;
-  rateLimitStore.set(key, entry);
-  return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count, resetAt: entry.resetAt };
-}
-
 function startOfUtcDay(d: Date) {
   return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
 }
@@ -81,12 +45,12 @@ const ALLOWED_DIFFICULTY = ["easy", "medium", "hard"] as const;
 type CaseType = (typeof ALLOWED_CASE_TYPES)[number];
 type Difficulty = (typeof ALLOWED_DIFFICULTY)[number];
 
-function isAllowedCaseType(v: any): v is CaseType {
-  return ALLOWED_CASE_TYPES.includes(v);
+function isAllowedCaseType(v: unknown): v is CaseType {
+  return typeof v === "string" && ALLOWED_CASE_TYPES.includes(v as CaseType);
 }
 
-function isAllowedDifficulty(v: any): v is Difficulty {
-  return ALLOWED_DIFFICULTY.includes(v);
+function isAllowedDifficulty(v: unknown): v is Difficulty {
+  return typeof v === "string" && ALLOWED_DIFFICULTY.includes(v as Difficulty);
 }
 
 function pickRandom<T>(arr: readonly T[]) {
@@ -510,9 +474,13 @@ GOLD STANDARD SCHEMA
 ------------------------------ */
 
 function schemaDescription(include_framework: boolean) {
+  const frameworkNote = include_framework
+    ? "Framework output is expected where relevant."
+    : "Framework output can be concise if not required.";
   // include_framework currently kept for future extension; schema stays stable
   return `
 Return ONLY valid JSON.
+${frameworkNote}
 
 {
 "title":"",
@@ -612,13 +580,17 @@ function normalizeSteps(steps: string[]) {
   return steps.map((s) => s.trim().toLowerCase());
 }
 
-function validateFunnelAgainstTemplate(funnel: any, templateSteps: string[]) {
+function validateFunnelAgainstTemplate(funnel: unknown, templateSteps: string[]) {
   if (!Array.isArray(funnel)) return false;
 
   const expected = normalizeSteps(templateSteps);
   const got = normalizeSteps(
     funnel
-      .map((r: any) => (typeof r?.step === "string" ? r.step : ""))
+      .map((r: unknown) =>
+        typeof r === "object" && r !== null && "step" in r && typeof r.step === "string"
+          ? r.step
+          : ""
+      )
       .filter(Boolean)
   );
 
@@ -631,12 +603,21 @@ function validateFunnelAgainstTemplate(funnel: any, templateSteps: string[]) {
   return true;
 }
 
-function coerceFunnelToTemplate(rawFunnel: any, templateSteps: string[]) {
-  const map = new Map<string, any>();
+type FunnelLikeRow = {
+  step?: string;
+  baseline?: string;
+  current?: string;
+  delta?: string;
+  notes?: string;
+};
+
+function coerceFunnelToTemplate(rawFunnel: unknown, templateSteps: string[]) {
+  const map = new Map<string, FunnelLikeRow>();
   if (Array.isArray(rawFunnel)) {
     for (const row of rawFunnel) {
-      const k = typeof row?.step === "string" ? row.step.trim().toLowerCase() : "";
-      if (k) map.set(k, row);
+      const rowObj = typeof row === "object" && row !== null ? (row as FunnelLikeRow) : {};
+      const k = typeof rowObj.step === "string" ? rowObj.step.trim().toLowerCase() : "";
+      if (k) map.set(k, rowObj);
     }
   }
 
@@ -854,7 +835,7 @@ Return JSON only.
     });
 
     const jsonText1 = completion1.choices[0].message.content || "{}";
-    let result: any = JSON.parse(jsonText1);
+    let result = JSON.parse(jsonText1) as Record<string, unknown>;
 
     // Validate funnel. If wrong, retry once with stricter instruction.
     const funnelOk = validateFunnelAgainstTemplate(result?.funnel_breakdown, template.steps);
@@ -887,7 +868,7 @@ Return ONLY valid JSON in the same schema. Do not remove other fields.
       });
 
       const jsonText2 = completion2.choices[0].message.content || "{}";
-      result = JSON.parse(jsonText2);
+      result = JSON.parse(jsonText2) as Record<string, unknown>;
 
       // If still not ok, coerce programmatically (never break UI)
       if (!validateFunnelAgainstTemplate(result?.funnel_breakdown, template.steps)) {
@@ -913,7 +894,7 @@ Return ONLY valid JSON in the same schema. Do not remove other fields.
     });
 
     return NextResponse.json({ result });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error(e);
     try {
       const session = await getServerSession(authOptions);
@@ -925,7 +906,12 @@ Return ONLY valid JSON in the same schema. Do not remove other fields.
             data: {
               userId: user.id,
               success: false,
-              error: String(e?.message || "Unknown error").slice(0, 500),
+              error:
+                String(
+                  typeof e === "object" && e !== null && "message" in e
+                    ? (e as { message?: string }).message
+                    : "Unknown error"
+                ).slice(0, 500),
             },
           });
         }

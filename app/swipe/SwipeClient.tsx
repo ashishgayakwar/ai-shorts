@@ -682,6 +682,7 @@ export default function SwipeClient(
                       <div className="visual-label">Concept Overview</div>
 
                       <div className="visual-image-wrapper">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={visualTopic.heroImage}
                           alt={visualTopic.title + " overview"}
@@ -696,6 +697,7 @@ export default function SwipeClient(
                       <div className="visual-label">Deep Dive</div>
 
                       <div className="visual-image-wrapper secondary">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={visualTopic.detailImage}
                           alt={visualTopic.title + " detail"}
