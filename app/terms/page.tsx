@@ -12,7 +12,7 @@ export default function TermsPage() {
           abusive traffic, misuse, or policy violations.
         </p>
         <p className="text-sm leading-7 text-slate-300">
-          For support and legal communication, contact hello@aipmworld.com.
+          For support and legal communication, contact ashishgayakwar3@gmail.com.
         </p>
       </div>
     </main>

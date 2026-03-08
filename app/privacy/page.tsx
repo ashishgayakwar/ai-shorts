@@ -13,7 +13,7 @@ export default function PrivacyPage() {
           service improvements. We do not sell personal information.
         </p>
         <p className="text-sm leading-7 text-slate-300">
-          For deletion or data access requests, contact hello@aipmworld.com.
+          For deletion or data access requests, contact ashishgayakwar3@gmail.com.
         </p>
       </div>
     </main>

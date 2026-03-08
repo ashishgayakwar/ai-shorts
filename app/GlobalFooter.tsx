@@ -32,11 +32,10 @@ export default function GlobalFooter() {
         <div className="grid gap-2 text-xs text-slate-400 sm:grid-cols-2">
           <p>
             Contact:{" "}
-            <a href="mailto:hello@aipmworld.com" className="underline underline-offset-2">
-              hello@aipmworld.com
+            <a href="mailto:ashishgayakwar3@gmail.com" className="underline underline-offset-2">
+              ashishgayakwar3@gmail.com
             </a>
           </p>
-          <p className="sm:text-right">Support Hours: Mon-Sat, 10 AM - 7 PM IST</p>
           <Link href="/privacy" className="underline underline-offset-2">
             Privacy Policy
           </Link>
