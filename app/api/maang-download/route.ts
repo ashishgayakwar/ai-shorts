@@ -16,9 +16,13 @@ export async function GET() {
     );
   }
 
-  const hostedPdfUrl = process.env.MAANG_PDF_URL;
+  const hostedPdfUrl = process.env.MAANG_PDF_URL?.trim();
   if (hostedPdfUrl) {
-    const response = NextResponse.redirect(hostedPdfUrl, 302);
+    const normalizedHostedUrl =
+      /^https?:\/\/[^/]+\/?$/.test(hostedPdfUrl)
+        ? `${hostedPdfUrl.replace(/\/+$/, "")}/maang-interview-series.pdf`
+        : hostedPdfUrl;
+    const response = NextResponse.redirect(normalizedHostedUrl, 302);
     response.cookies.set({
       name: "maang_dl_token",
       value: "",

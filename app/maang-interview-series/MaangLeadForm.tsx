@@ -37,10 +37,13 @@ export default function MaangLeadForm() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [country, setCountry] = useState("");
   const [role, setRole] = useState("");
+  const [website, setWebsite] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [toast, setToast] = useState<ToastState>(null);
+  const [formStartedAt] = useState(() => Date.now());
 
   const phoneDigits = useMemo(() => normalizePhone(phone), [phone]);
 
@@ -69,6 +72,11 @@ export default function MaangLeadForm() {
       return;
     }
 
+    if (country.trim().length < 2) {
+      setError("Please enter your country.");
+      return;
+    }
+
     if (!role) {
       setError("Please select your role.");
       return;
@@ -84,7 +92,10 @@ export default function MaangLeadForm() {
           name: name.trim(),
           phone: phoneDigits,
           email: email.trim(),
+          country: country.trim(),
           role,
+          website: website.trim(),
+          formStartedAt,
         }),
       });
 
@@ -166,6 +177,27 @@ export default function MaangLeadForm() {
           ))}
         </select>
       </label>
+
+      <label className="grid gap-2 sm:col-span-1">
+        <span className="text-sm font-medium text-slate-200">Country</span>
+        <input
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+          required
+          maxLength={80}
+          placeholder="e.g. India, United States"
+          className="rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/55"
+        />
+      </label>
+
+      <input
+        tabIndex={-1}
+        autoComplete="off"
+        value={website}
+        onChange={(e) => setWebsite(e.target.value)}
+        className="hidden"
+        aria-hidden="true"
+      />
 
       <div className="sm:col-span-2">
         {error ? <p className="text-sm text-rose-300">{error}</p> : null}

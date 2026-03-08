@@ -88,10 +88,16 @@ model MaangLead {
   name      String
   phone     String
   email     String
+  country   String   @default("Unknown")
   role      String
+  ipHash    String?
+  userAgent String?
   source    String?  @default("maang_interview_series")
   createdAt DateTime @default(now())
 
   @@index([email, createdAt])
+  @@index([phone, createdAt])
+  @@index([country, createdAt])
+  @@index([ipHash, createdAt])
   @@index([createdAt])
 }

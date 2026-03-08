@@ -7,6 +7,7 @@ type LeadRow = {
   name: string;
   email: string;
   phone: string;
+  country: string;
   role: string;
   source: string | null;
   createdAt: string;
@@ -58,7 +59,8 @@ export default function LeadsTable({ leads }: Props) {
       return (
         item.name.toLowerCase().includes(q) ||
         item.email.toLowerCase().includes(q) ||
-        item.phone.toLowerCase().includes(q)
+        item.phone.toLowerCase().includes(q) ||
+        item.country.toLowerCase().includes(q)
       );
     });
   }, [rows, query, role]);
@@ -105,11 +107,12 @@ export default function LeadsTable({ leads }: Props) {
 
   function handleExport() {
     const rows = [
-      ["Name", "Email", "Phone", "Role", "Source", "Created At (ISO)"],
+      ["Name", "Email", "Phone", "Country", "Role", "Source", "Created At (ISO)"],
       ...filtered.map((item) => [
         item.name,
         item.email,
         item.phone,
+        item.country,
         item.role,
         item.source ?? "",
         item.createdAt,
@@ -124,7 +127,7 @@ export default function LeadsTable({ leads }: Props) {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search name, email, phone"
+          placeholder="Search name, email, phone, country"
           className="rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
         />
         <select
@@ -171,6 +174,7 @@ export default function LeadsTable({ leads }: Props) {
               <th className="px-4 py-3 text-left font-semibold">Name</th>
               <th className="px-4 py-3 text-left font-semibold">Email</th>
               <th className="px-4 py-3 text-left font-semibold">Phone</th>
+              <th className="px-4 py-3 text-left font-semibold">Country</th>
               <th className="px-4 py-3 text-left font-semibold">Role</th>
               <th className="px-4 py-3 text-left font-semibold">Source</th>
               <th className="px-4 py-3 text-left font-semibold">Created At</th>
@@ -190,6 +194,7 @@ export default function LeadsTable({ leads }: Props) {
                 <td className="px-4 py-3">{item.name}</td>
                 <td className="px-4 py-3">{item.email}</td>
                 <td className="px-4 py-3">{item.phone}</td>
+                <td className="px-4 py-3">{item.country}</td>
                 <td className="px-4 py-3">{item.role}</td>
                 <td className="px-4 py-3">{item.source ?? "-"}</td>
                 <td className="px-4 py-3">{new Date(item.createdAt).toLocaleString()}</td>
