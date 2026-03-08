@@ -3,21 +3,25 @@
 import { FormEvent, useMemo, useState } from "react";
 
 const ROLES = [
-  "Product Manager",
-  "Associate Product Manager",
-  "Technical Program Manager",
+  "Product",
+  "Engineering",
+  "Data",
+  "AI/ML",
+  "Design",
+  "Marketing",
+  "Sales",
+  "Customer Success",
+  "Operations",
+  "Business Strategy",
+  "Consulting",
+  "Finance",
+  "Human Resources",
+  "Founders Office",
+  "Student",
+  "Recruitment/Talent",
+  "Quality Assurance",
+  "Legal/Compliance",
   "Software Engineer",
-  "Data Scientist",
-  "Data Analyst",
-  "Machine Learning Engineer",
-  "AI Engineer",
-  "Solutions Architect",
-  "UX Designer",
-  "Product Designer",
-  "Sales Manager",
-  "Marketing Manager",
-  "Growth Manager",
-  "Business Analyst",
   "Other",
 ];
 
@@ -28,20 +32,27 @@ function normalizePhone(raw: string): string {
 }
 
 export default function MaangLeadForm() {
+  type ToastState = { tone: "info" | "success" | "error"; message: string } | null;
+
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [toast, setToast] = useState<ToastState>(null);
 
   const phoneDigits = useMemo(() => normalizePhone(phone), [phone]);
+
+  function showToast(tone: "info" | "success" | "error", message: string) {
+    setToast({ tone, message });
+    window.setTimeout(() => setToast(null), 2600);
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    setSuccess(false);
+    setToast(null);
 
     if (name.trim().length < 2) {
       setError("Please enter your full name.");
@@ -84,13 +95,32 @@ export default function MaangLeadForm() {
       };
       if (!response.ok || !payload.ok) {
         setError(payload.error || "Unable to submit details. Please try again.");
+        showToast("error", "Download failed. Please try again.");
         return;
       }
 
-      setSuccess(true);
-      window.location.href = payload.downloadUrl || "/api/maang-download";
+      showToast("info", "Preparing download...");
+      const downloadRes = await fetch(payload.downloadUrl || "/api/maang-download");
+      if (!downloadRes.ok) {
+        const downloadErr = (await downloadRes.json().catch(() => null)) as { error?: string } | null;
+        setError(downloadErr?.error || "Download failed. Please try again.");
+        showToast("error", "Download failed. Please try again.");
+        return;
+      }
+
+      const blob = await downloadRes.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = "maang-interview-series.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objectUrl);
+      showToast("success", "Download started");
     } catch {
       setError("Unable to submit details. Please try again.");
+      showToast("error", "Download failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -155,7 +185,6 @@ export default function MaangLeadForm() {
 
       <div className="sm:col-span-2">
         {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-        {success ? <p className="text-sm text-emerald-300">Success. Starting your download...</p> : null}
       </div>
 
       <div className="sm:col-span-2">
@@ -167,6 +196,20 @@ export default function MaangLeadForm() {
           {loading ? "Submitting..." : "Submit & Download PDF"}
         </button>
       </div>
+
+      {toast ? (
+        <div
+          className={`fixed left-1/2 top-5 z-50 -translate-x-1/2 rounded-lg px-3 py-2 text-xs shadow-md ${
+            toast.tone === "success"
+              ? "bg-emerald-500/15 text-emerald-100"
+              : toast.tone === "error"
+                ? "bg-rose-500/15 text-rose-100"
+                : "bg-slate-700/50 text-slate-100"
+          }`}
+        >
+          {toast.message}
+        </div>
+      ) : null}
     </form>
   );
 }

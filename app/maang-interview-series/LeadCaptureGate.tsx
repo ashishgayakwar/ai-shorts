@@ -20,8 +20,8 @@ export default function LeadCaptureGate() {
       ) : null}
 
       {open ? (
-        <div className="mt-5 rounded-2xl border border-white/15 bg-black/25 p-5 sm:p-6">
-          <div className="mb-2 flex items-center justify-between gap-3">
+        <div className="mt-5">
+          <div className="flex items-center justify-between gap-3">
             <p className="text-sm text-slate-300">Enter your details to access the PDF download.</p>
             <button
               type="button"
