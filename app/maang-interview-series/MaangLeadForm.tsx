@@ -100,23 +100,7 @@ export default function MaangLeadForm() {
       }
 
       showToast("info", "Preparing download...");
-      const downloadRes = await fetch(payload.downloadUrl || "/api/maang-download");
-      if (!downloadRes.ok) {
-        const downloadErr = (await downloadRes.json().catch(() => null)) as { error?: string } | null;
-        setError(downloadErr?.error || "Download failed. Please try again.");
-        showToast("error", "Download failed. Please try again.");
-        return;
-      }
-
-      const blob = await downloadRes.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = objectUrl;
-      a.download = "maang-interview-series.pdf";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(objectUrl);
+      window.location.href = payload.downloadUrl || "/api/maang-download";
       showToast("success", "Download started");
     } catch {
       setError("Unable to submit details. Please try again.");

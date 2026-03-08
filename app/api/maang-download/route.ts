@@ -16,6 +16,18 @@ export async function GET() {
     );
   }
 
+  const hostedPdfUrl = process.env.MAANG_PDF_URL;
+  if (hostedPdfUrl) {
+    const response = NextResponse.redirect(hostedPdfUrl, 302);
+    response.cookies.set({
+      name: "maang_dl_token",
+      value: "",
+      path: "/",
+      maxAge: 0,
+    });
+    return response;
+  }
+
   const filePath = path.join(process.cwd(), "assets", "maang-interview-series.pdf");
   let file: Buffer;
 
@@ -23,6 +35,20 @@ export async function GET() {
     file = await readFile(filePath);
   } catch {
     return NextResponse.json({ ok: false, error: "PDF not found." }, { status: 404 });
+  }
+
+  // If deployment didn't fetch Git LFS objects, this file is just a tiny pointer text.
+  const lfsPointerPrefix = "version https://git-lfs.github.com/spec/v1";
+  const headText = file.subarray(0, 80).toString("utf8");
+  if (headText.startsWith(lfsPointerPrefix)) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "PDF binary is not available on this deployment. Configure MAANG_PDF_URL or enable Git LFS in deploy.",
+      },
+      { status: 500 }
+    );
   }
 
   const response = new NextResponse(new Uint8Array(file), {
