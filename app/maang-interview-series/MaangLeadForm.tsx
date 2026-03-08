@@ -25,6 +25,35 @@ const ROLES = [
   "Other",
 ];
 
+const COUNTRIES = [
+  "India",
+  "United States",
+  "United Kingdom",
+  "Canada",
+  "Australia",
+  "Germany",
+  "France",
+  "Netherlands",
+  "Sweden",
+  "Switzerland",
+  "Singapore",
+  "United Arab Emirates",
+  "Saudi Arabia",
+  "South Africa",
+  "Nigeria",
+  "Brazil",
+  "Mexico",
+  "Japan",
+  "South Korea",
+  "China",
+  "Indonesia",
+  "Malaysia",
+  "Philippines",
+  "Thailand",
+  "Vietnam",
+  "Other",
+];
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function normalizePhone(raw: string): string {
@@ -72,8 +101,8 @@ export default function MaangLeadForm() {
       return;
     }
 
-    if (country.trim().length < 2) {
-      setError("Please enter your country.");
+    if (!country) {
+      setError("Please select your country.");
       return;
     }
 
@@ -92,7 +121,7 @@ export default function MaangLeadForm() {
           name: name.trim(),
           phone: phoneDigits,
           email: email.trim(),
-          country: country.trim(),
+          country,
           role,
           website: website.trim(),
           formStartedAt,
@@ -180,14 +209,19 @@ export default function MaangLeadForm() {
 
       <label className="grid gap-2 sm:col-span-1">
         <span className="text-sm font-medium text-slate-200">Country</span>
-        <input
+        <select
           value={country}
           onChange={(e) => setCountry(e.target.value)}
           required
-          maxLength={80}
-          placeholder="e.g. India, United States"
           className="rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/55"
-        />
+        >
+          <option value="">Select your country</option>
+          {COUNTRIES.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
       </label>
 
       <input

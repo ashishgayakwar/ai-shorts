@@ -29,19 +29,21 @@ export default function GlobalFooter() {
           ))}
         </div>
 
-        <div className="grid gap-2 text-xs text-slate-400 sm:grid-cols-2">
-          <p>
+        <div className="flex flex-col gap-3 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-left">
             Contact:{" "}
             <a href="mailto:ashishgayakwar3@gmail.com" className="underline underline-offset-2">
               ashishgayakwar3@gmail.com
             </a>
           </p>
-          <Link href="/privacy" className="underline underline-offset-2">
-            Privacy Policy
-          </Link>
-          <Link href="/terms" className="sm:text-right underline underline-offset-2">
-            Terms of Use
-          </Link>
+          <div className="flex flex-wrap items-center justify-start gap-4 sm:justify-end">
+            <Link href="/privacy" className="underline underline-offset-2">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="underline underline-offset-2">
+              Terms of Use
+            </Link>
+          </div>
         </div>
 
         <div className="border-t border-white/10 pt-4 text-xs text-slate-400">
