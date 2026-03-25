@@ -13,12 +13,12 @@ type Entry = {
 };
 
 const headerLinks = [
-  { label: "Cards", href: "/cards" },
-  { label: "Quiz", href: "/quiz" },
-  { label: "Visualize", href: "/visualize" },
+  { label: "Cards", href: "/swipe" },
+  { label: "Quiz", href: "/swipe?mode=quiz" },
+  { label: "Visualize", href: "/swipe?mode=visualize" },
   { label: "Compare", href: "/compare" },
   { label: "Interview", href: "/interview" },
-  { label: "Resume", href: "/resume" },
+  { label: "Resume", href: "/pm-resume-screener" },
   { label: "Home", href: "/" },
 ];
 
@@ -35,7 +35,7 @@ const section01Entries: Entry[] = [
     label: "INTERACTIVE",
     title: "Concept Swipe",
     desc: "Card-based learning with next/prev concept journeys.",
-    href: "/cards",
+    href: "/swipe",
   },
 ];
 
@@ -45,14 +45,14 @@ const section02Entries: Entry[] = [
     label: "QUIZ",
     title: "AI Quiz",
     desc: "Level-based checks to test concept clarity fast.",
-    href: "/quiz",
+    href: "/swipe?mode=quiz",
   },
   {
     num: "02",
     label: "PRACTICE",
     title: "Case Studio",
     desc: "Generate interview-ready AI PM case simulations.",
-    href: "/case",
+    href: "/case-study-generator",
   },
   {
     num: "03",
@@ -69,7 +69,7 @@ const section03Entries: Entry[] = [
     label: "TOOL",
     title: "PM Resume Screener",
     desc: "Analyze resume-to-JD fit with score, gaps, and one instant fix.",
-    href: "/resume",
+    href: "/pm-resume-screener",
     labelTone: "teal",
   },
   {
@@ -77,7 +77,7 @@ const section03Entries: Entry[] = [
     label: "PDF GUIDE",
     title: "M-A-A-N-G Interview Series",
     desc: "Download the MAANG prep PDF. Structured for Meta, Apple, Amazon, Netflix, Google.",
-    href: "/maang",
+    href: "/maang-interview-series",
     labelTone: "red",
   },
 ];
