@@ -41,6 +41,13 @@ const learningTracks = [
     accent: "from-violet-300/20 to-cyan-500/5",
   },
   {
+    title: "PM Resume Screener",
+    href: "/pm-resume-screener",
+    tag: "Tool",
+    desc: "Analyze resume-to-JD fit with score, gaps, and one instant fix.",
+    accent: "from-lime-300/20 to-amber-500/10",
+  },
+  {
     title: "M-A-A-N-G Interview Series",
     href: "/maang-interview-series",
     tag: "PDF Guide",
@@ -56,6 +63,7 @@ const headerLinks = [
   { label: "Visualize", href: "/swipe?mode=visualize" },
   { label: "Compare", href: "/compare" },
   { label: "Interview", href: "/interview" },
+  { label: "Resume", href: "/pm-resume-screener" },
   { label: "Home", href: "/" },
 ];
 

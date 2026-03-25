@@ -10,6 +10,7 @@ const primaryLinks = [
   { label: "Interview", href: "/interview" },
   { label: "QnA", href: "/qna" },
   { label: "Case Studio", href: "/case-study-generator" },
+  { label: "Resume Screener", href: "/pm-resume-screener" },
   { label: "MAANG", href: "/maang-interview-series" },
 ];
 

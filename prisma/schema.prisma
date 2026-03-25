@@ -101,3 +101,14 @@ model MaangLead {
   @@index([ipHash, createdAt])
   @@index([createdAt])
 }
+
+model ResumeScreenerRequest {
+  id              String   @id @default(cuid())
+  visitorHash     String
+  ipHash          String
+  fingerprintHash String
+  createdAt       DateTime @default(now())
+
+  @@index([visitorHash, createdAt])
+  @@index([createdAt])
+}
