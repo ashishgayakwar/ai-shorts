@@ -1,71 +1,116 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
 
-const learningTracks = [
+type Entry = {
+  num: string;
+  label: string;
+  title: string;
+  desc: string;
+  href: string;
+  labelTone?: "default" | "teal" | "red";
+};
+
+const headerLinks = [
+  { label: "Cards", href: "/cards" },
+  { label: "Quiz", href: "/quiz" },
+  { label: "Visualize", href: "/visualize" },
+  { label: "Compare", href: "/compare" },
+  { label: "Interview", href: "/interview" },
+  { label: "Resume", href: "/resume" },
+  { label: "Home", href: "/" },
+];
+
+const section01Entries: Entry[] = [
   {
+    num: "01",
+    label: "READER MODE",
     title: "Basics Track",
-    href: "/basics",
-    tag: "Reader Mode",
     desc: "Day Zero foundations, explained without jargon.",
-    accent: "from-cyan-400/20 to-sky-500/5",
+    href: "/basics",
   },
   {
+    num: "02",
+    label: "INTERACTIVE",
     title: "Concept Swipe",
-    href: "/swipe",
-    tag: "Interactive",
     desc: "Card-based learning with next/prev concept journeys.",
-    accent: "from-emerald-400/20 to-cyan-500/5",
-  },
-  {
-    title: "AI Quiz",
-    href: "/swipe?mode=quiz",
-    tag: "Quiz",
-    desc: "Level-based checks to test concept clarity fast.",
-    accent: "from-sky-400/20 to-cyan-500/5",
-  },
-  {
-    title: "Case Studio",
-    href: "/case-study-generator",
-    tag: "Practice",
-    desc: "Generate interview-ready AI PM case simulations.",
-    accent: "from-amber-300/20 to-orange-500/5",
-  },
-  {
-    title: "Topic QnA",
-    href: "/qna",
-    tag: "QnA",
-    desc: "Browse AI PM interview questions by topic.",
-    accent: "from-violet-300/20 to-cyan-500/5",
-  },
-  {
-    title: "PM Resume Screener",
-    href: "/pm-resume-screener",
-    tag: "Tool",
-    desc: "Analyze resume-to-JD fit with score, gaps, and one instant fix.",
-    accent: "from-lime-300/20 to-amber-500/10",
-  },
-  {
-    title: "M-A-A-N-G Interview Series",
-    href: "/maang-interview-series",
-    tag: "PDF Guide",
-    desc: "Download the MAANG prep PDF.",
-    descClassName: "text-xs leading-5",
-    accent: "from-fuchsia-300/20 to-rose-500/5",
+    href: "/cards",
   },
 ];
 
-const headerLinks = [
-  { label: "Cards", href: "/swipe" },
-  { label: "Quiz", href: "/swipe?mode=quiz" },
-  { label: "Visualize", href: "/swipe?mode=visualize" },
-  { label: "Compare", href: "/compare" },
-  { label: "Interview", href: "/interview" },
-  { label: "Resume", href: "/pm-resume-screener" },
-  { label: "Home", href: "/" },
+const section02Entries: Entry[] = [
+  {
+    num: "01",
+    label: "QUIZ",
+    title: "AI Quiz",
+    desc: "Level-based checks to test concept clarity fast.",
+    href: "/quiz",
+  },
+  {
+    num: "02",
+    label: "PRACTICE",
+    title: "Case Studio",
+    desc: "Generate interview-ready AI PM case simulations.",
+    href: "/case",
+  },
+  {
+    num: "03",
+    label: "QNA",
+    title: "Topic QnA",
+    desc: "Browse AI PM interview questions by topic.",
+    href: "/qna",
+  },
 ];
+
+const section03Entries: Entry[] = [
+  {
+    num: "01",
+    label: "TOOL",
+    title: "PM Resume Screener",
+    desc: "Analyze resume-to-JD fit with score, gaps, and one instant fix.",
+    href: "/resume",
+    labelTone: "teal",
+  },
+  {
+    num: "02",
+    label: "PDF GUIDE",
+    title: "M-A-A-N-G Interview Series",
+    desc: "Download the MAANG prep PDF. Structured for Meta, Apple, Amazon, Netflix, Google.",
+    href: "/maang",
+    labelTone: "red",
+  },
+];
+
+function EntryRows({ entries, dark = false }: { entries: Entry[]; dark?: boolean }) {
+  return (
+    <div className="entry-list">
+      {entries.map((entry, idx) => (
+        <Link
+          key={`${entry.num}-${entry.title}`}
+          href={entry.href}
+          className={`entry-row ${dark ? "entry-row-dark" : ""} ${
+            idx === entries.length - 1 ? "entry-row-last" : ""
+          }`}
+        >
+          <span className="enum">{entry.num}</span>
+          <div className="ec">
+            <div className="et">{entry.title}</div>
+            <div className="ed">{entry.desc}</div>
+          </div>
+          <span
+            className={`el ${entry.labelTone === "teal" ? "el-teal" : ""} ${
+              entry.labelTone === "red" ? "el-red" : ""
+            }`}
+          >
+            {entry.label}
+          </span>
+          <span className="ea-circle">→</span>
+        </Link>
+      ))}
+    </div>
+  );
+}
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -77,129 +122,529 @@ export default async function Home() {
   const isAdmin = !!session?.user?.email && adminEmails.includes(session.user.email.toLowerCase());
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#040b18] text-slate-100">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 left-1/2 h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.22),rgba(3,7,18,0))]" />
-        <div className="absolute bottom-[-180px] right-[-120px] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(251,191,36,0.18),rgba(3,7,18,0))]" />
-      </div>
+    <>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&display=swap"
+      />
 
-      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 sm:py-8">
-        <header className="sticky top-3 z-50 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur-xl sm:px-6">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10">
-                <Image src="/favicon.ico" alt="AI PM World" width={20} height={20} priority />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-200/90">
-                  AI PM World
-                </p>
-                <p className="text-xs text-slate-300/80">Learn. Build. Ship AI products.</p>
-              </div>
+      <main className="home-root">
+        <div className="home-container">
+          <header className="home-nav-wrap">
+            <div className="home-brand">
+              <p className="home-brand-name">AI PM World</p>
+              <p className="home-brand-sub">Practical intelligence for product builders</p>
             </div>
 
-            <nav className="hidden items-center gap-2 md:flex">
+            <nav className="home-nav-desktop">
               {headerLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-full border border-white/20 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-slate-200 transition hover:border-cyan-200/45 hover:bg-cyan-300/15 hover:text-cyan-50"
-                >
+                <Link key={item.href} href={item.href} className="home-pill">
                   {item.label}
                 </Link>
               ))}
             </nav>
 
-            <div className="flex flex-wrap items-center gap-2">
-              {userLabel ? (
-                <>
-                  <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-slate-300">
-                    {userLabel}
-                  </span>
-                  {isAdmin ? (
-                    <Link
-                      href="/admin/users"
-                      className="rounded-full border border-white/25 px-3 py-1 text-xs text-slate-100 transition hover:bg-white/10"
-                    >
-                      Admin
-                    </Link>
-                  ) : null}
-                  <Link
-                    href="/auth/signout?callbackUrl=/"
-                    className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900 transition hover:bg-cyan-100"
-                  >
-                    Sign out
+            <details className="home-nav-mobile">
+              <summary className="home-hamburger">☰</summary>
+              <div className="home-mobile-menu">
+                {headerLinks.map((item) => (
+                  <Link key={item.href} href={item.href} className="home-mobile-link">
+                    {item.label}
                   </Link>
-                </>
-              ) : null}
+                ))}
+              </div>
+            </details>
+          </header>
 
-              <details className="menu-drawer relative md:hidden">
-                <summary className="menu-attn list-none cursor-pointer rounded-full border border-white/20 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-100 transition hover:bg-white/10">
-                  Menu
-                </summary>
-                <div className="absolute right-0 top-10 z-30 w-64 rounded-2xl border border-white/15 bg-[#061126]/95 p-3 shadow-[0_14px_42px_rgba(2,6,23,0.55)] backdrop-blur-xl">
-                  <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                    Quick Access
-                  </div>
-                  <div className="grid gap-2">
-                    {headerLinks.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="rounded-xl border border-white/15 bg-white/[0.04] px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-200/45 hover:bg-cyan-300/15"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </details>
-            </div>
+          <div className="home-user-row">
+            {userLabel ? <span className="home-user-pill">{userLabel}</span> : null}
+            {isAdmin ? (
+              <Link href="/admin/users" className="home-user-link">
+                Admin
+              </Link>
+            ) : null}
+            {userLabel ? (
+              <Link href="/auth/signout?callbackUrl=/" className="home-user-link">
+                Sign out
+              </Link>
+            ) : null}
           </div>
-        </header>
 
-        <main className="flex flex-1 flex-col py-5 sm:py-14">
-          <section className="max-w-3xl">
-            <h1 className="mt-1 text-3xl font-semibold leading-snug tracking-tight text-white sm:mt-5 sm:text-5xl sm:leading-tight">
-              Modern AI learning,
-              <span className="bg-gradient-to-r from-cyan-200 to-emerald-200 bg-clip-text text-transparent sm:block">
-                designed for execution.
-              </span>
+          <section className="hero">
+            <p className="hero-eyebrow">PRODUCT INTELLIGENCE JOURNAL</p>
+            <h1 className="hero-title">
+              Learn AI PM Through <span className="hero-title-accent">Systems, Signals,</span> and
+              Practice.
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-[1.45] text-slate-300 sm:mt-5 sm:text-base sm:leading-7">
-              Move from fundamentals to applied AI PM workflows with concise modules,
-              swipe concepts, and interview-grade case practice in one place.
+            <p className="hero-copy">
+              AI PM World is a focused learning platform for execution-minded builders. Move from
+              first principles to applied interviews, case drills, and high-leverage product
+              thinking.
             </p>
           </section>
 
-          <section className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {learningTracks.map((track) => (
-              <Link
-                key={track.href}
-                href={track.href}
-                className="group relative overflow-hidden rounded-2xl border border-white/15 bg-slate-950/35 p-5 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-cyan-200/40"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${track.accent} opacity-70`} />
-                <div className="relative flex h-full flex-col">
-                  <span className="inline-flex rounded-full bg-black/30 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-200">
-                    {track.tag}
-                  </span>
-                  <h2 className="mt-3 text-xl font-semibold text-white">{track.title}</h2>
-                  <p className={`mt-2 text-slate-300 ${track.descClassName || "text-sm leading-6"}`}>
-                    {track.desc}
-                  </p>
-                  <div className="mt-4 flex justify-end">
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-cyan-200/40 bg-cyan-300/15 text-base font-semibold text-cyan-100 transition group-hover:translate-x-0.5 group-hover:bg-cyan-300/25 group-hover:text-cyan-50">
-                      ›
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+          <section className="home-section">
+            <p className="section-eyebrow">SECTION 01</p>
+            <div className="section-rule" />
+            <div className="section-one-grid">
+              <div>
+                <h2 className="section-title">Core Curriculum</h2>
+                <p className="section-desc">
+                  Start from first principles. These modules build your mental models for AI
+                  product thinking - no jargon, no fluff, just structured clarity that compounds.
+                </p>
+                <p className="section-quote">
+                  The fundamentals don&apos;t change. The vocabulary does.
+                </p>
+              </div>
+              <EntryRows entries={section01Entries} />
+            </div>
           </section>
 
-        </main>
-      </div>
-    </div>
+          <section className="home-section">
+            <div className="section-two-head">
+              <p className="section-eyebrow">SECTION 02</p>
+              <div className="section-rule" />
+              <h2 className="section-title">Applied Practice</h2>
+              <p className="section-desc">
+                Knowing is not enough. These tools put you in the chair - quizzes that
+                pressure-test recall, case simulations that mirror real PM interviews, and topic
+                drills that build muscle memory.
+              </p>
+            </div>
+            <EntryRows entries={section02Entries} />
+          </section>
+
+          <section className="home-dark-block">
+            <p className="section-eyebrow">SECTION 03</p>
+            <div className="section-rule" />
+            <h2 className="section-title section-title-dark">Interview Readiness</h2>
+            <p className="section-desc section-desc-dark">
+              The final stretch. Screen your resume against real JDs, download the MAANG prep
+              guide, and walk into interviews knowing exactly where you stand.
+            </p>
+            <EntryRows entries={section03Entries} dark />
+          </section>
+        </div>
+
+        <style>{`
+          .home-root {
+            --bg: #ede8df;
+            --text-primary: #1a1a1a;
+            --text-muted: #777777;
+            --text-hint: #aaaaaa;
+            --accent-red: #b84a2a;
+            --accent-teal: #2a7b7b;
+            --border: #c8bfb0;
+            --border-light: #c8c0b4;
+            --num-color: #d0c8bc;
+            --bg-dark: #1c1c1a;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding-bottom: 80px;
+            font-family: "Lexend", sans-serif;
+          }
+          .home-container {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 16px;
+          }
+
+          .home-nav-wrap {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            border-bottom: 1px solid #cec8bc;
+            padding: 20px 0;
+            margin-bottom: 40px;
+          }
+          .home-brand-name {
+            margin: 0;
+            font-family: "Lexend", sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            line-height: 1.2;
+          }
+          .home-brand-sub {
+            margin: 4px 0 0;
+            font-family: "Lexend", sans-serif;
+            font-weight: 400;
+            font-size: 11px;
+            color: #999999;
+          }
+          .home-nav-desktop {
+            display: none;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+          }
+          .home-pill {
+            font-family: "Lexend", sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            border: 1px solid #c0b8ac;
+            border-radius: 20px;
+            padding: 5px 14px;
+            color: #444444;
+            background: rgba(255, 255, 255, 0.4);
+            text-decoration: none;
+            transition: all 0.15s ease;
+          }
+          .home-pill:hover {
+            background: #1a1a1a;
+            color: #f2ede4;
+            border-color: #1a1a1a;
+          }
+
+          .home-nav-mobile {
+            display: block;
+            position: relative;
+            z-index: 20;
+          }
+          .home-hamburger {
+            list-style: none;
+            cursor: pointer;
+            font-family: "Lexend", sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            line-height: 1;
+            color: #333333;
+            user-select: none;
+          }
+          .home-hamburger::-webkit-details-marker {
+            display: none;
+          }
+          .home-mobile-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 230px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--bg);
+          }
+          .home-mobile-link {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-family: "Lexend", sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            color: #333333;
+            text-decoration: none;
+          }
+          .home-mobile-link:last-child {
+            border-bottom: 0;
+          }
+
+          .home-user-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 22px;
+          }
+          .home-user-pill,
+          .home-user-link {
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-family: "Lexend", sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            color: #4a4a4a;
+            text-decoration: none;
+          }
+
+          .hero {
+            margin-bottom: 48px;
+          }
+          .hero-eyebrow {
+            margin: 0 0 20px;
+            font-family: "Lexend", sans-serif;
+            font-weight: 600;
+            font-size: 11px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--accent-red);
+          }
+          .hero-title {
+            margin: 0 0 24px;
+            max-width: 680px;
+            font-family: "Lexend", sans-serif;
+            font-weight: 800;
+            font-size: 36px;
+            line-height: 1.1;
+            letter-spacing: -1px;
+          }
+          .hero-title-accent {
+            color: var(--accent-teal);
+          }
+          .hero-copy {
+            margin: 0;
+            max-width: 480px;
+            font-family: "Lexend", sans-serif;
+            font-weight: 400;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #666666;
+          }
+
+          .home-section {
+            border-top: 1px solid var(--border-light);
+            padding-top: 36px;
+            margin-bottom: 48px;
+          }
+          .section-eyebrow {
+            margin: 0 0 6px;
+            font-family: "Lexend", sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent-red);
+          }
+          .section-rule {
+            width: 32px;
+            height: 2.5px;
+            border-radius: 2px;
+            background: var(--accent-red);
+            margin-bottom: 20px;
+          }
+          .section-title {
+            margin: 0 0 14px;
+            font-family: "Lexend", sans-serif;
+            font-weight: 800;
+            font-size: 28px;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+          }
+          .section-desc {
+            margin: 0;
+            font-family: "Lexend", sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.85;
+          }
+
+          .section-one-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+          }
+          .section-quote {
+            margin: 22px 0 0;
+            border-left: 2px solid var(--accent-red);
+            padding-left: 14px;
+            font-family: "Lexend", sans-serif;
+            font-weight: 300;
+            font-style: italic;
+            font-size: 16px;
+            line-height: 1.55;
+            color: var(--accent-red);
+          }
+
+          .section-two-head {
+            border-left: 3px solid var(--accent-teal);
+            padding-left: 22px;
+            margin-bottom: 32px;
+          }
+
+          .home-dark-block {
+            background: var(--bg-dark);
+            border-radius: 16px;
+            padding: 32px 24px;
+            margin-bottom: 64px;
+          }
+          .section-title-dark {
+            color: #f2ede4;
+          }
+          .section-desc-dark {
+            color: #888888;
+            margin-bottom: 28px;
+          }
+
+          .entry-list {
+            width: 100%;
+          }
+          .entry-row {
+            display: grid;
+            grid-template-columns: 36px 1fr auto;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: all 0.15s ease;
+          }
+          .entry-row-last {
+            border-bottom: 0;
+          }
+
+          .enum {
+            font-family: "Lexend", sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            line-height: 1;
+            color: var(--num-color);
+            transition: color 0.2s ease;
+          }
+          .ec {
+            min-width: 0;
+          }
+          .et {
+            margin: 0 0 3px;
+            font-family: "Lexend", sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color 0.15s ease;
+          }
+          .ed {
+            margin: 0;
+            font-family: "Lexend", sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            color: var(--text-hint);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .el {
+            display: none;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-family: "Lexend", sans-serif;
+            font-weight: 600;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            color: var(--text-hint);
+          }
+          .el-teal {
+            border-color: var(--accent-teal);
+            color: var(--accent-teal);
+          }
+          .el-red {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+          }
+
+          .ea-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-family: "Lexend", sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: transform 0.15s ease;
+          }
+
+          .entry-row:hover .enum,
+          .entry-row:active .enum,
+          .entry-row:hover .et,
+          .entry-row:active .et {
+            color: var(--accent-red);
+          }
+          .entry-row:hover .ea-circle,
+          .entry-row:active .ea-circle {
+            transform: scale(1.1);
+          }
+
+          .entry-row-dark {
+            border-bottom-color: #2e2e2c;
+          }
+          .entry-row-dark .enum {
+            color: #3a3a38;
+          }
+          .entry-row-dark .et {
+            color: #f0ebe0;
+          }
+          .entry-row-dark .ed {
+            color: #555555;
+          }
+          .entry-row-dark .el {
+            border-color: #333333;
+            color: #555555;
+          }
+
+          .entry-row-dark:hover .enum,
+          .entry-row-dark:active .enum,
+          .entry-row-dark:hover .et,
+          .entry-row-dark:active .et {
+            color: var(--accent-red);
+          }
+
+          @media (min-width: 768px) {
+            .home-container {
+              padding: 0 28px;
+            }
+            .home-nav-wrap {
+              margin-bottom: 72px;
+            }
+            .home-nav-desktop {
+              display: flex;
+            }
+            .home-nav-mobile {
+              display: none;
+            }
+
+            .hero {
+              margin-bottom: 80px;
+            }
+            .hero-title {
+              font-size: 56px;
+              line-height: 1.05;
+              letter-spacing: -2px;
+            }
+
+            .home-section {
+              padding-top: 52px;
+              margin-bottom: 64px;
+            }
+            .section-title {
+              font-size: 36px;
+            }
+            .section-one-grid {
+              grid-template-columns: 1fr 1fr;
+              gap: 52px;
+              align-items: start;
+            }
+
+            .home-dark-block {
+              padding: 52px 44px;
+            }
+
+            .entry-row {
+              grid-template-columns: 44px 1fr auto auto;
+            }
+            .enum {
+              font-size: 32px;
+            }
+            .el {
+              display: inline-flex;
+            }
+          }
+        `}</style>
+      </main>
+    </>
   );
 }
