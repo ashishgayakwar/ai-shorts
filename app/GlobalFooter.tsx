@@ -10,27 +10,28 @@ const primaryLinks = [
   { label: "Interview", href: "/interview" },
   { label: "QnA", href: "/qna" },
   { label: "Case Studio", href: "/case-study-generator" },
+  { label: "User Stories", href: "/user-story-generator" },
   { label: "Resume Screener", href: "/pm-resume-screener" },
   { label: "MAANG", href: "/maang-interview-series" },
 ];
 
 export default function GlobalFooter() {
   return (
-    <footer className="border-t border-white/10 bg-[#060c18] px-6 py-8 text-sm text-slate-300">
+    <footer className="border-t border-[#dccfbe] bg-[#f5f0e8] px-6 py-8 text-sm text-[#4f4338]">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
         <div className="flex flex-wrap items-center gap-3">
           {primaryLinks.map((item) => (
             <Link
               key={item.label}
               href={item.href}
-              className="rounded-full border border-white/15 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-slate-200 transition hover:border-cyan-200/45 hover:bg-cyan-300/15"
+              className="rounded-full border border-[#d5c8b8] bg-[#efe6d9] px-3 py-1.5 text-xs font-semibold text-[#3c332d] transition hover:border-[#c0522a] hover:text-[#c0522a]"
             >
               {item.label}
             </Link>
           ))}
         </div>
 
-        <div className="flex flex-col gap-3 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 text-xs text-[#6e6158] sm:flex-row sm:items-center sm:justify-between">
           <p className="text-left">
             Contact:{" "}
             <a href="mailto:ashishgayakwar3@gmail.com" className="underline underline-offset-2">
@@ -47,7 +48,7 @@ export default function GlobalFooter() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-4 text-xs text-slate-400">
+        <div className="border-t border-[#dccfbe] pt-4 text-xs text-[#6e6158]">
           © {new Date().getFullYear()} Ashish Gayakwar. All rights reserved.
         </div>
       </div>

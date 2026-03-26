@@ -18,6 +18,7 @@ const headerLinks = [
   { label: "Visualize", href: "/swipe?mode=visualize" },
   { label: "Compare", href: "/compare" },
   { label: "Interview", href: "/interview" },
+  { label: "Stories", href: "/user-story-generator" },
   { label: "Resume", href: "/pm-resume-screener" },
   { label: "Home", href: "/" },
 ];
@@ -60,6 +61,13 @@ const section02Entries: Entry[] = [
     title: "Topic QnA",
     desc: "Browse AI PM interview questions by topic.",
     href: "/qna",
+  },
+  {
+    num: "04",
+    label: "TOOL",
+    title: "User Story Generator",
+    desc: "Generate full user-story suites with acceptance criteria by user type.",
+    href: "/user-story-generator",
   },
 ];
 

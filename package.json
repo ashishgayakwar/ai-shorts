@@ -19,6 +19,7 @@
     "@react-spring/web": "^9.7.5",
     "baseline-browser-mapping": "^2.9.19",
     "framer-motion": "^12.23.26",
+    "jspdf": "^4.2.1",
     "next": "16.0.7",
     "next-auth": "^4.24.13",
     "openai": "^6.10.0",

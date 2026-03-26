@@ -112,3 +112,14 @@ model ResumeScreenerRequest {
   @@index([visitorHash, createdAt])
   @@index([createdAt])
 }
+
+model UserStoryGeneratorRequest {
+  id              String   @id @default(cuid())
+  visitorHash     String
+  ipHash          String
+  fingerprintHash String
+  createdAt       DateTime @default(now())
+
+  @@index([visitorHash, createdAt])
+  @@index([createdAt])
+}

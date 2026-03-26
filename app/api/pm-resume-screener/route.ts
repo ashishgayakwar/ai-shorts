@@ -14,6 +14,7 @@ const openai = new OpenAI({
 const MAX_JD_CHARS = 12_000;
 const MAX_RESUME_CHARS = 12_000;
 const MAX_ANALYSES_PER_VISITOR = 5;
+const COOLDOWN_SECONDS = 30;
 
 type MatchStatus = "Strong Match" | "Needs Work" | "Not a Fit";
 
@@ -25,13 +26,21 @@ type ScreenerResult = {
   oneThingToFixNow: string;
 };
 
-type RateLimitDecision = {
-  allowed: boolean;
-  remaining: number;
-};
+type RateLimitDecision =
+  | {
+      allowed: true;
+      remaining: number;
+    }
+  | {
+      allowed: false;
+      remaining: number;
+      retryAfterSeconds: number;
+      reason: "cap" | "cooldown";
+    };
 
 type RateStatsRow = {
   total_count: number;
+  latest_created_at: Date | null;
 };
 
 function clamp(n: number, min: number, max: number) {
@@ -113,7 +122,7 @@ function isMissingRateLimitTableError(error: unknown): boolean {
 
 function getInMemoryRateLimitStore() {
   const globalState = globalThis as unknown as {
-    pmResumeScreenerRateLimit?: Map<string, { count: number }>;
+    pmResumeScreenerRateLimit?: Map<string, { count: number; lastCreatedAtMs: number }>;
   };
 
   if (!globalState.pmResumeScreenerRateLimit) {
@@ -124,14 +133,30 @@ function getInMemoryRateLimitStore() {
 }
 
 function checkRateLimitInMemory(visitorHash: string): RateLimitDecision {
+  const now = Date.now();
   const store = getInMemoryRateLimitStore();
   const existing = store.get(visitorHash);
 
   if (!existing) {
-    store.set(visitorHash, { count: 1 });
+    store.set(visitorHash, { count: 1, lastCreatedAtMs: now });
     return {
       allowed: true,
       remaining: MAX_ANALYSES_PER_VISITOR - 1,
+    };
+  }
+
+  if (now - existing.lastCreatedAtMs < COOLDOWN_SECONDS * 1000) {
+    const retryAfterSeconds = clamp(
+      Math.ceil((COOLDOWN_SECONDS * 1000 - (now - existing.lastCreatedAtMs)) / 1000),
+      1,
+      COOLDOWN_SECONDS
+    );
+
+    return {
+      allowed: false,
+      remaining: Math.max(0, MAX_ANALYSES_PER_VISITOR - existing.count),
+      retryAfterSeconds,
+      reason: "cooldown",
     };
   }
 
@@ -139,11 +164,14 @@ function checkRateLimitInMemory(visitorHash: string): RateLimitDecision {
     return {
       allowed: false,
       remaining: 0,
+      retryAfterSeconds: 0,
+      reason: "cap",
     };
   }
 
   const updated = {
     count: existing.count + 1,
+    lastCreatedAtMs: now,
   };
 
   store.set(visitorHash, updated);
@@ -165,21 +193,43 @@ async function checkAndStoreRateLimit(request: Request): Promise<RateLimitDecisi
   try {
     const statsRows = await prisma.$queryRaw<RateStatsRow[]>`
       SELECT
-        COUNT(*)::int AS total_count
+        COUNT(*)::int AS total_count,
+        MAX("createdAt") AS latest_created_at
       FROM "ResumeScreenerRequest"
       WHERE "visitorHash" = ${visitorHash}
     `;
 
-    const stats = statsRows[0] || { total_count: 0 };
+    const stats = statsRows[0] || { total_count: 0, latest_created_at: null };
+    const latestCreatedAtMs = stats.latest_created_at
+      ? new Date(stats.latest_created_at).getTime()
+      : 0;
+    const nowMs = Date.now();
+
+    if (latestCreatedAtMs && nowMs - latestCreatedAtMs < COOLDOWN_SECONDS * 1000) {
+      const retryAfterSeconds = clamp(
+        Math.ceil((COOLDOWN_SECONDS * 1000 - (nowMs - latestCreatedAtMs)) / 1000),
+        1,
+        COOLDOWN_SECONDS
+      );
+
+      return {
+        allowed: false,
+        remaining: Math.max(0, MAX_ANALYSES_PER_VISITOR - stats.total_count),
+        retryAfterSeconds,
+        reason: "cooldown",
+      };
+    }
 
     if (stats.total_count >= MAX_ANALYSES_PER_VISITOR) {
       return {
         allowed: false,
         remaining: 0,
+        retryAfterSeconds: 0,
+        reason: "cap",
       };
     }
 
-    const now = new Date();
+    const now = new Date(nowMs);
     await prisma.$executeRaw`
       INSERT INTO "ResumeScreenerRequest" ("id", "visitorHash", "ipHash", "fingerprintHash", "createdAt")
       VALUES (${randomUUID()}, ${visitorHash}, ${ipHash}, ${fingerprintHash}, ${now})
@@ -256,16 +306,23 @@ export async function POST(request: Request) {
 
     const rateLimit = await checkAndStoreRateLimit(request);
     if (!rateLimit.allowed) {
+      const message =
+        rateLimit.reason === "cooldown"
+          ? `Please wait ${rateLimit.retryAfterSeconds}s before analyzing again.`
+          : "You have reached the maximum of 5 analyses for this browser and IP.";
+
       const response = NextResponse.json(
         {
-          error: "You have reached the maximum of 5 analyses for this browser and IP.",
+          error: message,
           remaining: rateLimit.remaining,
+          retryAfterSeconds: rateLimit.retryAfterSeconds,
         },
         { status: 429 }
       );
 
       response.headers.set("x-ratelimit-limit", String(MAX_ANALYSES_PER_VISITOR));
       response.headers.set("x-ratelimit-remaining", String(rateLimit.remaining));
+      response.headers.set("retry-after", String(rateLimit.retryAfterSeconds));
       return response;
     }
 

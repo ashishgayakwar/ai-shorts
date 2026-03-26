@@ -80,7 +80,7 @@ export default function RootLayout({
           />
         </noscript>
 
-        <div className="flex min-h-screen flex-col">
+        <div className="flex min-h-screen flex-col overflow-x-hidden">
           <div className="flex-1">
             <Providers>{children}</Providers>
           </div>

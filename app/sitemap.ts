@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/basics`, lastModified },
     { url: `${baseUrl}/swipe`, lastModified },
     { url: `${baseUrl}/compare`, lastModified },
+    { url: `${baseUrl}/user-story-generator`, lastModified },
     { url: `${baseUrl}/pm-resume-screener`, lastModified },
   ];
 
