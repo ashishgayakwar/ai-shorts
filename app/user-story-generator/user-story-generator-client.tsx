@@ -455,6 +455,9 @@ export default function UserStoryGeneratorClient() {
               placeholder="Describe your product or feature in plain English..."
               className="mt-2 min-h-[160px] w-full resize-y rounded-2xl border border-[#cfcfc8] bg-white p-3 text-[15px] leading-7 text-[#111827] outline-none transition focus:border-[#111827] focus:ring-2 focus:ring-[#111827]/20 sm:min-h-[320px] sm:p-5"
             />
+            <p className="mt-2 text-xs italic text-[#8b8b8b]">
+              Minimum 80 characters required to enable Generate Suite.
+            </p>
 
             <div className="mt-4 flex flex-wrap gap-2">
               {EXAMPLE_PROMPTS.map((prompt) => (
