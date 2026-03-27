@@ -23,6 +23,20 @@ const headerLinks = [
   { label: "Home", href: "/" },
 ];
 
+type ChallengeDay = {
+  num: string;
+  title: string;
+  href: string;
+};
+
+const challengeDays: ChallengeDay[] = [
+  { num: "01", title: "PM Resume Screener", href: "/pm-resume-screener" },
+  { num: "02", title: "User Story Generator", href: "/user-story-generator" },
+  { num: "03", title: "Book Summarizer", href: "/book-summarizer" },
+];
+
+const CHALLENGE_TOTAL = 75;
+
 const section01Entries: Entry[] = [
   {
     num: "01",
@@ -62,26 +76,11 @@ const section02Entries: Entry[] = [
     desc: "Browse AI PM interview questions by topic.",
     href: "/qna",
   },
-  {
-    num: "04",
-    label: "TOOL",
-    title: "User Story Generator",
-    desc: "Generate full user-story suites with acceptance criteria by user type.",
-    href: "/user-story-generator",
-  },
 ];
 
 const section03Entries: Entry[] = [
   {
     num: "01",
-    label: "TOOL",
-    title: "PM Resume Screener",
-    desc: "Analyze resume-to-JD fit with score, gaps, and one instant fix.",
-    href: "/pm-resume-screener",
-    labelTone: "teal",
-  },
-  {
-    num: "02",
     label: "PDF GUIDE",
     title: "M-A-A-N-G Interview Series",
     desc: "Download the MAANG prep PDF. Structured for Meta, Apple, Amazon, Netflix, Google.",
@@ -191,6 +190,37 @@ export default async function Home() {
             </p>
           </section>
 
+          <section className="challenge-block">
+            <div className="challenge-head">
+              <div className="challenge-head-top">
+                <div className="challenge-counter">
+                  <span className="challenge-num">{String(challengeDays.length).padStart(2, "0")}</span>
+                  <span className="challenge-sep"> / </span>
+                  <span className="challenge-total">{CHALLENGE_TOTAL}</span>
+                </div>
+                <p className="challenge-eyebrow">
+                  <span className="challenge-eyebrow-badge">75 PRODUCTS · 75 DAYS</span>
+                  <span className="challenge-eyebrow-live">● LIVE</span>
+                </p>
+              </div>
+              <div className="challenge-bar-track">
+                <div
+                  className="challenge-bar-fill"
+                  style={{ width: `${(challengeDays.length / CHALLENGE_TOTAL) * 100}%` }}
+                />
+              </div>
+            </div>
+            <div className="challenge-list">
+              {challengeDays.map((day) => (
+                <Link key={day.num} href={day.href} className="challenge-row">
+                  <span className="challenge-day-num">{day.num}</span>
+                  <span className="challenge-day-title">{day.title}</span>
+                  <span className="challenge-day-arrow">→</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+
           <section className="home-section">
             <p className="section-eyebrow">SECTION 01</p>
             <div className="section-rule" />
@@ -236,6 +266,136 @@ export default async function Home() {
         </div>
 
         <style>{`
+          /* ---- 75-day challenge block ---- */
+          .challenge-block {
+            margin: 0 0 48px 0;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+          }
+          .challenge-head {
+            padding: 24px 28px 20px;
+            background: var(--bg-dark);
+          }
+          .challenge-head-top {
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 14px;
+          }
+          @media (min-width: 480px) {
+            .challenge-head-top {
+              flex-direction: row;
+              align-items: flex-end;
+              justify-content: space-between;
+              gap: 0;
+            }
+          }
+          .challenge-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+          }
+          .challenge-eyebrow-badge {
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            color: #f5f0e8;
+            background: var(--accent-red);
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+          }
+          @media (min-width: 480px) {
+            .challenge-eyebrow-badge {
+              font-size: 15px;
+              padding: 5px 14px;
+            }
+          }
+          .challenge-eyebrow-live {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            color: #4ade80;
+          }
+          .challenge-counter {
+            display: flex;
+            align-items: baseline;
+            gap: 2px;
+          }
+          .challenge-num {
+            font-size: 52px;
+            font-weight: 900;
+            color: #f5f0e8;
+            line-height: 1;
+            letter-spacing: -0.04em;
+          }
+          .challenge-sep {
+            font-size: 28px;
+            font-weight: 300;
+            color: #555550;
+            margin: 0 4px;
+          }
+          .challenge-total {
+            font-size: 28px;
+            font-weight: 400;
+            color: #555550;
+          }
+          .challenge-bar-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 99px;
+            overflow: hidden;
+          }
+          .challenge-bar-fill {
+            height: 100%;
+            background: #b84a2a;
+            border-radius: 99px;
+            transition: width 0.4s ease;
+          }
+          .challenge-list {
+            background: #f7f4ef;
+          }
+          .challenge-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 28px;
+            border-bottom: 1px solid var(--border-light);
+            text-decoration: none;
+            transition: background 0.15s;
+          }
+          .challenge-row:last-child {
+            border-bottom: none;
+          }
+          .challenge-row:hover {
+            background: #ede8df;
+          }
+          .challenge-day-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--num-color);
+            letter-spacing: 0.08em;
+            min-width: 24px;
+          }
+          .challenge-day-title {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+          }
+          .challenge-day-arrow {
+            font-size: 14px;
+            color: var(--text-hint);
+          }
+          .challenge-row:hover .challenge-day-arrow {
+            color: var(--accent-red);
+          }
+          /* ---- end challenge block ---- */
+
           .home-root {
             --bg: #ede8df;
             --text-primary: #1a1a1a;
@@ -255,7 +415,7 @@ export default async function Home() {
           }
           .home-container {
             width: 100%;
-            max-width: 960px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 16px;
           }
