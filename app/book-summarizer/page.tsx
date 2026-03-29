@@ -47,15 +47,6 @@ function clamp(n: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, n));
 }
 
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
 async function sha256Hex(input: string): Promise<string> {
   if (typeof window === "undefined" || !window.crypto?.subtle) return input;
 
@@ -182,99 +173,8 @@ export default function BookSummarizerPage() {
 
   function handleDownloadPdf() {
     if (typeof window === "undefined" || !result) return;
-
-    const printWindow = window.open("", "_blank", "noopener,noreferrer");
-    if (!printWindow) return;
-
-    const ideasHtml = result.ideas
-      .map(
-        (idea, idx) => `
-          <section class="block">
-            <h3>${idx + 1}. ${escapeHtml(idea.headline)}</h3>
-            <p>${escapeHtml(idea.summary)}</p>
-          </section>
-        `
-      )
-      .join("");
-
-    const quotesHtml = result.quotes
-      .map(
-        (quote) => `
-          <section class="block quote">
-            <p>“${escapeHtml(quote.text)}”</p>
-            <small>${escapeHtml(quote.context)}</small>
-          </section>
-        `
-      )
-      .join("");
-
-    const html = `
-      <!doctype html>
-      <html>
-        <head>
-          <meta charset="utf-8" />
-          <title>${escapeHtml(resultTitle)} — Summary</title>
-          <style>
-            body {
-              margin: 0;
-              font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-              background: #101010;
-              color: #f5f0e8;
-              padding: 32px;
-              line-height: 1.7;
-            }
-            h1 {
-              font-size: 28px;
-              margin: 0 0 12px;
-            }
-            h2 {
-              font-size: 13px;
-              margin: 26px 0 10px;
-              text-transform: uppercase;
-              letter-spacing: 1.6px;
-              color: #c4533a;
-            }
-            h3 {
-              font-size: 17px;
-              margin: 0 0 8px;
-            }
-            p { margin: 0; }
-            .meta { opacity: 0.65; margin-bottom: 20px; font-size: 13px; }
-            .block {
-              background: #1a1a1a;
-              border: 1px solid rgba(255,255,255,0.1);
-              border-radius: 10px;
-              padding: 14px 16px;
-              margin-bottom: 12px;
-            }
-            .quote p { font-style: italic; }
-            .quote small { opacity: 0.6; display: block; margin-top: 8px; }
-          </style>
-        </head>
-        <body>
-          <h1>${escapeHtml(resultTitle)}</h1>
-          <p class="meta">Published: ${result.publishedYear} · ${escapeHtml(result.author)}</p>
-
-          <h2>Essence</h2>
-          <section class="block"><p>${escapeHtml(result.essence)}</p></section>
-
-          <h2>Ideas</h2>
-          ${ideasHtml}
-
-          <h2>Quotes</h2>
-          ${quotesHtml}
-
-          <h2>Who Should Read</h2>
-          <section class="block"><p>${escapeHtml(result.whoShouldRead)}</p></section>
-        </body>
-      </html>
-    `;
-
-    printWindow.document.open();
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.focus();
-    window.setTimeout(() => printWindow.print(), 250);
+    setError(null);
+    window.print();
   }
 
   if (!result) {
@@ -1555,6 +1455,50 @@ const styles = `
 
           .s-num {
             font-size: 62px;
+          }
+        }
+
+        @media print {
+          :global(html),
+          :global(body) {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+          }
+
+          .page {
+            background: #ffffff !important;
+          }
+
+          .page::before,
+          nav,
+          .page-head,
+          .foot,
+          .btn-dl,
+          .error {
+            display: none !important;
+          }
+
+          .bento-section {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 16px !important;
+          }
+
+          .result-bar {
+            margin-bottom: 14px !important;
+          }
+
+          .result-title,
+          .result-author {
+            color: #1c1510 !important;
+          }
+
+          .bento > * {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            box-shadow: none !important;
           }
         }
 `;

@@ -17,6 +17,7 @@ const headerLinks = [
   { label: "Quiz", href: "/swipe?mode=quiz" },
   { label: "Visualize", href: "/swipe?mode=visualize" },
   { label: "Compare", href: "/compare" },
+  { label: "Compete", href: "/competitor-analysis" },
   { label: "Interview", href: "/interview" },
   { label: "Stories", href: "/user-story-generator" },
   { label: "Resume", href: "/pm-resume-screener" },
@@ -33,6 +34,7 @@ const challengeDays: ChallengeDay[] = [
   { num: "01", title: "PM Resume Screener", href: "/pm-resume-screener" },
   { num: "02", title: "User Story Generator", href: "/user-story-generator" },
   { num: "03", title: "Book Summarizer", href: "/book-summarizer" },
+  { num: "04", title: "Competitor Analysis Summarizer", href: "/competitor-analysis" },
 ];
 
 const CHALLENGE_TOTAL = 75;

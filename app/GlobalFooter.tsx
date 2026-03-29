@@ -11,6 +11,7 @@ const primaryLinks = [
   { label: "QnA", href: "/qna" },
   { label: "Case Studio", href: "/case-study-generator" },
   { label: "User Stories", href: "/user-story-generator" },
+  { label: "Competitor Analysis", href: "/competitor-analysis" },
   { label: "Resume Screener", href: "/pm-resume-screener" },
   { label: "MAANG", href: "/maang-interview-series" },
 ];
