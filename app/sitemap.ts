@@ -63,7 +63,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
 
   const qnaTopicRoutes: MetadataRoute.Sitemap = getAllTopicSlugs().map((topicSlug) => ({
-    url: `${baseUrl}/qna/${topicSlug}`,
+    url: `${baseUrl}/qna/${encodeURIComponent(topicSlug)}`,
     lastModified,
   }));
 
