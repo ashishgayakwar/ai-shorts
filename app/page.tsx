@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
+
+export const metadata: Metadata = {
+  title: "AI PM World — Learn AI Product Management",
+  description:
+    "Free AI PM learning platform. Practice interview questions, run case studies, screen your resume, and download the MAANG prep guide. Built for execution-minded builders.",
+  alternates: { canonical: "https://www.aipmworld.com" },
+  openGraph: { url: "https://www.aipmworld.com" },
+};
 
 type Entry = {
   num: string;

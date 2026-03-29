@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import LeadCaptureGate from "./LeadCaptureGate";
+
+export const metadata: Metadata = {
+  title: "MAANG AI PM Interview Prep PDF — Meta, Apple, Amazon, Netflix, Google",
+  description:
+    "Download the free MAANG interview prep guide for AI PM roles. Covers interview patterns, answer frameworks, execution stories, and final round readiness.",
+  alternates: { canonical: "https://www.aipmworld.com/maang-interview-series" },
+  openGraph: { url: "https://www.aipmworld.com/maang-interview-series" },
+};
 
 export default function MaangInterviewSeriesPage() {
   const guideModules = [

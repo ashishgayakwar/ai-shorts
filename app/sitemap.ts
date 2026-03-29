@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { concepts } from "@/data/concepts";
+import questionsData from "@/interview_prep/data/questions.json";
+import { getAllTopicSlugs } from "@/interview_prep/lib/qna";
 
 // Same slugify logic you already use elsewhere
 function slugify(s: string) {
@@ -21,9 +23,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/basics`, lastModified },
     { url: `${baseUrl}/swipe`, lastModified },
     { url: `${baseUrl}/compare`, lastModified },
+    { url: `${baseUrl}/quiz`, lastModified },
+    { url: `${baseUrl}/visualize`, lastModified },
     { url: `${baseUrl}/user-story-generator`, lastModified },
     { url: `${baseUrl}/competitor-analysis`, lastModified },
+    { url: `${baseUrl}/book-summarizer`, lastModified },
     { url: `${baseUrl}/pm-resume-screener`, lastModified },
+    { url: `${baseUrl}/case-study-generator`, lastModified },
+    { url: `${baseUrl}/interview`, lastModified },
+    { url: `${baseUrl}/maang-interview-series`, lastModified },
+    { url: `${baseUrl}/qna`, lastModified },
+    { url: `${baseUrl}/privacy`, lastModified },
+    { url: `${baseUrl}/terms`, lastModified },
   ];
 
   // Concept pages
@@ -37,5 +48,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified,
   }));
 
-  return [...staticRoutes, ...conceptRoutes, ...swipeConceptRoutes];
+  const questions = (
+    questionsData as {
+      questions?: Array<{ question_id: string }>;
+    }
+  ).questions ?? [];
+
+  const interviewQuestionRoutes: MetadataRoute.Sitemap = questions
+    .map((q) => q.question_id?.trim())
+    .filter(Boolean)
+    .map((id) => ({
+      url: `${baseUrl}/interview/${id}`,
+      lastModified,
+    }));
+
+  const qnaTopicRoutes: MetadataRoute.Sitemap = getAllTopicSlugs().map((topicSlug) => ({
+    url: `${baseUrl}/qna/${topicSlug}`,
+    lastModified,
+  }));
+
+  return [
+    ...staticRoutes,
+    ...conceptRoutes,
+    ...swipeConceptRoutes,
+    ...interviewQuestionRoutes,
+    ...qnaTopicRoutes,
+  ];
 }

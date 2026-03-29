@@ -4,6 +4,7 @@ import "./globals.css";
 import Script from "next/script";
 import Providers from "./providers";
 import GlobalFooter from "./GlobalFooter";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 
 const lexend = Lexend({
   variable: "--font-lexend",
@@ -19,33 +20,25 @@ const geistMono = Geist_Mono({
 const GTM_ID = "GTM-WZ3KGPZF";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aipmworld.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "AI Shorts — Learn AI in minutes",
-    template: "%s | AI Shorts",
+    default: `${SITE_NAME} — Learn AI Product Management`,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "AI Shorts helps you learn AI concepts through beginner-friendly reader mode and interactive swipe, quiz, compare, and visualize experiences.",
+  description: SITE_DESCRIPTION,
   openGraph: {
-    title: "AI Shorts — Learn AI in minutes",
-    description:
-      "Beginner basics + interactive swipe cards, quiz, compare, and visualize AI concepts.",
     type: "website",
-    images: [
-      {
-        url: "/og.png",
-        width: 1200,
-        height: 630,
-        alt: "AI Shorts",
-      },
-    ],
+    siteName: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
   },
   twitter: {
-    card: "summary_large_image",
-    title: "AI Shorts — Learn AI in minutes",
-    description:
-      "Beginner basics + interactive swipe cards, quiz, compare, and visualize AI concepts.",
-    images: ["/og.png"],
+    card: "summary",
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

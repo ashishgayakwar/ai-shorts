@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { concepts as baseConcepts } from "@/data/concepts";
 import { concepts as generatedConcepts } from "@/data/concepts.generated";
+
+export const metadata: Metadata = {
+  title: "AI PM Concept Cards — Browse & Learn",
+  description:
+    "Card-based learning for AI product managers. Navigate AI concepts with structured primers. Built for busy PMs who want to learn fast.",
+  alternates: { canonical: "https://www.aipmworld.com/swipe" },
+  openGraph: { url: "https://www.aipmworld.com/swipe" },
+};
 
 function slugify(s: string) {
   return s
