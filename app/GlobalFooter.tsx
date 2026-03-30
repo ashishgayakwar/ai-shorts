@@ -14,6 +14,7 @@ const primaryLinks = [
   { label: "QnA", href: "/qna" },
   { label: "Case Studio", href: "/case-study-generator" },
   { label: "User Stories", href: "/user-story-generator" },
+  { label: "City Guide", href: "/city-guide" },
   { label: "Competitor Analysis", href: "/competitor-analysis" },
   { label: "Resume Screener", href: "/pm-resume-screener" },
   { label: "MAANG", href: "/maang-interview-series" },
@@ -21,6 +22,10 @@ const primaryLinks = [
 
 export default function GlobalFooter() {
   const pathname = usePathname();
+  if (pathname.startsWith("/city-guide")) {
+    return null;
+  }
+
   const useLegacyThemeFooter =
     pathname.startsWith("/auth") ||
     pathname.startsWith("/swipe") ||

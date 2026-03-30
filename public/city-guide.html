@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>City Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent: #C9963A;
+  --accent-light: #E8B95A;
+  --deep: #1A1208;
+  --cream: #FAF6EF;
+  --muted: #8C7B6A;
+  --border: #E8E0D0;
+  --red: #C0392B;
+  --green: #2D6A4F;
+}
+
+body {
+  background: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--deep);
+  min-height: 100vh;
+}
+
+/* ── LANDING ── */
+.landing {
+  min-height: 100vh;
+  background: var(--deep);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.landing::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 20% 50%, rgba(201,150,58,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 80% 30%, rgba(201,150,58,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 60% 80%, rgba(201,150,58,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+.landing-bg-text { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.landing-bg-text span {
+  position: absolute;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: rgba(255,255,255,0.025);
+  white-space: nowrap;
+  animation: drift 20s ease-in-out infinite;
+}
+.landing-bg-text span:nth-child(1) { font-size: 130px; top: 2%;   left: -3%;  animation-delay: 0s;   animation-duration: 22s; }
+.landing-bg-text span:nth-child(2) { font-size: 80px;  top: 22%;  right: -2%; animation-delay: -5s;  animation-duration: 18s; }
+.landing-bg-text span:nth-child(3) { font-size: 110px; top: 48%;  left: 8%;   animation-delay: -8s;  animation-duration: 25s; }
+.landing-bg-text span:nth-child(4) { font-size: 75px;  top: 68%;  right: 4%;  animation-delay: -12s; animation-duration: 20s; }
+.landing-bg-text span:nth-child(5) { font-size: 95px;  bottom: 2%;left: 28%;  animation-delay: -3s;  animation-duration: 28s; }
+@keyframes drift {
+  0%,100% { transform: translateY(0) translateX(0); }
+  33%      { transform: translateY(-12px) translateX(8px); }
+  66%      { transform: translateY(8px) translateX(-6px); }
+}
+.landing-inner { position: relative; z-index: 1; text-align: center; max-width: 640px; width: 100%; }
+.landing-eyebrow {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 5px;
+  color: var(--accent-light); text-transform: uppercase; margin-bottom: 24px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.2s forwards;
+}
+.landing-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(52px, 10vw, 96px);
+  color: #fff; line-height: 0.95; margin-bottom: 20px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.3s forwards;
+}
+.landing-title em { color: var(--accent-light); font-style: italic; }
+.landing-sub {
+  font-size: 15px; color: rgba(255,255,255,0.38); line-height: 1.65; margin-bottom: 48px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.4s forwards;
+}
+/* SEARCH */
+.search-wrap {
+  display: flex; gap: 0;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 18px; padding: 6px;
+  backdrop-filter: blur(12px);
+  opacity: 0; animation: fadeUp 0.6s ease 0.5s forwards;
+  max-width: 540px; margin: 0 auto;
+}
+.search-input {
+  flex: 1; background: transparent; border: none;
+  padding: 14px 18px;
+  font-family: 'DM Sans', sans-serif; font-size: 15px;
+  color: #fff; outline: none; min-width: 0;
+}
+.search-input::placeholder { color: rgba(255,255,255,0.22); }
+.search-btn {
+  background: var(--accent); color: #fff; border: none;
+  border-radius: 13px; padding: 14px 26px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s, transform 0.15s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.search-btn:hover { background: var(--accent-light); transform: scale(1.02); }
+.search-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+/* POPULAR */
+.popular { margin-top: 28px; opacity: 0; animation: fadeUp 0.6s ease 0.65s forwards; }
+.popular-label {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px;
+  color: rgba(255,255,255,0.18); text-transform: uppercase; margin-bottom: 12px;
+}
+.popular-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.popular-pill {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.45); font-size: 12px; padding: 7px 16px;
+  border-radius: 100px; cursor: pointer; transition: all 0.2s;
+}
+.popular-pill:hover {
+  background: rgba(201,150,58,0.15); border-color: rgba(201,150,58,0.4);
+  color: var(--accent-light); transform: translateY(-1px);
+}
+/* STATS */
+.landing-stats {
+  display: flex; gap: 48px; justify-content: center; margin-top: 52px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.8s forwards;
+  border-top: 1px solid rgba(255,255,255,0.07); padding-top: 40px;
+}
+.lstat { text-align: center; }
+.lstat-num { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--accent-light); display: block; line-height: 1; margin-bottom: 5px; }
+.lstat-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; color: rgba(255,255,255,0.18); text-transform: uppercase; }
+
+/* guide padding */
+#guide {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 20px 28px 40px;
+}
+
+/* ── LOADING ── */
+.loading-state {
+  display: none;
+  padding: 72px 20px;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+.loading-state.visible { display: block; }
+.loader-shell {
+  max-width: 620px;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #fff, #fdfaf4);
+  padding: 28px 28px 24px;
+  box-shadow: 0 14px 40px rgba(26, 18, 8, 0.08);
+}
+.loader-topline {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.loader-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 38px);
+  line-height: 1.1;
+  color: var(--deep);
+  margin-bottom: 6px;
+}
+.loader-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+.loader-track {
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: #efe6d7;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.loader-bar {
+  height: 100%;
+  width: 36%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  animation: loaderShift 1.5s ease-in-out infinite;
+}
+@keyframes loaderShift {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(280%); }
+}
+.loader-steps {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.loader-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.loader-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #d8cebf;
+  flex-shrink: 0;
+}
+.loader-step.active {
+  color: var(--deep);
+}
+.loader-step.active .loader-dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 5px rgba(201, 150, 58, 0.18);
+  animation: pulseDot 1.1s ease-in-out infinite;
+}
+.loader-step.done .loader-dot {
+  background: var(--green);
+  box-shadow: none;
+}
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.16); }
+}
+
+/* ── GUIDE (hidden until loaded) ── */
+#guide { display: none; }
+#guide.visible { display: block; }
+
+/* HERO */
+.hero {
+  border-radius: 20px;
+  padding: 40px 40px 36px;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+  background: var(--deep);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 80% 50%, rgba(201,150,58,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(201,150,58,0.08) 0%, transparent 60%);
+}
+.hero-inner {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.city-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--accent-light);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.city-name {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(48px, 9vw, 84px);
+  color: #fff;
+  line-height: 0.9;
+}
+.city-name em { color: var(--accent-light); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 12px; }
+.hero-pills { display: flex; flex-wrap: wrap; gap: 8px; align-self: flex-end; max-width: 340px; }
+.pill {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.65);
+  font-size: 11px;
+  padding: 7px 14px;
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+}
+.pill span { color: var(--accent-light); margin-right: 5px; }
+
+/* ── CAROUSEL ── */
+.carousel-wrap { margin-bottom: 10px; }
+.carousel-track-outer {
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  background: var(--deep);
+  height: 340px;
+}
+.carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.55s cubic-bezier(0.77, 0, 0.175, 1);
+  will-change: transform;
+}
+.carousel-slide { min-width: 100%; height: 100%; position: relative; flex-shrink: 0; }
+.carousel-slide img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: opacity 0.4s ease; opacity: 0;
+}
+.carousel-slide img.loaded { opacity: 1; }
+.carousel-slide::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(20,12,4,0.75) 0%, transparent 60%);
+  pointer-events: none;
+}
+.slide-bg {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 80px;
+  color: rgba(255,255,255,0.04);
+  font-style: italic;
+}
+.slide-caption {
+  position: absolute; bottom: 20px; left: 24px; right: 24px; z-index: 2;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+}
+.caption-text { font-family: 'Playfair Display', serif; font-size: 18px; color: #fff; line-height: 1.2; }
+.caption-sub { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; color: rgba(255,255,255,0.45); text-transform: uppercase; margin-top: 4px; }
+.photo-credit { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); text-align: right; flex-shrink: 0; }
+.photo-credit a { color: rgba(255,255,255,0.35); text-decoration: none; }
+.carousel-btn {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15);
+  color: #fff; width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px;
+  transition: background 0.2s; backdrop-filter: blur(6px);
+}
+.carousel-btn:hover { background: rgba(201,150,58,0.5); border-color: var(--accent); }
+.carousel-btn.prev { left: 16px; }
+.carousel-btn.next { right: 16px; }
+.carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); cursor: pointer; transition: background 0.2s, transform 0.2s; }
+.dot.active { background: var(--accent); transform: scale(1.3); }
+
+/* ── BENTO ── */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 12px;
+  grid-auto-rows: minmax(90px, auto);
+  align-items: start;
+}
+.tile {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow 0.2s, transform 0.2s;
+  height: 100%;
+  align-self: stretch;
+}
+.tile:hover { box-shadow: 0 10px 40px rgba(0,0,0,0.07); transform: translateY(-2px); }
+.tile::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  opacity: 0; transition: opacity 0.2s; border-radius: 18px 18px 0 0;
+}
+.tile:hover::before { opacity: 1; }
+
+.t-vibe      { grid-column: span 5; }
+.t-best-time { grid-column: span 3; background: var(--deep); }
+.t-visa      { grid-column: span 4; }
+.t-stats     { grid-column: span 3; }
+.t-history   { grid-column: span 9; }
+.t-food      { grid-column: span 5; }
+.t-budget    { grid-column: span 7; }
+.t-flights   { grid-column: span 6; }
+.t-hood      { grid-column: span 6; }
+.t-intercity { grid-column: span 7; }
+.t-gems      { grid-column: span 5; background: var(--deep); }
+.t-customs   { grid-column: span 4; }
+.t-photos    { grid-column: span 8; background: #1C2B1E; }
+.t-tips      { grid-column: span 12; background: var(--deep); }
+
+/* TILE TYPOGRAPHY */
+.tile-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: block; }
+.tile-title { font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 10px; line-height: 1.2; }
+.tile-body  { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.tile-body strong { color: var(--deep); font-weight: 500; }
+
+/* dark tiles */
+.t-best-time .tile-label, .t-gems .tile-label, .t-photos .tile-label, .t-tips .tile-label { color: rgba(255,255,255,0.3); }
+.t-best-time .tile-title, .t-gems .tile-title, .t-photos .tile-title, .t-tips .tile-title { color: #fff; }
+.t-best-time .tile-body,  .t-gems .tile-body,  .t-photos .tile-body,  .t-tips .tile-body  { color: rgba(255,255,255,0.5); }
+.t-best-time .tile-body strong, .t-gems .tile-body strong, .t-photos .tile-body strong, .t-tips .tile-body strong { color: rgba(255,255,255,0.85); }
+
+/* accent visa tile — colour set dynamically */
+.t-visa .tile-label { color: rgba(255,255,255,0.6); }
+.t-visa .tile-title { color: #fff; }
+.t-visa .tile-body  { color: rgba(255,255,255,0.8); }
+.t-visa .tile-body strong { color: #fff; }
+.t-visa::before { display: none; }
+.t-visa { background: #c0522a !important; border-color: #c0522a !important; }
+
+.big-num { font-family: 'Playfair Display', serif; font-size: 40px; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+.big-num.white { color: #fff; }
+
+.cl { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.cl li { font-size: 12px; color: var(--muted); line-height: 1.5; display: grid; grid-template-columns: 14px 1fr; gap: 8px; align-items: start; }
+.cl li .arr { color: var(--accent); font-size: 11px; padding-top: 2px; }
+.cl li .txt strong { color: var(--deep); font-weight: 500; }
+.t-best-time .cl li, .t-gems .cl li, .t-photos .cl li, .t-tips .cl li { color: rgba(255,255,255,0.45); }
+.t-best-time .cl li .arr, .t-gems .cl li .arr, .t-photos .cl li .arr, .t-tips .cl li .arr { color: var(--accent-light); }
+.t-best-time .cl li .txt strong, .t-gems .cl li .txt strong, .t-photos .cl li .txt strong, .t-tips .cl li .txt strong { color: rgba(255,255,255,0.85); }
+
+.budget-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.budget-row:last-child { margin-bottom: 0; }
+.blabel { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); width: 52px; flex-shrink: 0; }
+.bbar-wrap { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.bbar { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); }
+.bprice { font-family: 'Playfair Display', serif; font-size: 16px; width: 82px; text-align: right; flex-shrink: 0; color: var(--deep); }
+
+.frow { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.frow:last-child { border-bottom: none; padding-bottom: 0; }
+.frow:first-child { padding-top: 0; }
+.fcity { font-family: 'Playfair Display', serif; font-size: 18px; flex: 1; }
+.farrow { color: var(--accent); flex-shrink: 0; }
+.ftime { text-align: right; min-width: 0; }
+.ftime strong { color: var(--deep); display: block; font-size: 13px; font-family: 'DM Mono', monospace; white-space: nowrap; }
+.ftime span   { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; white-space: nowrap; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+.tag { display: inline-block; background: var(--cream); border: 1px solid var(--border); color: var(--muted); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-family: 'DM Mono', monospace; white-space: nowrap; }
+.tag.a { background: rgba(201,150,58,0.1); border-color: rgba(201,150,58,0.3); color: var(--accent); }
+.tag.r { background: rgba(192,57,43,0.07); border-color: rgba(192,57,43,0.2); color: var(--red); }
+
+.ic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 10px; }
+.ic-item { background: var(--cream); border-radius: 10px; padding: 10px 12px; }
+.ic-city { font-family: 'Playfair Display', serif; font-size: 14px; margin-bottom: 3px; }
+.ic-detail { font-size: 10.5px; color: var(--muted); line-height: 1.4; }
+
+.tips-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 12px; }
+.tip-icon { font-size: 24px; margin-bottom: 6px; }
+.tip-text { font-size: 11.5px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+.tip-text strong { color: rgba(255,255,255,0.85); }
+
+.stats-split { display: flex; flex-direction: column; justify-content: space-around; height: 100%; gap: 16px; }
+.stat-block .slabel { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.stat-block .snum { font-family: 'Playfair Display', serif; font-size: 48px; color: var(--accent); line-height: 1; }
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+.fade-in { opacity: 0; transform: translateY(12px); animation: fadeUp 0.4s ease forwards; }
+
+@media (max-width: 768px) {
+  body { padding: 12px; }
+  #guide { padding: 14px 0 24px; max-width: none; }
+  .loading-state { max-width: none; }
+  .bento { grid-template-columns: 1fr; gap: 8px; }
+  .t-vibe, .t-history, .t-food, .t-budget, .t-flights,
+  .t-hood, .t-intercity, .t-tips,
+  .t-best-time, .t-visa, .t-stats,
+  .t-gems, .t-customs, .t-photos { grid-column: span 1; }
+  .tips-grid { grid-template-columns: 1fr 1fr; }
+  .carousel-track-outer { height: 240px; }
+  .hero-inner { flex-direction: column; align-items: flex-start; }
+  .hero-pills { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div class="landing" id="landing">
+  <div class="landing-bg-text">
+    <span>Bangkok</span>
+    <span>Tokyo</span>
+    <span>Amritsar</span>
+    <span>Paris</span>
+    <span>Kyoto</span>
+  </div>
+  <div class="landing-inner">
+    <div class="landing-eyebrow">✦ AI-Powered Travel Guide</div>
+    <div class="landing-title">Every city.<br><em>Instantly.</em></div>
+    <div class="landing-sub">Enter any city in the world. Get a full travel guide — history, food, budget, hidden gems, flights from India — generated in seconds.</div>
+    <div class="search-wrap">
+      <input class="search-input" id="cityInput" type="text" placeholder="Bangkok, Amritsar, Tokyo, Paris…" />
+      <button class="search-btn" id="searchBtn" onclick="loadCity()">Explore →</button>
+    </div>
+    <div class="popular">
+      <div class="popular-label">Popular right now</div>
+      <div class="popular-pills">
+        <span class="popular-pill" onclick="quickSearch('Bangkok')">🇹🇭 Bangkok</span>
+        <span class="popular-pill" onclick="quickSearch('Tokyo')">🇯🇵 Tokyo</span>
+        <span class="popular-pill" onclick="quickSearch('Amritsar')">🇮🇳 Amritsar</span>
+        <span class="popular-pill" onclick="quickSearch('Paris')">🇫🇷 Paris</span>
+        <span class="popular-pill" onclick="quickSearch('Bali')">🇮🇩 Bali</span>
+        <span class="popular-pill" onclick="quickSearch('Dubai')">🇦🇪 Dubai</span>
+        <span class="popular-pill" onclick="quickSearch('Kyoto')">🇯🇵 Kyoto</span>
+        <span class="popular-pill" onclick="quickSearch('Istanbul')">🇹🇷 Istanbul</span>
+      </div>
+    </div>
+    <div class="landing-stats">
+      <div class="lstat"><span class="lstat-num">195+</span><span class="lstat-label">Countries</span></div>
+      <div class="lstat"><span class="lstat-num">10K+</span><span class="lstat-label">Cities</span></div>
+      <div class="lstat"><span class="lstat-num">14</span><span class="lstat-label">Cards per guide</span></div>
+      <div class="lstat"><span class="lstat-num">&lt;10s</span><span class="lstat-label">Generation time</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="loading-state" id="loadingState">
+  <div class="loader-shell" id="loaderShell">
+    <div class="loader-topline">Building Your Guide</div>
+    <div class="loader-title" id="loaderCity">Preparing your city guide</div>
+    <div class="loader-sub">Gathering local signals, pricing, and travel highlights.</div>
+    <div class="loader-track"><div class="loader-bar"></div></div>
+    <ul class="loader-steps" id="loaderSteps">
+      <li class="loader-step active"><span class="loader-dot"></span><span>Reading city profile</span></li>
+      <li class="loader-step"><span class="loader-dot"></span><span>Generating travel intelligence</span></li>
+      <li class="loader-step"><span class="loader-dot"></span><span>Mapping budget + visa info</span></li>
+      <li class="loader-step"><span class="loader-dot"></span><span>Curating photo carousel</span></li>
+      <li class="loader-step"><span class="loader-dot"></span><span>Finalizing your guide</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- GUIDE -->
+<div id="guide">
+
+  <!-- HERO -->
+  <div class="hero fade-in" id="heroSection">
+    <div class="hero-inner">
+      <div>
+        <div class="city-label">✦ City Guide</div>
+        <div class="city-name" id="heroName"></div>
+        <div class="hero-sub" id="heroSub"></div>
+      </div>
+      <div class="hero-pills" id="heroPills"></div>
+    </div>
+  </div>
+
+  <!-- CAROUSEL -->
+  <div class="carousel-wrap fade-in">
+    <div class="carousel-track-outer" id="carouselOuter">
+      <div class="carousel-track" id="carouselTrack"></div>
+      <button class="carousel-btn prev" id="prevBtn">&#8592;</button>
+      <button class="carousel-btn next" id="nextBtn">&#8594;</button>
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+  </div>
+
+  <!-- BENTO -->
+  <div class="bento" id="bento">
+    <div class="tile t-vibe fade-in">
+      <span class="tile-label" id="lb-vibe">City Vibe</span>
+      <div class="tile-title" id="tt-vibe"></div>
+      <div class="tile-body" id="tb-vibe"></div>
+      <div class="tags" id="tags-vibe"></div>
+      <div id="bkg-vibe" style="position:absolute;bottom:18px;right:18px;font-family:'Playfair Display',serif;font-size:68px;color:rgba(201,150,58,0.06);font-style:italic;line-height:1;pointer-events:none;"></div>
+    </div>
+
+    <div class="tile t-best-time fade-in">
+      <span class="tile-label">Best Season</span>
+      <div class="big-num white" id="best-time-num" style="font-size:28px;margin:6px 0 8px;"></div>
+      <div class="tile-body" id="best-time-body"></div>
+    </div>
+
+    <div class="tile t-visa fade-in" id="visaTile">
+      <span class="tile-label" id="visa-label">Entry</span>
+      <div class="tile-title" id="visa-title"></div>
+      <div class="tile-body" id="visa-body"></div>
+    </div>
+
+    <div class="tile t-stats fade-in">
+      <div class="stats-split">
+        <div class="stat-block"><div class="slabel">Population</div><div class="snum" id="stat-pop"></div></div>
+        <div class="divider"></div>
+        <div class="stat-block"><div class="slabel">Avg Temp</div><div class="snum" id="stat-temp"></div></div>
+      </div>
+    </div>
+
+    <div class="tile t-history fade-in">
+      <span class="tile-label">History</span>
+      <div class="tile-title" id="hist-title"></div>
+      <div class="tile-body" id="hist-body"></div>
+      <ul class="cl" id="hist-list"></ul>
+    </div>
+
+    <div class="tile t-food fade-in">
+      <span class="tile-label">Food & Drink</span>
+      <div class="tile-title" id="food-title"></div>
+      <ul class="cl" id="food-list"></ul>
+      <div class="tags" id="food-tags"></div>
+    </div>
+
+    <div class="tile t-budget fade-in">
+      <span class="tile-label">Daily Budget — Per Person</span>
+      <div class="tile-title" id="budget-title"></div>
+      <div style="margin-top:14px;" id="budget-bars"></div>
+      <div class="divider"></div>
+      <div class="tile-body" id="budget-warn"></div>
+    </div>
+
+    <div class="tile t-flights fade-in">
+      <span class="tile-label">✈️ From India</span>
+      <div class="tile-title">Flight Times</div>
+      <div style="margin-top:10px;" id="flights-list"></div>
+      <div class="divider"></div>
+      <div class="tile-body" id="flights-note"></div>
+    </div>
+
+    <div class="tile t-hood fade-in">
+      <span class="tile-label">Neighbourhoods</span>
+      <div class="tile-title">Where to Stay vs Explore</div>
+      <div id="hood-content"></div>
+    </div>
+
+    <div class="tile t-intercity fade-in">
+      <span class="tile-label">Inter-City Travel</span>
+      <div class="tile-title" id="ic-title"></div>
+      <div class="ic-grid" id="ic-grid"></div>
+    </div>
+
+    <div class="tile t-gems fade-in">
+      <span class="tile-label">💎 Hidden Gems</span>
+      <div class="tile-title">What Tourists Miss</div>
+      <ul class="cl" id="gems-list"></ul>
+    </div>
+
+    <div class="tile t-customs fade-in">
+      <span class="tile-label">🙏 Local Customs</span>
+      <div class="tile-title">Do's & Don'ts</div>
+      <ul class="cl" id="customs-list"></ul>
+    </div>
+
+    <div class="tile t-photos fade-in">
+      <span class="tile-label">📸 Best Photo Spots</span>
+      <div class="tile-title">Where to Shoot</div>
+      <ul class="cl" id="photos-list"></ul>
+    </div>
+
+    <div class="tile t-tips fade-in">
+      <span class="tile-label">⚡ Don't Leave Without Knowing</span>
+      <div class="tips-grid" id="tips-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// SERVER BRIDGE
+// ─────────────────────────────────────────
+let lastCityPayload = null;
+let loaderStepTimer = null;
+let loaderCursor = 0;
+
+function buildFingerprint() {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "unknown";
+    const payload = [
+      navigator.language || "unknown",
+      navigator.platform || "unknown",
+      String(screen.width || 0),
+      String(screen.height || 0),
+      String(screen.colorDepth || 0),
+      String(new Date().getTimezoneOffset()),
+      tz,
+    ].join("|");
+    return btoa(unescape(encodeURIComponent(payload))).slice(0, 256);
+  } catch {
+    return "unknown";
+  }
+}
+
+// ─────────────────────────────────────────
+// CAROUSEL
+// ─────────────────────────────────────────
+let carouselCurrent = 0;
+let carouselTimer = null;
+let carouselTotal = 0;
+
+function buildCarousel(photos) {
+  const track = document.getElementById('carouselTrack');
+  const dotsEl = document.getElementById('carouselDots');
+  track.innerHTML = '';
+  dotsEl.innerHTML = '';
+  carouselCurrent = 0;
+  carouselTotal = photos.length;
+
+  photos.forEach((p, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'carousel-slide';
+    slide.innerHTML = `<div class="slide-bg">${p.city || ''}</div>`;
+
+    if (p.url) {
+      const img = document.createElement('img');
+      img.alt = p.caption;
+      img.onload = () => img.classList.add('loaded');
+      img.src = p.url;
+      slide.appendChild(img);
+    }
+
+    const cap = document.createElement('div');
+    cap.className = 'slide-caption';
+    cap.innerHTML = `
+      <div>
+        <div class="caption-text">${p.caption}</div>
+        <div class="caption-sub">${p.sub}</div>
+      </div>
+      <div class="photo-credit">Photo via <a href="https://www.pexels.com" target="_blank">Pexels</a></div>`;
+    slide.appendChild(cap);
+    track.appendChild(slide);
+
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => carouselGoTo(i));
+    dotsEl.appendChild(dot);
+  });
+
+  clearInterval(carouselTimer);
+  carouselTimer = setInterval(() => carouselGoTo((carouselCurrent + 1) % carouselTotal), 4500);
+}
+
+function carouselGoTo(n) {
+  carouselCurrent = n;
+  document.getElementById('carouselTrack').style.transform = `translateX(-${n * 100}%)`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === n));
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+  clearInterval(carouselTimer);
+  carouselGoTo((carouselCurrent - 1 + carouselTotal) % carouselTotal);
+  carouselTimer = setInterval(() => carouselGoTo((carouselCurrent + 1) % carouselTotal), 4500);
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+  clearInterval(carouselTimer);
+  carouselGoTo((carouselCurrent + 1) % carouselTotal);
+  carouselTimer = setInterval(() => carouselGoTo((carouselCurrent + 1) % carouselTotal), 4500);
+});
+
+let touchStartX = 0;
+document.getElementById('carouselOuter').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+document.getElementById('carouselOuter').addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 40) {
+    clearInterval(carouselTimer);
+    carouselGoTo(diff > 0 ? (carouselCurrent + 1) % carouselTotal : (carouselCurrent - 1 + carouselTotal) % carouselTotal);
+  }
+});
+
+// ─────────────────────────────────────────
+// PHOTOS (via server payload)
+// ─────────────────────────────────────────
+async function fetchPhotos(city, topics) {
+  const queries = topics || [city, `${city} landmark`, `${city} street`, `${city} food`, `${city} culture`];
+  try {
+    const fingerprint = buildFingerprint();
+    const res = await fetch('/api/city-photos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-fingerprint': fingerprint
+      },
+      body: JSON.stringify({ queries: queries.slice(0, 5) })
+    });
+    const json = await res.json();
+    const photos = Array.isArray(json.photos) ? json.photos : [];
+    return queries.slice(0, 5).map((q, idx) => ({
+      url: photos[idx] || null,
+      caption: q,
+      sub: 'Pexels',
+      city: city.toUpperCase(),
+    }));
+  } catch (e) {
+    console.warn('Pexels fetch failed');
+    return queries.slice(0, 5).map((q) => ({ url: null, caption: q, sub: '', city: city.toUpperCase() }));
+  }
+}
+
+// ─────────────────────────────────────────
+// RENDER HELPERS
+// ─────────────────────────────────────────
+function cl(items) {
+  return items.map(it => `<li><span class="arr">→</span><span class="txt">${it}</span></li>`).join('');
+}
+function tags(items) {
+  return items.map(t => `<span class="tag ${t.type || ''}">${t.label}</span>`).join('');
+}
+
+function renderGuide(city, d) {
+  // Hero
+  const mid = Math.floor(city.length / 2);
+  document.getElementById('heroName').innerHTML = city.slice(0, mid) + '<em>' + city.slice(mid) + '</em>';
+  document.getElementById('heroSub').textContent = d.hero.tagline;
+  document.getElementById('heroPills').innerHTML = d.hero.pills.map(p =>
+    `<div class="pill"><span>${p.emoji}</span>${p.text}</div>`).join('');
+  document.getElementById('bkg-vibe').textContent = d.hero.code || city.slice(0,3).toUpperCase();
+
+  // Dynamic accent colour
+  if (d.accentColor) {
+    document.documentElement.style.setProperty('--accent', d.accentColor);
+    document.documentElement.style.setProperty('--accent-light', d.accentColorLight || d.accentColor);
+  }
+
+  // Vibe
+  document.getElementById('tt-vibe').textContent = d.vibe.title;
+  document.getElementById('tb-vibe').innerHTML = d.vibe.body;
+  document.getElementById('tags-vibe').innerHTML = tags(d.vibe.tags);
+
+  // Best time
+  document.getElementById('best-time-num').textContent = d.bestTime.period;
+  document.getElementById('best-time-body').innerHTML = d.bestTime.note;
+
+  // Visa
+  document.getElementById('visa-title').textContent = d.visa.title;
+  document.getElementById('visa-body').innerHTML = d.visa.body;
+
+  // Stats
+  document.getElementById('stat-pop').textContent = d.stats.population;
+  document.getElementById('stat-temp').textContent = d.stats.avgTemp;
+
+  // History
+  document.getElementById('hist-title').textContent = d.history.title;
+  document.getElementById('hist-body').innerHTML = d.history.body;
+  document.getElementById('hist-list').innerHTML = cl(d.history.sites);
+
+  // Food
+  document.getElementById('food-title').textContent = d.food.title;
+  document.getElementById('food-list').innerHTML = cl(d.food.items);
+  document.getElementById('food-tags').innerHTML = tags(d.food.tags);
+
+  // Budget
+  document.getElementById('budget-title').textContent = d.budget.title;
+  document.getElementById('budget-bars').innerHTML = d.budget.tiers.map(t =>
+    `<div class="budget-row">
+      <div class="blabel">${t.label}</div>
+      <div class="bbar-wrap"><div class="bbar" style="width:${t.pct}%"></div></div>
+      <div class="bprice">${t.price}</div>
+    </div>`).join('');
+  document.getElementById('budget-warn').innerHTML = d.budget.warning;
+
+  // Flights
+  document.getElementById('flights-list').innerHTML = d.flights.routes.map(r =>
+    `<div class="frow">
+      <div class="fcity">${r.from}</div>
+      <div class="farrow">→</div>
+      <div class="ftime"><strong>${r.time}</strong><span>${r.note}</span></div>
+    </div>`).join('');
+  document.getElementById('flights-note').innerHTML = d.flights.note;
+
+  // Neighbourhoods
+  document.getElementById('hood-content').innerHTML = `
+    <div class="tile-label" style="margin-top:8px;margin-bottom:4px;">🛏 Stay</div>
+    <ul class="cl">${cl(d.neighbourhoods.stay)}</ul>
+    <div class="tile-label" style="margin-top:14px;margin-bottom:4px;">🥾 Explore</div>
+    <ul class="cl">${cl(d.neighbourhoods.explore)}</ul>`;
+
+  // Intercity
+  document.getElementById('ic-title').textContent = d.intercity.title;
+  document.getElementById('ic-grid').innerHTML = d.intercity.destinations.map((dest, i) =>
+    `<div class="ic-item" ${i === d.intercity.destinations.length - 1 ? 'style="background:rgba(201,150,58,0.08);border:1px solid rgba(201,150,58,0.2);"' : ''}>
+      <div class="ic-city" ${i === d.intercity.destinations.length - 1 ? 'style="color:var(--accent)"' : ''}>${dest.city}</div>
+      <div class="ic-detail">${dest.detail}</div>
+    </div>`).join('');
+
+  // Gems
+  document.getElementById('gems-list').innerHTML = cl(d.gems);
+
+  // Customs
+  document.getElementById('customs-list').innerHTML = cl(d.customs);
+
+  // Photos
+  document.getElementById('photos-list').innerHTML = cl(d.photoSpots);
+
+  // Tips
+  document.getElementById('tips-grid').innerHTML = d.tips.map(t =>
+    `<div><div class="tip-icon">${t.icon}</div><div class="tip-text">${t.text}</div></div>`).join('');
+}
+
+// ─────────────────────────────────────────
+// DATA CALL (via server API)
+// ─────────────────────────────────────────
+async function fetchCityData(city) {
+  const fingerprint = buildFingerprint();
+  const res = await fetch('/api/city-guide', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-fingerprint': fingerprint
+    },
+    body: JSON.stringify({ city })
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'City guide API failed');
+  lastCityPayload = json;
+  return json.data || null;
+}
+
+function startLoader(city) {
+  const loading = document.getElementById('loadingState');
+  loading.innerHTML = `
+    <div class="loader-shell" id="loaderShell">
+      <div class="loader-topline">Building Your Guide</div>
+      <div class="loader-title" id="loaderCity">Preparing ${city}</div>
+      <div class="loader-sub">Gathering local signals, pricing, and travel highlights.</div>
+      <div class="loader-track"><div class="loader-bar"></div></div>
+      <ul class="loader-steps" id="loaderSteps">
+        <li class="loader-step active"><span class="loader-dot"></span><span>Reading city profile</span></li>
+        <li class="loader-step"><span class="loader-dot"></span><span>Generating travel intelligence</span></li>
+        <li class="loader-step"><span class="loader-dot"></span><span>Mapping budget + visa info</span></li>
+        <li class="loader-step"><span class="loader-dot"></span><span>Curating photo carousel</span></li>
+        <li class="loader-step"><span class="loader-dot"></span><span>Finalizing your guide</span></li>
+      </ul>
+    </div>`;
+  loading.classList.add('visible');
+
+  const steps = Array.from(document.querySelectorAll('#loaderSteps .loader-step'));
+  loaderCursor = 0;
+  clearInterval(loaderStepTimer);
+  loaderStepTimer = setInterval(() => {
+    if (!steps.length) return;
+    steps.forEach((step, idx) => {
+      step.classList.toggle('done', idx < loaderCursor);
+      step.classList.toggle('active', idx === loaderCursor);
+    });
+    loaderCursor = (loaderCursor + 1) % steps.length;
+  }, 1100);
+}
+
+function stopLoader() {
+  clearInterval(loaderStepTimer);
+  loaderStepTimer = null;
+}
+
+// ─────────────────────────────────────────
+// MAIN
+// ─────────────────────────────────────────
+async function loadCity() {
+  const city = document.getElementById('cityInput').value.trim();
+  if (!city) return;
+
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true;
+  startLoader(city);
+  document.getElementById('guide').classList.remove('visible');
+
+  try {
+    const data = await fetchCityData(city);
+    const finalPhotos = await fetchPhotos(city, data.carouselSearchTerms || null);
+
+    renderGuide(city, data);
+    buildCarousel(finalPhotos);
+
+    document.getElementById('loadingState').classList.remove('visible');
+    stopLoader();
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('guide').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch (err) {
+    console.error(err);
+    stopLoader();
+    document.getElementById('loadingState').innerHTML = `
+      <div style="color:#C0392B;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;">
+        ERROR — Unable to generate city guide right now
+      </div>`;
+  }
+
+  btn.disabled = false;
+}
+
+function quickSearch(city) {
+  document.getElementById('cityInput').value = city;
+  loadCity();
+}
+
+// Enter key support
+document.getElementById('cityInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') loadCity();
+});
+</script>
+</body>
+</html>
