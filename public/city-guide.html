@@ -146,14 +146,21 @@ body {
 /* ── LOADING ── */
 .loading-state {
   display: none;
-  padding: 72px 20px;
-  max-width: 1360px;
-  margin: 0 auto;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 50% 35% at 50% 35%, rgba(201,150,58,0.15), transparent 70%),
+    rgba(26, 18, 8, 0.72);
+  backdrop-filter: blur(6px);
 }
-.loading-state.visible { display: block; }
+.loading-state.visible { display: flex; }
 .loader-shell {
   max-width: 620px;
-  margin: 0 auto;
+  width: min(620px, 100%);
   border: 1px solid var(--border);
   border-radius: 20px;
   background: linear-gradient(180deg, #fff, #fdfaf4);
@@ -467,7 +474,6 @@ body {
 @media (max-width: 768px) {
   body { padding: 12px; }
   #guide { padding: 14px 0 24px; max-width: none; }
-  .loading-state { max-width: none; }
   .bento { grid-template-columns: 1fr; gap: 8px; }
   .t-vibe, .t-history, .t-food, .t-budget, .t-flights,
   .t-hood, .t-intercity, .t-tips,
