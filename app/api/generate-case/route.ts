@@ -824,7 +824,7 @@ Return JSON only.
 
     // Attempt 1
     const completion1 = await client.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       temperature: 0.7,
       max_tokens: 3500,
       response_format: { type: "json_object" },
@@ -856,7 +856,7 @@ Return ONLY valid JSON in the same schema. Do not remove other fields.
 `;
 
       const completion2 = await client.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         temperature: 0.5,
         max_tokens: 3500,
         response_format: { type: "json_object" },

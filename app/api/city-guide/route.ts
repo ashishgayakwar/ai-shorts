@@ -164,6 +164,79 @@ type CityGuidePayload = {
   carouselSearchTerms: string[];
 };
 
+const INDIA_CITY_HINTS = new Set([
+  "amritsar",
+  "agra",
+  "ahmedabad",
+  "bengaluru",
+  "bangalore",
+  "bhopal",
+  "chandigarh",
+  "chennai",
+  "coimbatore",
+  "dehradun",
+  "delhi",
+  "goa",
+  "gurugram",
+  "guwahati",
+  "hyderabad",
+  "indore",
+  "jaipur",
+  "kochi",
+  "kolkata",
+  "lucknow",
+  "mumbai",
+  "mysuru",
+  "nagpur",
+  "nashik",
+  "new delhi",
+  "noida",
+  "patna",
+  "pune",
+  "rishikesh",
+  "shimla",
+  "srinagar",
+  "surat",
+  "thane",
+  "trivandrum",
+  "udaipur",
+  "varanasi",
+  "visakhapatnam",
+]);
+
+function isLikelyIndianDestination(city: string, guide: CityGuidePayload): boolean {
+  const cityKey = city.trim().toLowerCase();
+  if (INDIA_CITY_HINTS.has(cityKey)) return true;
+
+  const region = guide.hero.region.toLowerCase();
+  const timezone = guide.hero.timezone.toLowerCase();
+  const language = guide.hero.language.toLowerCase();
+
+  return (
+    region.includes("india") ||
+    timezone.includes("ist") ||
+    timezone.includes("utc+5:30") ||
+    language.includes("hindi")
+  );
+}
+
+function buildEntryCard(city: string, guide: CityGuidePayload): { label: string; title: string; body: string } {
+  if (isLikelyIndianDestination(city, guide)) {
+    return {
+      label: "Travel Docs",
+      title: "Domestic Travel",
+      body:
+        "• No visa needed for Indian citizens. • Carry a valid government photo ID for flights, hotels, and verification checks. • Check permit requirements for restricted/protected areas before travel.",
+    };
+  }
+
+  return {
+    label: "Entry",
+    title: guide.visa.headline,
+    body: guide.visa.details.map((d) => `• ${d}`).join(" "),
+  };
+}
+
 function parseBudgetMax(text: string): number {
   const parts = text.match(/\d[\d,]*/g);
   if (!parts?.length) return 0;
@@ -172,6 +245,7 @@ function parseBudgetMax(text: string): number {
 }
 
 function toLegacyGuide(city: string, guide: CityGuidePayload) {
+  const entryCard = buildEntryCard(city, guide);
   const b = parseBudgetMax(guide.budget.backpacker);
   const m = parseBudgetMax(guide.budget.mid);
   const p = parseBudgetMax(guide.budget.premium);
@@ -200,8 +274,9 @@ function toLegacyGuide(city: string, guide: CityGuidePayload) {
       note: `${guide.bestTime.why} <strong>Avoid:</strong> ${guide.bestTime.avoid}`,
     },
     visa: {
-      title: guide.visa.headline,
-      body: guide.visa.details.map((d) => `• ${d}`).join(" "),
+      label: entryCard.label,
+      title: entryCard.title,
+      body: entryCard.body,
     },
     stats: guide.stats,
     history: {
@@ -400,9 +475,9 @@ Rules:
 - Focus on travelers from India for visa and flights.
 - No markdown. No prose. JSON only.`;
 
-  async function runWithModel(model: "gpt-4o" | "gpt-4o-mini") {
+  async function runWithModel() {
     return openai.chat.completions.create({
-      model,
+      model: "gpt-4o-mini",
       temperature: 0.5,
       response_format: { type: "json_object" },
       messages: [{ role: "user", content: prompt }],
@@ -410,12 +485,7 @@ Rules:
     });
   }
 
-  let completion;
-  try {
-    completion = await runWithModel("gpt-4o");
-  } catch {
-    completion = await runWithModel("gpt-4o-mini");
-  }
+  const completion = await runWithModel();
 
   const content = completion.choices[0]?.message?.content || "{}";
   const parsed = JSON.parse(extractJsonObject(content));

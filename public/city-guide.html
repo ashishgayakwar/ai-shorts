@@ -38,6 +38,39 @@ body {
   position: relative;
   overflow: hidden;
 }
+.landing-top {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  z-index: 2;
+}
+.home-icon-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+.home-icon-link:hover {
+  background: rgba(201,150,58,0.2);
+  border-color: rgba(201,150,58,0.55);
+  transform: translateY(-1px);
+}
+.home-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+}
 .landing::before {
   content: '';
   position: absolute; inset: 0;
@@ -289,6 +322,12 @@ body {
 .city-name em { color: var(--accent-light); font-style: italic; }
 .hero-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 12px; }
 .hero-pills { display: flex; flex-wrap: wrap; gap: 8px; align-self: flex-end; max-width: 340px; }
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
 .pill {
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.1);
@@ -374,11 +413,22 @@ body {
   padding: 22px;
   overflow: hidden;
   position: relative;
-  transition: box-shadow 0.2s, transform 0.2s;
+  transform: translateZ(0);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.65) inset,
+    0 14px 28px rgba(26, 18, 8, 0.08),
+    0 2px 8px rgba(26, 18, 8, 0.06);
+  transition: box-shadow 0.24s ease, transform 0.24s ease;
   height: 100%;
   align-self: stretch;
 }
-.tile:hover { box-shadow: 0 10px 40px rgba(0,0,0,0.07); transform: translateY(-2px); }
+.tile:hover {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 22px 46px rgba(26, 18, 8, 0.14),
+    0 4px 14px rgba(26, 18, 8, 0.08);
+  transform: perspective(1100px) translateY(-3px) rotateX(1deg);
+}
 .tile::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: linear-gradient(90deg, var(--accent), var(--accent-light));
@@ -470,10 +520,26 @@ body {
 
 @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 .fade-in { opacity: 0; transform: translateY(12px); animation: fadeUp 0.4s ease forwards; }
+.guide-footer {
+  margin-top: 14px;
+  padding: 14px 4px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+}
+.guide-footer .home-icon-link {
+  background: #fff;
+  color: var(--deep);
+  border-color: var(--border);
+}
+.guide-footer .home-icon-link:hover {
+  background: #f7f1e7;
+  border-color: #d7c8b3;
+}
 
 @media (max-width: 768px) {
-  body { padding: 12px; }
-  #guide { padding: 14px 0 24px; max-width: none; }
+  body { padding: 0; }
+  #guide { padding: 14px 10px 24px; max-width: none; }
   .bento { grid-template-columns: 1fr; gap: 8px; }
   .t-vibe, .t-history, .t-food, .t-budget, .t-flights,
   .t-hood, .t-intercity, .t-tips,
@@ -482,7 +548,11 @@ body {
   .tips-grid { grid-template-columns: 1fr 1fr; }
   .carousel-track-outer { height: 240px; }
   .hero-inner { flex-direction: column; align-items: flex-start; }
+  .hero-right { width: 100%; align-items: flex-start; }
   .hero-pills { max-width: 100%; }
+  .landing-top { top: 12px; right: 12px; }
+  .home-icon-link .home-label { display: none; }
+  .home-icon-link { padding: 8px; }
 }
 </style>
 </head>
@@ -490,6 +560,15 @@ body {
 
 <!-- LANDING -->
 <div class="landing" id="landing">
+  <div class="landing-top">
+    <a class="home-icon-link" href="/" target="_top" aria-label="Go to home">
+      <svg class="home-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M3 10.5L12 3l9 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M5.5 9.5V20h13V9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      <span class="home-label">Home</span>
+    </a>
+  </div>
   <div class="landing-bg-text">
     <span>Bangkok</span>
     <span>Tokyo</span>
@@ -555,7 +634,16 @@ body {
         <div class="city-name" id="heroName"></div>
         <div class="hero-sub" id="heroSub"></div>
       </div>
-      <div class="hero-pills" id="heroPills"></div>
+      <div class="hero-right">
+        <a class="home-icon-link" href="/" target="_top" aria-label="Go to home">
+          <svg class="home-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 10.5L12 3l9 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M5.5 9.5V20h13V9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <span class="home-label">Home</span>
+        </a>
+        <div class="hero-pills" id="heroPills"></div>
+      </div>
     </div>
   </div>
 
@@ -664,6 +752,16 @@ body {
       <div class="tips-grid" id="tips-grid"></div>
     </div>
   </div>
+
+  <footer class="guide-footer fade-in">
+    <a class="home-icon-link" href="/" target="_top" aria-label="Go to home">
+      <svg class="home-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M3 10.5L12 3l9 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M5.5 9.5V20h13V9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      <span class="home-label">Home</span>
+    </a>
+  </footer>
 </div>
 
 <script>
@@ -832,6 +930,7 @@ function renderGuide(city, d) {
   document.getElementById('best-time-body').innerHTML = d.bestTime.note;
 
   // Visa
+  document.getElementById('visa-label').textContent = d.visa.label || 'Entry';
   document.getElementById('visa-title').textContent = d.visa.title;
   document.getElementById('visa-body').innerHTML = d.visa.body;
 

@@ -12,7 +12,7 @@ const projectRoot = path.join(__dirname, "..");
 
 // ----------------- CONFIG -----------------
 const EMBEDDING_MODEL = "text-embedding-3-large";
-const RELATION_MODEL = "gpt-4.1";
+const RELATION_MODEL = "gpt-4o-mini";
 
 // how many nearest neighbors per topic to keep
 const TOP_K = 3;

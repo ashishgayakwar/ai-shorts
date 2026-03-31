@@ -356,7 +356,7 @@ ${trimmedResumeText}
 `;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       temperature: 0.2,
       max_tokens: 900,
       response_format: { type: "json_object" },
