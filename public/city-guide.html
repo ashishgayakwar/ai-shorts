@@ -871,27 +871,41 @@ document.getElementById('carouselOuter').addEventListener('touchend', e => {
 // ─────────────────────────────────────────
 async function fetchPhotos(city, topics) {
   const queries = topics || [city, `${city} landmark`, `${city} street`, `${city} food`, `${city} culture`];
+  const querySlice = queries.slice(0, 5);
   try {
     const fingerprint = buildFingerprint();
-    const res = await fetch('/api/city-photos', {
+    const requestPhotos = async () => fetch('/api/city-photos', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-fingerprint': fingerprint
       },
-      body: JSON.stringify({ queries: queries.slice(0, 5) })
+      body: JSON.stringify({ queries: querySlice })
     });
-    const json = await res.json();
+
+    let res = await requestPhotos();
+    let json = await res.json();
+
+    if (!res.ok && res.status === 429 && Number(json.retryAfterSeconds) > 0) {
+      await new Promise(resolve => setTimeout(resolve, (Number(json.retryAfterSeconds) + 1) * 1000));
+      res = await requestPhotos();
+      json = await res.json();
+    }
+
+    if (!res.ok) {
+      throw new Error(json.error || `City photos API failed with status ${res.status}`);
+    }
+
     const photos = Array.isArray(json.photos) ? json.photos : [];
-    return queries.slice(0, 5).map((q, idx) => ({
+    return querySlice.map((q, idx) => ({
       url: photos[idx] || null,
       caption: q,
       sub: 'Pexels',
       city: city.toUpperCase(),
     }));
   } catch (e) {
-    console.warn('Pexels fetch failed');
-    return queries.slice(0, 5).map((q) => ({ url: null, caption: q, sub: '', city: city.toUpperCase() }));
+    console.warn('Pexels fetch failed', e);
+    return querySlice.map((q) => ({ url: null, caption: q, sub: '', city: city.toUpperCase() }));
   }
 }
 
