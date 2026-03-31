@@ -8,7 +8,7 @@ export default function NorthStarSection({ northStar }: NorthStarSectionProps) {
   const alternatives = northStar.rejected_alternatives.slice(0, 3);
 
   return (
-    <section className="rounded-[28px] border border-[#202b3f] bg-[#101826] p-8 text-[#e9eff8] sm:p-12">
+    <section className="rounded-[28px] border border-[#202b3f] bg-[linear-gradient(180deg,#121d2f_0%,#101826_70%)] p-8 text-[#e9eff8] shadow-[0_28px_60px_rgba(8,14,24,0.35),0_8px_20px_rgba(8,14,24,0.25)] sm:p-12">
       <p className="text-[11px] font-[800] uppercase tracking-[0.22em] text-[#9eb1cc]">
         North Star Metric
       </p>
@@ -19,7 +19,7 @@ export default function NorthStarSection({ northStar }: NorthStarSectionProps) {
         <p className="mt-5 max-w-3xl text-[16px] leading-8 text-[#c4d1e2]">{northStar.definition}</p>
       ) : null}
 
-      <div className="mt-5 rounded-2xl border border-[#314360] bg-[#15233a] px-4 py-3">
+      <div className="mt-5 rounded-2xl border border-[#314360] bg-[linear-gradient(180deg,#1a2b45_0%,#15233a_100%)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
         <p className="text-[11px] font-[800] uppercase tracking-[0.16em] text-[#8fa7c7]">
           Formula
         </p>

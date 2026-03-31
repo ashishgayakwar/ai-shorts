@@ -20,7 +20,7 @@ export default function ResultMemo({ result, onReset }: ResultMemoProps) {
           <p className="text-[11px] font-[800] uppercase tracking-[0.2em] text-[#677588]">
             Metrics Intelligence Memo
           </p>
-          <h2 className="truncate font-[family-name:var(--font-fraunces)] text-[32px] leading-tight text-[#131b29] sm:text-[40px]">
+          <h2 className="truncate font-[family-name:var(--font-fraunces)] text-[40px] font-[900] leading-tight text-[#131b29] sm:text-[56px]">
             {result.company.name?.trim() || "—"}
           </h2>
           <span className="mt-1 inline-flex rounded-full border border-[#d0d9e5] bg-[#f2f6fb] px-2.5 py-1 text-[11px] font-[700] uppercase tracking-[0.12em] text-[#506077]">
