@@ -28,6 +28,7 @@ const headerLinks = [
   { label: "Compare", href: "/compare" },
   { label: "City", href: "/city-guide" },
   { label: "Compete", href: "/competitor-analysis" },
+  { label: "Metrics", href: "/metrics-intelligence" },
   { label: "Interview", href: "/interview" },
   { label: "Stories", href: "/user-story-generator" },
   { label: "Resume", href: "/pm-resume-screener" },
@@ -46,6 +47,7 @@ const challengeDays: ChallengeDay[] = [
   { num: "03", title: "Book Summarizer", href: "/book-summarizer" },
   { num: "04", title: "Competitor Analysis Summarizer", href: "/competitor-analysis" },
   { num: "05", title: "AI City Guide", href: "/city-guide" },
+  { num: "06", title: "Metrics Intelligence", href: "/metrics-intelligence" },
 ];
 
 const CHALLENGE_TOTAL = 75;
