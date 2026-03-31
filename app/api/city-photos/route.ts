@@ -110,6 +110,10 @@ function getRetryDelayMs(attempt: number, retryAfterHeader: string | null): numb
   return clamp(expBackoff + jitter, 300, 5000);
 }
 
+function getFallbackPhotoUrl(query: string): string {
+  return `https://picsum.photos/seed/${encodeURIComponent(normalizeQuery(query))}/1600/900`;
+}
+
 async function fetchPexelsPhoto(query: string): Promise<string | null> {
   const cached = getCachedPhoto(query);
   if (cached) return cached;
@@ -117,7 +121,7 @@ async function fetchPexelsPhoto(query: string): Promise<string | null> {
   const apiKey = process.env.PEXELS_API_KEY;
   if (!apiKey) {
     console.error("PEXELS_API_KEY is missing.");
-    return null;
+    return getFallbackPhotoUrl(query);
   }
 
   for (let attempt = 1; attempt <= PEXELS_MAX_ATTEMPTS; attempt += 1) {
@@ -148,14 +152,14 @@ async function fetchPexelsPhoto(query: string): Promise<string | null> {
       console.error("Pexels error:", res.status, responseText);
 
       if (!shouldRetry || attempt >= PEXELS_MAX_ATTEMPTS) {
-        return null;
+        return getFallbackPhotoUrl(query);
       }
 
       await sleep(getRetryDelayMs(attempt, res.headers.get("retry-after")));
     } catch (e) {
       console.error("Pexels fetch failed:", e);
       if (attempt >= PEXELS_MAX_ATTEMPTS) {
-        return null;
+        return getFallbackPhotoUrl(query);
       }
       await sleep(getRetryDelayMs(attempt, null));
     } finally {
@@ -163,7 +167,7 @@ async function fetchPexelsPhoto(query: string): Promise<string | null> {
     }
   }
 
-  return null;
+  return getFallbackPhotoUrl(query);
 }
 
 function checkAndConsumeLimit(request: Request): RateDecision {
