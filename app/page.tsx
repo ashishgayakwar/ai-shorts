@@ -21,18 +21,37 @@ type Entry = {
   labelTone?: "default" | "teal" | "red";
 };
 
-const headerLinks = [
-  { label: "Cards", href: "/swipe" },
-  { label: "Quiz", href: "/swipe?mode=quiz" },
-  { label: "Visualize", href: "/swipe?mode=visualize" },
-  { label: "Compare", href: "/compare" },
-  { label: "City", href: "/city-guide" },
-  { label: "Compete", href: "/competitor-analysis" },
-  { label: "Metrics", href: "/metrics-intelligence" },
-  { label: "Interview", href: "/interview" },
-  { label: "Stories", href: "/user-story-generator" },
-  { label: "Resume", href: "/pm-resume-screener" },
-  { label: "Home", href: "/" },
+const headerLinkGroups = [
+  {
+    group: "Learn",
+    links: [
+      { label: "Cards", href: "/swipe" },
+      { label: "Quiz", href: "/swipe?mode=quiz" },
+      { label: "Visualize", href: "/swipe?mode=visualize" },
+      { label: "Compare", href: "/compare" },
+    ],
+  },
+  {
+    group: "Build",
+    links: [
+      { label: "City", href: "/city-guide" },
+      { label: "Compete", href: "/competitor-analysis" },
+      { label: "Metrics", href: "/metrics-intelligence" },
+      { label: "Frameworks", href: "/pm-framework-generator" },
+    ],
+  },
+  {
+    group: "Prepare",
+    links: [
+      { label: "Interview", href: "/interview" },
+      { label: "Stories", href: "/user-story-generator" },
+      { label: "Resume", href: "/pm-resume-screener" },
+    ],
+  },
+  {
+    group: "Core",
+    links: [{ label: "Home", href: "/" }],
+  },
 ];
 
 type ChallengeDay = {
@@ -48,6 +67,7 @@ const challengeDays: ChallengeDay[] = [
   { num: "04", title: "Competitor Analysis Summarizer", href: "/competitor-analysis" },
   { num: "05", title: "AI City Guide", href: "/city-guide" },
   { num: "06", title: "Metrics Intelligence", href: "/metrics-intelligence" },
+  { num: "07", title: "PM Framework Generator", href: "/pm-framework-generator" },
 ];
 
 const CHALLENGE_TOTAL = 75;
@@ -159,20 +179,32 @@ export default async function Home() {
             </div>
 
             <nav className="home-nav-desktop">
-              {headerLinks.map((item) => (
-                <Link key={item.href} href={item.href} className="home-pill">
-                  {item.label}
-                </Link>
+              {headerLinkGroups.map((group) => (
+                <div key={group.group} className="home-nav-group">
+                  <p className="home-nav-group-label">{group.group}</p>
+                  <div className="home-nav-group-links">
+                    {group.links.map((item) => (
+                      <Link key={item.href} href={item.href} className="home-pill">
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               ))}
             </nav>
 
             <details className="home-nav-mobile">
               <summary className="home-hamburger">☰</summary>
               <div className="home-mobile-menu">
-                {headerLinks.map((item) => (
-                  <Link key={item.href} href={item.href} className="home-mobile-link">
-                    {item.label}
-                  </Link>
+                {headerLinkGroups.map((group) => (
+                  <div key={group.group} className="home-mobile-group">
+                    <p className="home-mobile-group-label">{group.group}</p>
+                    {group.links.map((item) => (
+                      <Link key={item.href} href={item.href} className="home-mobile-link">
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
                 ))}
               </div>
             </details>
@@ -437,11 +469,16 @@ export default async function Home() {
 
           .home-nav-wrap {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
+            gap: 20px;
             border-bottom: 1px solid #cec8bc;
             padding: 20px 0;
             margin-bottom: 40px;
+          }
+          .home-brand {
+            flex: 0 0 auto;
+            max-width: 250px;
           }
           .home-brand-name {
             margin: 0;
@@ -459,21 +496,50 @@ export default async function Home() {
           }
           .home-nav-desktop {
             display: none;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 0;
+            margin-left: auto;
+            border: 1px solid #d2c8b8;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.36);
+            overflow: hidden;
+          }
+          .home-nav-group {
+            display: flex;
             align-items: center;
             gap: 8px;
+            padding: 8px 12px;
+            border-left: 1px solid #d6ccbe;
+          }
+          .home-nav-group:first-child {
+            border-left: none;
+          }
+          .home-nav-group-label {
+            margin: 0;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #8a8075;
+          }
+          .home-nav-group-links {
+            display: flex;
+            align-items: center;
+            gap: 7px;
           }
           .home-pill {
             font-family: "Lexend", sans-serif;
             font-weight: 500;
-            font-size: 12px;
-            border: 1px solid #c0b8ac;
+            font-size: 11px;
+            border: 1px solid #bfb5a8;
             border-radius: 20px;
-            padding: 5px 14px;
+            padding: 4px 12px;
             color: #444444;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.48);
             text-decoration: none;
             transition: all 0.15s ease;
+            white-space: nowrap;
           }
           .home-pill:hover {
             background: #1a1a1a;
@@ -503,25 +569,44 @@ export default async function Home() {
             position: absolute;
             top: calc(100% + 8px);
             right: 0;
-            min-width: 230px;
+            min-width: 250px;
             border: 1px solid var(--border);
             border-radius: 10px;
             overflow: hidden;
             background: var(--bg);
+            padding: 8px 0;
+          }
+          .home-mobile-group {
+            padding: 0 0 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 8px;
+          }
+          .home-mobile-group:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+            margin-bottom: 0;
+          }
+          .home-mobile-group-label {
+            margin: 0;
+            padding: 0 16px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #8a8075;
           }
           .home-mobile-link {
             display: block;
             width: 100%;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
+            padding: 10px 16px;
             font-family: "Lexend", sans-serif;
             font-weight: 500;
             font-size: 12px;
             color: #333333;
             text-decoration: none;
           }
-          .home-mobile-link:last-child {
-            border-bottom: 0;
+          .home-mobile-link:hover {
+            background: #e6dfd2;
           }
 
           .home-user-row {
@@ -776,7 +861,7 @@ export default async function Home() {
             color: var(--accent-red);
           }
 
-          @media (min-width: 768px) {
+          @media (min-width: 1024px) {
             .home-container {
               padding: 0 28px;
             }

@@ -15,6 +15,7 @@ const primaryLinks = [
   { label: "Case Studio", href: "/case-study-generator" },
   { label: "User Stories", href: "/user-story-generator" },
   { label: "City Guide", href: "/city-guide" },
+  { label: "Frameworks", href: "/pm-framework-generator" },
   { label: "Competitor Analysis", href: "/competitor-analysis" },
   { label: "Resume Screener", href: "/pm-resume-screener" },
   { label: "MAANG", href: "/maang-interview-series" },
@@ -37,24 +38,33 @@ export default function GlobalFooter() {
     pathname.startsWith("/qna") ||
     pathname.startsWith("/concept") ||
     pathname.startsWith("/case-study-generator");
+  const usePmFrameworkThemeFooter = pathname.startsWith("/pm-framework-generator");
 
   const footerClassName = useLegacyThemeFooter
     ? "relative z-40 border-t border-[#143a65] bg-[#05122a] px-6 py-8 text-sm text-[#cde8ff]"
-    : "relative z-40 border-t border-[#dccfbe] bg-[#f5f0e8] px-6 py-8 text-sm text-[#4f4338]";
+    : usePmFrameworkThemeFooter
+      ? "relative z-40 border-t border-[#d8e3f5] bg-[#f3f7fd] px-6 py-8 text-sm text-[#334155]"
+      : "relative z-40 border-t border-[#dccfbe] bg-[#f5f0e8] px-6 py-8 text-sm text-[#4f4338]";
   const linkClassName = useLegacyThemeFooter
-    ? "rounded-full border border-[#2f5f90] bg-[#0b1f3f] px-3 py-1.5 text-xs font-semibold text-[#cde8ff] transition hover:border-[#68c6ff] hover:text-[#68c6ff]"
-    : "rounded-full border border-[#d5c8b8] bg-[#efe6d9] px-3 py-1.5 text-xs font-semibold text-[#3c332d] transition hover:border-[#c0522a] hover:text-[#c0522a]";
+    ? "text-[11px] font-semibold text-[#cde8ff] underline decoration-transparent decoration-[1px] underline-offset-4 transition hover:text-[#68c6ff] hover:decoration-current"
+    : usePmFrameworkThemeFooter
+      ? "text-[11px] font-semibold text-[#1e3a8a] underline decoration-transparent decoration-[1px] underline-offset-4 transition hover:text-[#2563eb] hover:decoration-current"
+      : "text-[11px] font-semibold text-[#3c332d] underline decoration-transparent decoration-[1px] underline-offset-4 transition hover:text-[#c0522a] hover:decoration-current";
   const subTextClassName = useLegacyThemeFooter
     ? "text-xs text-[#97bddf]"
-    : "text-xs text-[#6e6158]";
+    : usePmFrameworkThemeFooter
+      ? "text-xs text-[#64748b]"
+      : "text-xs text-[#6e6158]";
   const dividerClassName = useLegacyThemeFooter
     ? "border-t border-[#143a65] pt-4 text-xs text-[#97bddf]"
-    : "border-t border-[#dccfbe] pt-4 text-xs text-[#6e6158]";
+    : usePmFrameworkThemeFooter
+      ? "border-t border-[#d8e3f5] pt-4 text-xs text-[#64748b]"
+      : "border-t border-[#dccfbe] pt-4 text-xs text-[#6e6158]";
 
   return (
     <footer className={footerClassName}>
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           {primaryLinks.map((item) => (
             <Link key={item.label} href={item.href} className={linkClassName}>
               {item.label}

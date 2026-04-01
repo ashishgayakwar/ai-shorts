@@ -29,6 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/competitor-analysis`, lastModified },
     { url: `${baseUrl}/book-summarizer`, lastModified },
     { url: `${baseUrl}/city-guide`, lastModified },
+    { url: `${baseUrl}/pm-framework-generator`, lastModified },
     { url: `${baseUrl}/pm-resume-screener`, lastModified },
     { url: `${baseUrl}/case-study-generator`, lastModified },
     { url: `${baseUrl}/interview`, lastModified },
