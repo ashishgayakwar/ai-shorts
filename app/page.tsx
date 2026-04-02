@@ -180,11 +180,14 @@ export default async function Home() {
 
             <nav className="home-nav-desktop">
               {headerLinkGroups.map((group) => (
-                <div key={group.group} className="home-nav-group">
-                  <p className="home-nav-group-label">{group.group}</p>
-                  <div className="home-nav-group-links">
+                <div key={group.group} className="home-nav-group home-nav-dropdown">
+                  <span className="home-nav-group-trigger">
+                    <span className="home-nav-group-label">{group.group}</span>
+                    <span className="home-nav-group-caret">▾</span>
+                  </span>
+                  <div className="home-nav-group-menu">
                     {group.links.map((item) => (
-                      <Link key={item.href} href={item.href} className="home-pill">
+                      <Link key={item.href} href={item.href} className="home-nav-menu-link">
                         {item.label}
                       </Link>
                     ))}
@@ -497,13 +500,13 @@ export default async function Home() {
           .home-nav-desktop {
             display: none;
             flex-wrap: nowrap;
-            align-items: center;
+            align-items: stretch;
             gap: 0;
             margin-left: auto;
             border: 1px solid #d2c8b8;
-            border-radius: 14px;
+            border-radius: 0;
             background: rgba(255, 255, 255, 0.36);
-            overflow: hidden;
+            overflow: visible;
           }
           .home-nav-group {
             display: flex;
@@ -511,9 +514,18 @@ export default async function Home() {
             gap: 8px;
             padding: 8px 12px;
             border-left: 1px solid #d6ccbe;
+            position: relative;
+            border-radius: 0;
           }
           .home-nav-group:first-child {
             border-left: none;
+          }
+          .home-nav-group-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
           }
           .home-nav-group-label {
             margin: 0;
@@ -523,25 +535,61 @@ export default async function Home() {
             text-transform: uppercase;
             color: #8a8075;
           }
-          .home-nav-group-links {
-            display: flex;
-            align-items: center;
-            gap: 7px;
+          .home-nav-group-caret {
+            font-size: 12px;
+            color: #8a8075;
+            transition: transform 0.15s ease;
           }
-          .home-pill {
+          .home-nav-group-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 10px;
+            min-width: 170px;
+            border: 1px solid #d7ccbe;
+            border-radius: 18px;
+            background: #f5efe6;
+            padding: 8px;
+            display: grid;
+            gap: 6px;
+            box-shadow: 0 20px 36px rgba(40, 32, 24, 0.14);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-4px);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            z-index: 40;
+          }
+          .home-nav-group-menu::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -10px;
+            height: 10px;
+          }
+          .home-nav-dropdown:hover .home-nav-group-menu,
+          .home-nav-dropdown:focus-within .home-nav-group-menu {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+          }
+          .home-nav-dropdown:hover .home-nav-group-caret,
+          .home-nav-dropdown:focus-within .home-nav-group-caret {
+            transform: rotate(180deg);
+          }
+          .home-nav-menu-link {
             font-family: "Lexend", sans-serif;
             font-weight: 500;
-            font-size: 11px;
+            font-size: 12px;
             border: 1px solid #bfb5a8;
-            border-radius: 20px;
-            padding: 4px 12px;
+            border-radius: 999px;
+            padding: 8px 14px;
             color: #444444;
             background: rgba(255, 255, 255, 0.48);
             text-decoration: none;
             transition: all 0.15s ease;
             white-space: nowrap;
           }
-          .home-pill:hover {
+          .home-nav-menu-link:hover {
             background: #1a1a1a;
             color: #f2ede4;
             border-color: #1a1a1a;
