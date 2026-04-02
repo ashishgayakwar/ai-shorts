@@ -535,6 +535,16 @@
   color: rgba(10, 10, 10, 0.82);
 }
 
+.cardNudge {
+  margin-top: 12px;
+  font-family: var(--font-bebas), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: rgba(10, 10, 10, 0.62);
+  border-top: 2px solid rgba(10, 10, 10, 0.18);
+  padding-top: 8px;
+}
+
 .deco {
   position: absolute;
   font-family: var(--font-bebas), sans-serif;
@@ -577,6 +587,11 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
+.panel2 .cardNudge {
+  color: rgba(255, 255, 255, 0.78);
+  border-top-color: rgba(255, 255, 255, 0.28);
+}
+
 .circleDeco {
   position: absolute;
   width: 180px;
@@ -613,6 +628,11 @@
   color: rgba(255, 255, 255, 0.4);
 }
 
+.panel4 .cardNudge {
+  color: rgba(255, 255, 255, 0.72);
+  border-top-color: rgba(255, 255, 255, 0.22);
+}
+
 .panel5 .deco {
   right: 12px;
   bottom: 12px;
@@ -631,6 +651,11 @@
 
 .panel5 .cardTag {
   color: rgba(255, 255, 255, 0.4);
+}
+
+.panel5 .cardNudge {
+  color: rgba(255, 255, 255, 0.76);
+  border-top-color: rgba(255, 255, 255, 0.24);
 }
 
 .panel6 .deco {
