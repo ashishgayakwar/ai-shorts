@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { NextRequest, NextResponse } from "next/server";
 
 import type { InterviewAnswer } from "@/app/pm-interview-coach/types";
+import { parseModelJson } from "@/lib/model-json";
 
 type RateLimitEntry = {
   count: number;
@@ -224,12 +225,18 @@ export async function POST(request: NextRequest) {
     const raw = completion.choices[0]?.message?.content ?? "{}";
     let parsed: unknown;
     try {
-      parsed = JSON.parse(raw);
+      parsed = parseModelJson(raw);
     } catch {
-      return NextResponse.json(
-        { error: "Invalid response structure. Please try again." },
-        { status: 500 }
-      );
+      try {
+        const retryCompletion = await createCompletion();
+        const retryRaw = retryCompletion.choices[0]?.message?.content ?? "{}";
+        parsed = parseModelJson(retryRaw);
+      } catch {
+        return NextResponse.json(
+          { error: "Invalid response structure. Please try again." },
+          { status: 500 }
+        );
+      }
     }
 
     if (!isValidAnswer(parsed)) {

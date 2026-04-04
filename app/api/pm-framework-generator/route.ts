@@ -2,6 +2,8 @@ import { createHash } from "crypto";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import { parseModelJson } from "@/lib/model-json";
+
 export const runtime = "nodejs";
 
 const openai = new OpenAI({
@@ -349,16 +351,19 @@ export async function POST(request: Request) {
     const system = `You are a senior AI PM coach. Return strict JSON only with practical, PM-grade output.`;
     const user = `Task context:\n${JSON.stringify({ task, persona, metric, effort, stage })}\n\nReturn JSON with ALL keys exactly (omit key only if truly not applicable):\n- rice_note\n- rice_decision\n- moscow_must\n- moscow_should\n- moscow_could\n- moscow_wont\n- moscow_scope_call\n- kano_basic\n- kano_performance\n- kano_delight\n- kano_product_call\n- kano_signal_check\n- five_whys (array of {why, impact})\n- jtbd_statement\n- jtbd_jobs (array)\n- jtbd_opportunity\n- prd_out_of_scope\n- prd_release_strategy\n- prd_risk_register (array)\n- stories (array of {actor, need, outcome, dod})\n- acceptance (array of {scenario, criterion})\n- okr_objective\n- okr_krs (array of {label, target, metric, progress})\n- okr_cadence\n- north_star_metric\n- north_star_description\n- north_star_inputs (array)\n- north_star_note\n- matrix (array of {quadrant, intent, recommendation})\n- plan_30d (array)\n\nRules:\n- Ground every line in the given task/persona/metric.\n- Do not invent unrelated domains or assumptions.\n- Keep content concise, practical, and execution-ready.\n- JTBD depth requirement:\n  - jtbd_statement: 2-3 sentences\n  - jtbd_jobs: exactly 4 bullets, each specific and non-generic\n  - jtbd_opportunity: 2 sentences with concrete execution implication\n- No markdown, no emojis, valid JSON only.`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      temperature: 0.5,
-      max_tokens: 1800,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user },
-      ],
-    });
+    const createCompletion = () =>
+      openai.chat.completions.create({
+        model: "gpt-4o",
+        temperature: 0.5,
+        max_tokens: 1800,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+      });
+
+    const completion = await createCompletion();
 
     const raw = completion.choices?.[0]?.message?.content;
     if (!raw) {
@@ -368,7 +373,14 @@ export async function POST(request: Request) {
       return empty;
     }
 
-    const parsed = JSON.parse(raw) as unknown;
+    let parsed: unknown;
+    try {
+      parsed = parseModelJson(raw);
+    } catch {
+      const retryCompletion = await createCompletion();
+      const retryRaw = retryCompletion.choices?.[0]?.message?.content ?? "{}";
+      parsed = parseModelJson(retryRaw);
+    }
     const pack = normalizeEnhancements(parsed);
 
     const ok = NextResponse.json({ pack, enhancements: pack, remaining: rateLimit.remaining });

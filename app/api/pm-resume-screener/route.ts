@@ -3,6 +3,7 @@ import { createHash, randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import { parseModelJson } from "@/lib/model-json";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -355,25 +356,34 @@ Resume:
 ${trimmedResumeText}
 `;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.2,
-      max_tokens: 900,
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content: "You evaluate PM resumes with strict hiring standards.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
+    const createCompletion = () =>
+      openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        temperature: 0.2,
+        max_tokens: 900,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content: "You evaluate PM resumes with strict hiring standards.",
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      });
+
+    const completion = await createCompletion();
 
     const rawContent = completion.choices[0]?.message?.content || "{}";
-    const parsedResult = JSON.parse(rawContent) as unknown;
+    let parsedResult: unknown;
+    try {
+      parsedResult = parseModelJson(rawContent);
+    } catch {
+      const retry = await createCompletion();
+      parsedResult = parseModelJson(retry.choices[0]?.message?.content || "{}");
+    }
     const result = toResult(parsedResult);
 
     const response = NextResponse.json({ result, remaining: rateLimit.remaining });

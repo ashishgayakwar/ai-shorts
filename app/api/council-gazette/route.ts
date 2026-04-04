@@ -10,7 +10,7 @@ type RateLimitEntry = {
 
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW_MS = 60_000;
-const MODEL_TIMEOUT_MS = 25_000;
+const MODEL_TIMEOUT_MS = 60_000;
 const MODEL_MAX_TOKENS = 800;
 const GEMINI_MAX_OUTPUT_TOKENS = 4000;
 
@@ -175,6 +175,30 @@ function parseAnswerPayload(raw: string): { headline: string; body: string } {
       throw new Error("Invalid model payload");
     }
     return salvaged;
+  }
+}
+
+function parseGeminiPayload(raw: string): { headline: string; body: string; strict: boolean } {
+  try {
+    const parsed: unknown = JSON.parse(extractJsonObject(raw));
+    if (!isValidAnswer(parsed)) {
+      throw new Error("Gemini response did not match required JSON schema.");
+    }
+    return {
+      headline: parsed.headline.trim(),
+      body: parsed.body.trim(),
+      strict: true,
+    };
+  } catch {
+    const salvaged = salvageAnswerPayload(raw);
+    if (!salvaged.headline.trim() || !salvaged.body.trim()) {
+      throw new Error("Gemini returned malformed JSON payload.");
+    }
+    return {
+      headline: salvaged.headline.trim(),
+      body: salvaged.body.trim(),
+      strict: false,
+    };
   }
 }
 
@@ -409,20 +433,19 @@ async function callGemini(question: string): Promise<ModelAnswer> {
         finishReason: firstCandidate.finishReason,
       });
     }
-    const strictParsed: unknown = JSON.parse(extractJsonObject(text));
-    if (!isValidAnswer(strictParsed)) {
-      throw new Error("Gemini response did not match required JSON schema.");
-    }
-    const parsed = strictParsed;
+    const parsed = parseGeminiPayload(text);
     const bodyWordCount = parsed.body.trim().split(/\s+/).filter(Boolean).length;
     if (bodyWordCount < 150) {
       throw new Error(`Gemini response too short (${bodyWordCount} words). Minimum is 150 words.`);
     }
+    if (!parsed.strict) {
+      console.warn("Council Gazette Gemini payload required salvage parsing");
+    }
 
     return {
       model: "gemini",
-      headline: parsed.headline.trim(),
-      body: parsed.body.trim(),
+      headline: parsed.headline,
+      body: parsed.body,
       status: "done",
       elapsed: Date.now() - start,
     };

@@ -3,6 +3,8 @@ import { createHash } from "crypto";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import { parseModelJson } from "@/lib/model-json";
+
 export const runtime = "nodejs";
 
 const openai = new OpenAI({
@@ -338,13 +340,6 @@ function toStrList(value: unknown, max = 8): string[] {
     .slice(0, max);
 }
 
-function extractJsonObject(input: string): string {
-  const cleaned = input.replace(/```json|```/g, "").trim();
-  if (cleaned.startsWith("{") && cleaned.endsWith("}")) return cleaned;
-  const match = cleaned.match(/\{[\s\S]*\}/);
-  return match ? match[0] : "{}";
-}
-
 function normalizePayload(raw: unknown, city: string): CityGuidePayload {
   const obj = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
   const heroObj = (obj.hero ?? {}) as Record<string, unknown>;
@@ -488,7 +483,13 @@ Rules:
   const completion = await runWithModel();
 
   const content = completion.choices[0]?.message?.content || "{}";
-  const parsed = JSON.parse(extractJsonObject(content));
+  let parsed: unknown;
+  try {
+    parsed = parseModelJson(content);
+  } catch {
+    const retry = await runWithModel();
+    parsed = parseModelJson(retry.choices[0]?.message?.content || "{}");
+  }
   return normalizePayload(parsed, city);
 }
 

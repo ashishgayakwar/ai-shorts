@@ -3,6 +3,7 @@ import { createHash, randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import { parseModelJson } from "@/lib/model-json";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -373,25 +374,34 @@ function normalizeResult(raw: unknown): StorySuiteResult | null {
 }
 
 async function generateSuite(featureDescription: string): Promise<StorySuiteResult | null> {
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    temperature: 0.2,
-    max_tokens: 4_000,
-    response_format: { type: "json_object" },
-    messages: [
-      {
-        role: "system",
-        content: SYSTEM_PROMPT,
-      },
-      {
-        role: "user",
-        content: `Feature description:\n${featureDescription}`,
-      },
-    ],
-  });
+  const createCompletion = () =>
+    openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.2,
+      max_tokens: 4_000,
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: SYSTEM_PROMPT,
+        },
+        {
+          role: "user",
+          content: `Feature description:\n${featureDescription}`,
+        },
+      ],
+    });
+
+  const completion = await createCompletion();
 
   const content = completion.choices[0]?.message?.content || "{}";
-  const parsed = JSON.parse(content) as unknown;
+  let parsed: unknown;
+  try {
+    parsed = parseModelJson(content);
+  } catch {
+    const retry = await createCompletion();
+    parsed = parseModelJson(retry.choices[0]?.message?.content || "{}");
+  }
   return normalizeResult(parsed);
 }
 

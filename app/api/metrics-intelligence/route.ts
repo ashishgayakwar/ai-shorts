@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 import { buildUserMessage, SYSTEM_PROMPT } from "@/lib/metrics-intelligence/prompt";
 import type { MetricsResult } from "@/lib/metrics-intelligence/types";
+import { parseModelJson } from "@/lib/model-json";
 
 export const runtime = "nodejs";
 
@@ -231,7 +232,7 @@ async function callGpt4o(company: string): Promise<MetricsResult> {
     throw new Error("No response from API");
   }
 
-  const parsed = JSON.parse(resultText) as unknown;
+  const parsed = parseModelJson(resultText);
   if (!isMetricsResult(parsed)) {
     throw new Error("Response schema mismatch");
   }
@@ -240,7 +241,19 @@ async function callGpt4o(company: string): Promise<MetricsResult> {
 }
 
 async function analyzeCompany(company: string, isRetry = false): Promise<MetricsResult> {
-  const result = await callGpt4o(company);
+  let result: MetricsResult;
+  try {
+    result = await callGpt4o(company);
+  } catch (error) {
+    if (!isRetry) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("metrics-intelligence parse/request failed, retrying once", error);
+      }
+      return analyzeCompany(company, true);
+    }
+    throw error;
+  }
+
   const issues = validateResult(result);
 
   if (issues.length > 0 && !isRetry) {

@@ -3,6 +3,8 @@ import { createHash } from "crypto";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import { parseModelJson } from "@/lib/model-json";
+
 export const runtime = "nodejs";
 
 const openai = new OpenAI({
@@ -407,29 +409,36 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please enter a valid book title." }, { status: 400 });
     }
 
-    const gptPromise = openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.2,
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a precise book summarizer. Return strict JSON only with this exact shape: {\"essence\": string, \"publishedYear\": number, \"author\": string, \"ideas\": [{\"headline\": string, \"summary\": string}], \"quotes\": [{\"text\": string, \"context\": string}], \"whoShouldRead\": string }. Output exactly 5 ideas and exactly 3 quotes. Keep ideas actionable and quote contexts concise.",
-        },
-        {
-          role: "user",
-          content: `Book title: ${title}`,
-        },
-      ],
-    });
+    const createSummaryCompletion = () =>
+      openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        temperature: 0.2,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a precise book summarizer. Return strict JSON only with this exact shape: {\"essence\": string, \"publishedYear\": number, \"author\": string, \"ideas\": [{\"headline\": string, \"summary\": string}], \"quotes\": [{\"text\": string, \"context\": string}], \"whoShouldRead\": string }. Output exactly 5 ideas and exactly 3 quotes. Keep ideas actionable and quote contexts concise.",
+          },
+          {
+            role: "user",
+            content: `Book title: ${title}`,
+          },
+        ],
+      });
 
     const coverPromise = resolveCoverUrl(title);
 
-    const [completion, coverUrl] = await Promise.all([gptPromise, coverPromise]);
+    const [completion, coverUrl] = await Promise.all([createSummaryCompletion(), coverPromise]);
 
     const content = completion.choices[0]?.message?.content || "{}";
-    const parsed = JSON.parse(content) as unknown;
+    let parsed: unknown;
+    try {
+      parsed = parseModelJson(content);
+    } catch {
+      const retry = await createSummaryCompletion();
+      parsed = parseModelJson(retry.choices[0]?.message?.content || "{}");
+    }
     const payload = toSummaryPayload(parsed);
 
     const ok = NextResponse.json({

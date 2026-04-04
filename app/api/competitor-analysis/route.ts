@@ -3,6 +3,8 @@ import { createHash } from "crypto";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import { parseModelJson } from "@/lib/model-json";
+
 export const runtime = "nodejs";
 
 const openai = new OpenAI({
@@ -218,13 +220,6 @@ function parseResult(raw: unknown, industryInput: string): CompetitorPayload {
   };
 }
 
-function extractJsonObject(text: string): string {
-  const trimmed = text.replace(/```json|```/g, "").trim();
-  if (trimmed.startsWith("{") && trimmed.endsWith("}")) return trimmed;
-  const match = trimmed.match(/\{[\s\S]*\}/);
-  return match ? match[0] : "{}";
-}
-
 export async function POST(request: Request) {
   try {
     if (!process.env.OPENAI_API_KEY) {
@@ -287,18 +282,24 @@ Return ONLY JSON:
   }
 }`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.2,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "user", content: prompt },
-      ],
-      max_tokens: 2200,
-    });
+    const createCompletion = () =>
+      openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        temperature: 0.2,
+        response_format: { type: "json_object" },
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 2200,
+      });
 
+    const completion = await createCompletion();
     const content = completion.choices[0]?.message?.content || "{}";
-    const parsed = JSON.parse(extractJsonObject(content)) as unknown;
+    let parsed: unknown;
+    try {
+      parsed = parseModelJson(content);
+    } catch {
+      const retry = await createCompletion();
+      parsed = parseModelJson(retry.choices[0]?.message?.content || "{}");
+    }
     const payload = parseResult(parsed, industry);
 
     const response = NextResponse.json(payload);

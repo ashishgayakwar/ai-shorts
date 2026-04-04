@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import type { Prisma } from "@prisma/client";
 
 import { authOptions } from "@/lib/auth";
+import { parseModelJson } from "@/lib/model-json";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -822,20 +823,30 @@ ${schemaDescription(include_framework)}
 Return JSON only.
 `;
 
+    const createPacketCompletion = () =>
+      client.chat.completions.create({
+        model: "gpt-4o-mini",
+        temperature: 0.7,
+        max_tokens: 3500,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: "You are a FAANG interviewer creating interview packets." },
+          { role: "user", content: prompt },
+        ],
+      });
+
     // Attempt 1
-    const completion1 = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.7,
-      max_tokens: 3500,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: "You are a FAANG interviewer creating interview packets." },
-        { role: "user", content: prompt },
-      ],
-    });
+    const completion1 = await createPacketCompletion();
 
     const jsonText1 = completion1.choices[0].message.content || "{}";
-    let result = JSON.parse(jsonText1) as Record<string, unknown>;
+    let result: Record<string, unknown>;
+    try {
+      result = parseModelJson(jsonText1) as Record<string, unknown>;
+    } catch {
+      const retryCompletion1 = await createPacketCompletion();
+      const retryJsonText1 = retryCompletion1.choices[0].message.content || "{}";
+      result = parseModelJson(retryJsonText1) as Record<string, unknown>;
+    }
 
     // Validate funnel. If wrong, retry once with stricter instruction.
     const funnelOk = validateFunnelAgainstTemplate(result?.funnel_breakdown, template.steps);
@@ -855,20 +866,29 @@ ${template.steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}
 Return ONLY valid JSON in the same schema. Do not remove other fields.
 `;
 
-      const completion2 = await client.chat.completions.create({
-        model: "gpt-4o-mini",
-        temperature: 0.5,
-        max_tokens: 3500,
-        response_format: { type: "json_object" },
-        messages: [
-          { role: "system", content: "You are a FAANG interviewer creating interview packets." },
-          { role: "user", content: prompt },
-          { role: "user", content: stricterPrompt },
-        ],
-      });
+      const createFunnelFixCompletion = () =>
+        client.chat.completions.create({
+          model: "gpt-4o-mini",
+          temperature: 0.5,
+          max_tokens: 3500,
+          response_format: { type: "json_object" },
+          messages: [
+            { role: "system", content: "You are a FAANG interviewer creating interview packets." },
+            { role: "user", content: prompt },
+            { role: "user", content: stricterPrompt },
+          ],
+        });
+
+      const completion2 = await createFunnelFixCompletion();
 
       const jsonText2 = completion2.choices[0].message.content || "{}";
-      result = JSON.parse(jsonText2) as Record<string, unknown>;
+      try {
+        result = parseModelJson(jsonText2) as Record<string, unknown>;
+      } catch {
+        const retryCompletion2 = await createFunnelFixCompletion();
+        const retryJsonText2 = retryCompletion2.choices[0].message.content || "{}";
+        result = parseModelJson(retryJsonText2) as Record<string, unknown>;
+      }
 
       // If still not ok, coerce programmatically (never break UI)
       if (!validateFunnelAgainstTemplate(result?.funnel_breakdown, template.steps)) {
