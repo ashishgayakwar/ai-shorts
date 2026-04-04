@@ -70,6 +70,7 @@ const challengeDays: ChallengeDay[] = [
   { num: "07", title: "PM Framework Generator", href: "/pm-framework-generator" },
   { num: "08", title: "Roast My Idea", href: "/roast" },
   { num: "09", title: "PM Interview Coach", href: "/pm-interview-coach" },
+  { num: "10", title: "The Council Gazette", href: "/council-gazette" },
 ];
 
 const CHALLENGE_TOTAL = 75;
