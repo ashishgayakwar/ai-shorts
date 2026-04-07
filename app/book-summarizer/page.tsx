@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Cormorant_Garamond, Instrument_Sans } from "next/font/google";
 
 type Idea = {
@@ -181,9 +182,9 @@ export default function BookSummarizerPage() {
     return (
       <div className={`page ${cormorant.variable} ${instrument.variable}`}>
         <nav>
-          <a className="nav-logo" href="/">
+          <Link className="nav-logo" href="/">
             aipmworld
-          </a>
+          </Link>
           <span className="nav-center">75 Products · 75 Days</span>
           <div className="nav-pill">
             <span className="nav-dot" /> Day 03
@@ -293,9 +294,9 @@ export default function BookSummarizerPage() {
   return (
     <div className={`page ${cormorant.variable} ${instrument.variable}`}>
       <nav>
-        <a className="nav-logo" href="/">
+        <Link className="nav-logo" href="/">
           aipmworld
-        </a>
+        </Link>
         <span className="nav-center">75 Products · 75 Days</span>
         <div className="nav-pill">
           <span className="nav-dot" /> Day 03

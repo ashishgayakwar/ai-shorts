@@ -941,7 +941,7 @@ export default function PmFrameworkGeneratorClient() {
                   <ul>{moscowDataFinal.should.map((x) => <li key={x}>{x}</li>)}</ul>
                   <p className="mini">Could Have</p>
                   <ul>{moscowDataFinal.could.map((x) => <li key={x}>{x}</li>)}</ul>
-                  <p className="mini">Won't Have (v1)</p>
+                  <p className="mini">Won&apos;t Have (v1)</p>
                   <ul>
                     {moscowDataFinal.wont.map((x) => <li key={x}>{x}</li>)}
                   </ul>

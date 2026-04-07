@@ -4,12 +4,19 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 import { parseModelJson } from "@/lib/model-json";
+import { createCompletionWithDeepSeekFallback } from "@/lib/openai-fallback";
 
 export const runtime = "nodejs";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+const deepseek = process.env.DEEPSEEK_API_KEY
+  ? new OpenAI({
+      apiKey: process.env.DEEPSEEK_API_KEY,
+      baseURL: "https://api.deepseek.com/v1",
+    })
+  : null;
 
 const MAX_ANALYSES_PER_VISITOR = 5;
 const COOLDOWN_MS = 30 * 1000;
@@ -283,12 +290,17 @@ Return ONLY JSON:
 }`;
 
     const createCompletion = () =>
-      openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        temperature: 0.2,
-        response_format: { type: "json_object" },
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 2200,
+      createCompletionWithDeepSeekFallback({
+        openai,
+        deepseek,
+        timeoutMs: 60_000,
+        params: {
+          model: "gpt-4o-mini",
+          temperature: 0.2,
+          response_format: { type: "json_object" },
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 2200,
+        },
       });
 
     const completion = await createCompletion();
