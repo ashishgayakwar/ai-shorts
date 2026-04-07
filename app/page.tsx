@@ -71,6 +71,7 @@ const challengeDays: ChallengeDay[] = [
   { num: "08", title: "Roast My Idea", href: "/roast" },
   { num: "09", title: "PM Interview Coach", href: "/pm-interview-coach" },
   { num: "10", title: "The Council Gazette", href: "/council-gazette" },
+  { num: "11", title: "StackLens", href: "/stacklens" },
 ];
 
 const CHALLENGE_TOTAL = 75;

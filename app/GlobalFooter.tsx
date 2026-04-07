@@ -23,7 +23,7 @@ const primaryLinks = [
 
 export default function GlobalFooter() {
   const pathname = usePathname();
-  if (pathname.startsWith("/city-guide") || pathname.startsWith("/council-gazette")) {
+  if (pathname.startsWith("/city-guide") || pathname.startsWith("/council-gazette") || pathname.startsWith("/stacklens")) {
     return null;
   }
 
