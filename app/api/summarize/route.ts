@@ -4,12 +4,19 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 import { parseModelJson } from "@/lib/model-json";
+import { createCompletionWithDeepSeekFallback } from "@/lib/openai-fallback";
 
 export const runtime = "nodejs";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+const deepseek = process.env.DEEPSEEK_API_KEY
+  ? new OpenAI({
+      apiKey: process.env.DEEPSEEK_API_KEY,
+      baseURL: "https://api.deepseek.com/v1",
+    })
+  : null;
 
 const MAX_USES_PER_WINDOW = 5;
 const WINDOW_MS = 24 * 60 * 60 * 1000;
@@ -315,6 +322,31 @@ function toHttpsUrl(url: string): string {
   return url.startsWith("http://") ? `https://${url.slice("http://".length)}` : url;
 }
 
+function getProviderErrorMessage(error: unknown): string | null {
+  if (error instanceof Error && error.name === "AbortError") {
+    return "Summary request timed out. Please try again.";
+  }
+
+  if (typeof error !== "object" || error === null) return null;
+
+  const status = "status" in error ? (error as { status?: unknown }).status : undefined;
+  if (typeof status !== "number") return null;
+
+  if (status === 401 || status === 403) {
+    return "Summary provider rejected server credentials. Please check API key configuration.";
+  }
+
+  if (status === 429) {
+    return "Summary provider is rate-limiting requests right now. Please retry in a moment.";
+  }
+
+  if (status >= 500) {
+    return "Summary provider is temporarily unavailable. Please retry in a moment.";
+  }
+
+  return null;
+}
+
 async function fetchGoogleBooksThumbnail(title: string): Promise<string | null> {
   try {
     const url = `${GOOGLE_BOOKS_VOLUMES_URL}?q=intitle:${encodeURIComponent(title)}&maxResults=1`;
@@ -376,8 +408,11 @@ async function resolveCoverUrl(title: string): Promise<string | null> {
 
 export async function POST(request: Request) {
   try {
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json({ error: "Server is missing OPENAI_API_KEY." }, { status: 500 });
+    if (!process.env.OPENAI_API_KEY && !process.env.DEEPSEEK_API_KEY) {
+      return NextResponse.json(
+        { error: "Server is missing OPENAI_API_KEY and DEEPSEEK_API_KEY." },
+        { status: 500 }
+      );
     }
 
     const decision = checkAndConsumeLimit(request);
@@ -410,21 +445,26 @@ export async function POST(request: Request) {
     }
 
     const createSummaryCompletion = () =>
-      openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        temperature: 0.2,
-        response_format: { type: "json_object" },
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a precise book summarizer. Return strict JSON only with this exact shape: {\"essence\": string, \"publishedYear\": number, \"author\": string, \"ideas\": [{\"headline\": string, \"summary\": string}], \"quotes\": [{\"text\": string, \"context\": string}], \"whoShouldRead\": string }. Output exactly 5 ideas and exactly 3 quotes. Keep ideas actionable and quote contexts concise.",
-          },
-          {
-            role: "user",
-            content: `Book title: ${title}`,
-          },
-        ],
+      createCompletionWithDeepSeekFallback({
+        openai,
+        deepseek,
+        timeoutMs: 60_000,
+        params: {
+          model: "gpt-4o-mini",
+          temperature: 0.2,
+          response_format: { type: "json_object" },
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a precise book summarizer. Return strict JSON only with this exact shape: {\"essence\": string, \"publishedYear\": number, \"author\": string, \"ideas\": [{\"headline\": string, \"summary\": string}], \"quotes\": [{\"text\": string, \"context\": string}], \"whoShouldRead\": string }. Output exactly 5 ideas and exactly 3 quotes. Keep ideas actionable and quote contexts concise.",
+            },
+            {
+              role: "user",
+              content: `Book title: ${title}`,
+            },
+          ],
+        },
       });
 
     const coverPromise = resolveCoverUrl(title);
@@ -436,8 +476,12 @@ export async function POST(request: Request) {
     try {
       parsed = parseModelJson(content);
     } catch {
-      const retry = await createSummaryCompletion();
-      parsed = parseModelJson(retry.choices[0]?.message?.content || "{}");
+      try {
+        const retry = await createSummaryCompletion();
+        parsed = parseModelJson(retry.choices[0]?.message?.content || "{}");
+      } catch {
+        parsed = {};
+      }
     }
     const payload = toSummaryPayload(parsed);
 
@@ -452,8 +496,11 @@ export async function POST(request: Request) {
     return ok;
   } catch (error) {
     console.error("/api/summarize failed", error);
+    const providerMessage = getProviderErrorMessage(error);
     return NextResponse.json(
-      { error: "Unable to summarize right now. Please try again in a moment." },
+      {
+        error: providerMessage || "Unable to summarize right now. Please try again in a moment.",
+      },
       { status: 500 }
     );
   }

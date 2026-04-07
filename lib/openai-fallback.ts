@@ -9,7 +9,7 @@ export function shouldFallbackToDeepSeek(error: unknown): boolean {
   if (typeof error !== "object" || error === null || !("status" in error)) return false;
   const status = (error as { status?: unknown }).status;
   if (typeof status !== "number") return false;
-  return status === 429 || status >= 500;
+  return status === 401 || status === 403 || status === 408 || status === 429 || status >= 500;
 }
 
 type CreateCompletionArgs = {
