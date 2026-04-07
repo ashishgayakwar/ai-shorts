@@ -14,6 +14,7 @@ const openai = new OpenAI({
 const MAX_USES_PER_WINDOW = 5;
 const WINDOW_MS = 24 * 60 * 60 * 1000;
 const COOLDOWN_MS = 30 * 1000;
+const OPENAI_TIMEOUT_MS = 60_000;
 
 type RateEntry = {
   windowStartMs: number;
@@ -471,13 +472,16 @@ Rules:
 - No markdown. No prose. JSON only.`;
 
   async function runWithModel() {
-    return openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.5,
-      response_format: { type: "json_object" },
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 2500,
-    });
+    return openai.chat.completions.create(
+      {
+        model: "gpt-4o-mini",
+        temperature: 0.5,
+        response_format: { type: "json_object" },
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 2500,
+      },
+      { signal: AbortSignal.timeout(OPENAI_TIMEOUT_MS) }
+    );
   }
 
   const completion = await runWithModel();
@@ -491,6 +495,49 @@ Rules:
     parsed = parseModelJson(retry.choices[0]?.message?.content || "{}");
   }
   return normalizePayload(parsed, city);
+}
+
+function mapUpstreamError(error: unknown): { status: number; message: string } {
+  if (error instanceof Error && error.name === "AbortError") {
+    return { status: 504, message: "City guide request timed out. Please try again." };
+  }
+
+  const status =
+    typeof error === "object" &&
+    error !== null &&
+    "status" in error &&
+    typeof (error as { status?: unknown }).status === "number"
+      ? (error as { status: number }).status
+      : undefined;
+
+  const message =
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof (error as { message?: unknown }).message === "string"
+      ? (error as { message: string }).message
+      : "Unable to generate guide right now. Please try again.";
+
+  if (status === 401) {
+    return { status: 500, message: "City Guide API authentication failed on server." };
+  }
+  if (status === 429) {
+    if (message.toLowerCase().includes("insufficient_quota")) {
+      return {
+        status: 429,
+        message: "OpenAI quota is exhausted for City Guide. Please recharge or rotate key.",
+      };
+    }
+    return { status: 429, message: "OpenAI rate limit hit. Please retry in a minute." };
+  }
+  if (typeof status === "number" && status >= 500) {
+    return { status: 502, message: "OpenAI is temporarily unavailable. Please try again." };
+  }
+  if (typeof status === "number" && status >= 400) {
+    return { status: 400, message };
+  }
+
+  return { status: 500, message };
 }
 
 export async function POST(request: Request) {
@@ -532,9 +579,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ city, data, remaining: rateLimit.remaining });
   } catch (error) {
     console.error("/api/city-guide failed", error);
-    return NextResponse.json(
-      { error: "Unable to generate guide right now. Please try again." },
-      { status: 500 }
-    );
+    const mapped = mapUpstreamError(error);
+    return NextResponse.json({ error: mapped.message }, { status: mapped.status });
   }
 }
