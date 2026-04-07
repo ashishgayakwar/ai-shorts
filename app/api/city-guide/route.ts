@@ -1,5 +1,3 @@
-import { createHash } from "crypto";
-
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -7,102 +5,98 @@ import { parseModelJson } from "@/lib/model-json";
 
 export const runtime = "nodejs";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const cityGuideApiKey = process.env.CITY_GUIDE_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+const openai = cityGuideApiKey
+  ? new OpenAI({
+      apiKey: cityGuideApiKey,
+    })
+  : null;
+const deepseek = process.env.DEEPSEEK_API_KEY
+  ? new OpenAI({
+      apiKey: process.env.DEEPSEEK_API_KEY,
+      baseURL: "https://api.deepseek.com/v1",
+    })
+  : null;
 
-const MAX_USES_PER_WINDOW = 5;
-const WINDOW_MS = 24 * 60 * 60 * 1000;
-const COOLDOWN_MS = 30 * 1000;
+const PROJECT_RATE_LIMIT_MAX = 120;
+const PROJECT_RATE_LIMIT_WINDOW_MS = 60_000;
 const OPENAI_TIMEOUT_MS = 60_000;
 
-type RateEntry = {
-  windowStartMs: number;
-  usedCount: number;
-  lastRequestMs: number;
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getErrorStatus(error: unknown): number | undefined {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "status" in error &&
+    typeof (error as { status?: unknown }).status === "number"
+  ) {
+    return (error as { status: number }).status;
+  }
+  return undefined;
+}
+
+function shouldRetryOrFallback(error: unknown): boolean {
+  const status = getErrorStatus(error);
+  if (status === 429) return true;
+  if (typeof status === "number" && status >= 500) return true;
+  if (error instanceof Error && error.name === "AbortError") return true;
+  return false;
+}
+
+type ProjectRateEntry = {
+  count: number;
+  resetAt: number;
 };
 
 type RateDecision =
   | { allowed: true; remaining: number }
-  | { allowed: false; remaining: number; retryAfterSeconds: number; reason: "cap" | "cooldown" };
+  | { allowed: false; remaining: number; retryAfterSeconds: number; reason: "project_cap" };
 
-function clamp(n: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, n));
-}
-
-function getClientIp(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const first = forwarded.split(",")[0]?.trim();
-    if (first) return first;
-  }
-  return request.headers.get("x-real-ip")?.trim() || "unknown";
-}
-
-function hashWithSecret(value: string): string {
-  const secret =
-    process.env.NEXTAUTH_SECRET || process.env.OPENAI_API_KEY || "city-guide-rate-limit-secret";
-  return createHash("sha256").update(`${value}|${secret}`).digest("hex");
-}
-
-function getRateLimitKey(request: Request): string {
-  const ip = getClientIp(request);
-  const fingerprint = request.headers.get("x-fingerprint") || "unknown";
-  return hashWithSecret(`${ip}|${fingerprint}`);
-}
-
-function getRateStore(): Map<string, RateEntry> {
-  const globalState = globalThis as unknown as { cityGuideRateStore?: Map<string, RateEntry> };
-  if (!globalState.cityGuideRateStore) {
-    globalState.cityGuideRateStore = new Map();
-  }
-  return globalState.cityGuideRateStore;
-}
-
-function checkAndConsumeLimit(request: Request): RateDecision {
-  const now = Date.now();
-  const key = getRateLimitKey(request);
-  const store = getRateStore();
-  const current = store.get(key);
-
-  if (!current || now - current.windowStartMs >= WINDOW_MS) {
-    store.set(key, { windowStartMs: now, usedCount: 1, lastRequestMs: now });
-    return { allowed: true, remaining: MAX_USES_PER_WINDOW - 1 };
-  }
-
-  if (now - current.lastRequestMs < COOLDOWN_MS) {
-    return {
-      allowed: false,
-      remaining: Math.max(0, MAX_USES_PER_WINDOW - current.usedCount),
-      retryAfterSeconds: clamp(
-        Math.ceil((COOLDOWN_MS - (now - current.lastRequestMs)) / 1000),
-        1,
-        30
-      ),
-      reason: "cooldown",
+function getProjectRateState(): ProjectRateEntry {
+  const globalState = globalThis as unknown as {
+    cityGuideProjectRate?: ProjectRateEntry;
+  };
+  if (!globalState.cityGuideProjectRate) {
+    globalState.cityGuideProjectRate = {
+      count: 0,
+      resetAt: Date.now() + PROJECT_RATE_LIMIT_WINDOW_MS,
     };
   }
+  return globalState.cityGuideProjectRate;
+}
 
-  if (current.usedCount >= MAX_USES_PER_WINDOW) {
+function setProjectRateState(next: ProjectRateEntry): void {
+  const globalState = globalThis as unknown as {
+    cityGuideProjectRate?: ProjectRateEntry;
+  };
+  globalState.cityGuideProjectRate = next;
+}
+
+function checkAndConsumeLimit(): RateDecision {
+  const now = Date.now();
+  const state = getProjectRateState();
+
+  if (now >= state.resetAt) {
+    const resetState = { count: 1, resetAt: now + PROJECT_RATE_LIMIT_WINDOW_MS };
+    setProjectRateState(resetState);
+    return { allowed: true, remaining: PROJECT_RATE_LIMIT_MAX - 1 };
+  }
+
+  if (state.count >= PROJECT_RATE_LIMIT_MAX) {
     return {
       allowed: false,
       remaining: 0,
-      retryAfterSeconds: clamp(
-        Math.ceil((current.windowStartMs + WINDOW_MS - now) / 1000),
-        1,
-        24 * 60 * 60
-      ),
-      reason: "cap",
+      retryAfterSeconds: Math.max(1, Math.ceil((state.resetAt - now) / 1000)),
+      reason: "project_cap",
     };
   }
 
-  const updated: RateEntry = {
-    ...current,
-    usedCount: current.usedCount + 1,
-    lastRequestMs: now,
-  };
-  store.set(key, updated);
-  return { allowed: true, remaining: Math.max(0, MAX_USES_PER_WINDOW - updated.usedCount) };
+  const nextState = { ...state, count: state.count + 1 };
+  setProjectRateState(nextState);
+  return { allowed: true, remaining: Math.max(0, PROJECT_RATE_LIMIT_MAX - nextState.count) };
 }
 
 type CityGuidePayload = {
@@ -471,7 +465,10 @@ Rules:
 - Focus on travelers from India for visa and flights.
 - No markdown. No prose. JSON only.`;
 
-  async function runWithModel() {
+  async function runOpenAiModel() {
+    if (!openai) {
+      throw new Error("OPENAI_API_KEY is not configured.");
+    }
     return openai.chat.completions.create(
       {
         model: "gpt-4o-mini",
@@ -484,15 +481,50 @@ Rules:
     );
   }
 
-  const completion = await runWithModel();
+  async function runDeepSeekModel() {
+    if (!deepseek) {
+      throw new Error("DEEPSEEK_API_KEY is not configured.");
+    }
+    return deepseek.chat.completions.create(
+      {
+        model: "deepseek-chat",
+        temperature: 0.5,
+        max_tokens: 2500,
+        messages: [{ role: "user", content: prompt }],
+      },
+      { signal: AbortSignal.timeout(OPENAI_TIMEOUT_MS) }
+    );
+  }
 
-  const content = completion.choices[0]?.message?.content || "{}";
+  let content = "{}";
+  try {
+    const completion = await runOpenAiModel();
+    content = completion.choices[0]?.message?.content || "{}";
+  } catch (firstError) {
+    if (!shouldRetryOrFallback(firstError)) {
+      throw firstError;
+    }
+
+    try {
+      await sleep(1200);
+      const retry = await runOpenAiModel();
+      content = retry.choices[0]?.message?.content || "{}";
+    } catch (retryError) {
+      if (!shouldRetryOrFallback(retryError) || !deepseek) {
+        throw retryError;
+      }
+      const fallback = await runDeepSeekModel();
+      content = fallback.choices[0]?.message?.content || "{}";
+    }
+  }
+
   let parsed: unknown;
   try {
     parsed = parseModelJson(content);
   } catch {
-    const retry = await runWithModel();
-    parsed = parseModelJson(retry.choices[0]?.message?.content || "{}");
+    if (!deepseek) throw new Error("Invalid model output and no fallback provider available.");
+    const fallback = await runDeepSeekModel();
+    parsed = parseModelJson(fallback.choices[0]?.message?.content || "{}");
   }
   return normalizePayload(parsed, city);
 }
@@ -542,8 +574,11 @@ function mapUpstreamError(error: unknown): { status: number; message: string } {
 
 export async function POST(request: Request) {
   try {
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json({ error: "Server missing OPENAI_API_KEY." }, { status: 500 });
+    if (!cityGuideApiKey && !process.env.DEEPSEEK_API_KEY) {
+      return NextResponse.json(
+        { error: "Server missing CITY_GUIDE_OPENAI_API_KEY / OPENAI_API_KEY and DEEPSEEK_API_KEY." },
+        { status: 500 }
+      );
     }
 
     const body = (await request.json().catch(() => null)) as { city?: unknown } | null;
@@ -553,14 +588,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please enter a valid city name." }, { status: 400 });
     }
 
-    const rateLimit = checkAndConsumeLimit(request);
+    const rateLimit = checkAndConsumeLimit();
     if (!rateLimit.allowed) {
       return NextResponse.json(
         {
-          error:
-            rateLimit.reason === "cooldown"
-              ? `Please wait ${rateLimit.retryAfterSeconds}s before generating another city guide.`
-              : "You have reached the maximum of 5 city guides for this browser and IP in 24 hours.",
+          error: `City Guide is at full project capacity right now. Retry in ${rateLimit.retryAfterSeconds}s.`,
           remaining: rateLimit.remaining,
           retryAfterSeconds: rateLimit.retryAfterSeconds,
           reason: rateLimit.reason,
