@@ -17,13 +17,19 @@ const primaryLinks = [
   { label: "City Guide", href: "/city-guide" },
   { label: "Frameworks", href: "/pm-framework-generator" },
   { label: "Competitor Analysis", href: "/competitor-analysis" },
+  { label: "Interview Guide", href: "/interview-guide" },
   { label: "Resume Screener", href: "/pm-resume-screener" },
   { label: "MAANG", href: "/maang-interview-series" },
 ];
 
 export default function GlobalFooter() {
   const pathname = usePathname();
-  if (pathname.startsWith("/city-guide") || pathname.startsWith("/council-gazette") || pathname.startsWith("/stacklens")) {
+  if (
+    pathname.startsWith("/city-guide") ||
+    pathname.startsWith("/council-gazette") ||
+    pathname.startsWith("/stacklens") ||
+    pathname.startsWith("/interview-guide")
+  ) {
     return null;
   }
 

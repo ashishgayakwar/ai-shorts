@@ -27,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/visualize`, lastModified },
     { url: `${baseUrl}/user-story-generator`, lastModified },
     { url: `${baseUrl}/competitor-analysis`, lastModified },
+    { url: `${baseUrl}/interview-guide`, lastModified },
     { url: `${baseUrl}/book-summarizer`, lastModified },
     { url: `${baseUrl}/city-guide`, lastModified },
     { url: `${baseUrl}/pm-framework-generator`, lastModified },
