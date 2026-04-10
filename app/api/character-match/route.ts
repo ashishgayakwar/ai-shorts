@@ -210,25 +210,50 @@ function normalizeResult(raw: unknown): MatchResult {
 }
 
 function buildPrompt(answers: QuizAnswers): string {
-  return `You are a character matching engine for a personality quiz. Based on the user's answers, match them to the single most fitting character from any movie or TV show, across all genres, eras, and languages.
+  return `You are a precise character matching engine. You will receive 5 specific answers from a personality quiz. You MUST use each answer as a direct signal to narrow down the character match.
 
-Return ONLY valid JSON. No markdown. No explanation. No preamble.
+Here is how to use each answer:
+- Q1 (Friday night behaviour) -> reveals social style and energy level
+- Q2 (Someone wrongs you) -> reveals emotional response and moral code
+- Q3 (Superpower) -> reveals core strength and self-perception
+- Q4 (Pick a world) -> reveals genre affinity - use this to filter which universe the character comes from
+- Q5 (What drives you) -> reveals core motivation - this is the most important signal
 
 Input answers:
 ${JSON.stringify({ answers })}
 
-The input contains exactly 5 answers (q1 to q5).
+CRITICAL RULES:
+- Different answer combinations MUST produce different characters. Never return the same character for different answer sets.
+- Q4 is a hard filter - if user picks "Gritty crime thriller", the character MUST come from that world. If they pick "Epic fantasy", pick from that world. Do not ignore this.
+- Q5 is the soul filter - Power, Justice, Freedom, Love must each lead to fundamentally different character archetypes
+- Draw from ALL of film and TV - Hollywood, Bollywood, Korean drama, anime, indie, classic cinema, prestige TV, cult shows
+- Avoid defaulting to GOT, Sherlock, Breaking Bad, Friends unless the answers very specifically point there
+- Be surprising and specific - an unexpected perfect match is better than an obvious safe pick
+- The character must genuinely reflect the combination of ALL 5 answers, not just one
+- Match percent between 72 and 96 - vary it, don't always return 87
+- Iconic quote must be real and accurate
+- Accent color must reflect the character's world and personality
 
-Return this exact structure:
+Return ONLY valid JSON. No markdown. No explanation. No preamble.
+
+BANNED characters unless answers make them truly unavoidable:
+- Francis Underwood
+- Walter White
+- Sherlock Holmes
+- Jon Snow
+- Tony Stark
+
+If you were about to pick any of these, stop and pick the next best alternative that fits the answers just as well.
+
 {
   "character": "Character full name",
   "show": "Show or Movie title",
   "match_percent": 87,
-  "accent_color": "#hex color that represents this character's vibe",
+  "accent_color": "#hex color",
   "reasons": [
-    { "title": "Bold one-line trait", "explanation": "One sentence connecting this trait to the character." },
-    { "title": "Bold one-line trait", "explanation": "One sentence connecting this trait to the character." },
-    { "title": "Bold one-line trait", "explanation": "One sentence connecting this trait to the character." }
+    { "title": "Bold one-line trait", "explanation": "One sentence tying this directly to both the user's answer and the character." },
+    { "title": "Bold one-line trait", "explanation": "One sentence tying this directly to both the user's answer and the character." },
+    { "title": "Bold one-line trait", "explanation": "One sentence tying this directly to both the user's answer and the character." }
   ],
   "iconic_quote": "Their most famous quote",
   "dark_side": {
@@ -236,19 +261,7 @@ Return this exact structure:
     "show": "Their show or movie",
     "reason": "One sentence explaining why"
   }
-}
-
-Rules:
-- Draw from ALL of film and TV history: Hollywood, Bollywood, Korean, anime, indie, classic, modern
-- Do NOT default to safe popular picks like GOT, Sherlock, or Breaking Bad unless the answers strongly justify it
-- Vary widely across eras, genres, and cultures based on the answers
-- The character must genuinely match the personality, not just be a famous name
-- Pick unexpected, surprising matches when the answers support it
-- Accent color must reflect the character's personality and world
-- match_percent must be between 72 and 96 and should feel earned
-- Reasons must feel personal and specific, not generic
-- iconic_quote must be real and accurate
-- All strings must be single-line text`;
+}`;
 }
 
 function isValidAnswers(value: unknown): value is QuizAnswers {
@@ -339,7 +352,14 @@ export async function POST(request: Request) {
           temperature: 0.9,
           max_tokens: 1400,
           response_format: { type: "json_object" },
-          messages: [{ role: "user", content: prompt }],
+          messages: [
+            {
+              role: "system",
+              content:
+                "You have an enormous database of characters across all of film and TV history. Your job is to find the MOST UNIQUE and SPECIFIC match for this exact combination of answers. Generic or obvious answers are a failure.",
+            },
+            { role: "user", content: prompt },
+          ],
         },
         { signal: AbortSignal.timeout(60_000) }
       );
