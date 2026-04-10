@@ -1433,3 +1433,428 @@ body {
     animation: none !important;
   }
 }
+
+/* -------------------------------------------------------
+   DAY 13 - WHICH CHARACTER ARE YOU?
+------------------------------------------------------- */
+.day13-root {
+  --bg: #0a0a0a;
+  --surface: #151515;
+  --surface2: #1a1a1a;
+  --border: #2a2a2a;
+  --text: #f2f2f2;
+  --muted: #9c9c9c;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+}
+
+.day13-root .grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: soft-light;
+  animation: day13-grainShift 8s linear infinite;
+  z-index: 2;
+}
+
+.day13-root .screen {
+  position: relative;
+  z-index: 3;
+  min-height: 100vh;
+  padding: 42px 28px;
+}
+
+.day13-root .intro {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  gap: 14px;
+}
+
+.day13-root .eyebrow {
+  font-family: var(--font-dmsans);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b0b0b0;
+}
+
+.day13-root .intro-title {
+  font-family: var(--font-anton);
+  font-size: clamp(64px, 14vw, 174px);
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  max-width: 900px;
+}
+
+.day13-root .intro-sub {
+  font-family: var(--font-dmsans);
+  font-size: 20px;
+  color: #c7c7c7;
+  margin-bottom: 10px;
+}
+
+.day13-root .cta {
+  margin-top: 8px;
+  background: var(--accent);
+  color: #0d0d0d;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 24px;
+  font-family: var(--font-dmsans);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.day13-root .error {
+  color: #ff8e8e;
+  font-family: var(--font-dmsans);
+  margin-top: 8px;
+}
+
+.day13-root .quiz {
+  max-width: 840px;
+  margin: 0 auto;
+  display: grid;
+  align-content: center;
+  gap: 26px;
+}
+
+.day13-root .q-label {
+  font-family: var(--font-dmsans);
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+.day13-root .progress-track {
+  height: 4px;
+  border-radius: 999px;
+  margin-top: 10px;
+  background: #1c1c1c;
+  overflow: hidden;
+}
+
+.day13-root .progress-fill {
+  height: 100%;
+  background: var(--accent);
+}
+
+.day13-root .question-block h2 {
+  font-family: var(--font-bebas);
+  font-size: clamp(36px, 7vw, 64px);
+  line-height: 0.95;
+  margin-bottom: 18px;
+  letter-spacing: 0.01em;
+}
+
+.day13-root .options {
+  display: grid;
+  gap: 12px;
+}
+
+.day13-root .option {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  color: #efefef;
+  text-align: left;
+  font-family: var(--font-dmsans);
+  font-size: 18px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.day13-root .option:hover {
+  border-color: var(--accent);
+}
+
+.day13-root .option.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0b0b0b;
+}
+
+.day13-root .result {
+  display: grid;
+  place-items: center;
+  padding: 28px;
+}
+
+.day13-root .result-card {
+  width: min(1120px, 100%);
+  background: #111;
+  border: 1px solid #242424;
+  border-radius: 22px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  box-shadow: 0 22px 90px rgba(0, 0, 0, 0.48);
+}
+
+.day13-root .media {
+  position: relative;
+  min-height: 520px;
+  background: #101010;
+}
+
+.day13-root .media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.day13-root .image-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-anton);
+  font-size: clamp(84px, 16vw, 180px);
+  color: rgba(255, 255, 255, 0.9);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 70%, #111), #121212);
+}
+
+.day13-root .media-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.88), transparent 50%);
+}
+
+.day13-root .media-name {
+  position: absolute;
+  left: 20px;
+  bottom: 14px;
+  right: 20px;
+  font-family: var(--font-bebas);
+  font-size: clamp(38px, 6vw, 64px);
+  line-height: 0.95;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.day13-root .content {
+  padding: 28px 30px 24px;
+}
+
+.day13-root .match-eyebrow {
+  font-family: var(--font-dmsans);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #b7b7b7;
+}
+
+.day13-root .score {
+  font-family: var(--font-bebas);
+  color: var(--accent);
+  font-size: clamp(66px, 9vw, 96px);
+  line-height: 0.8;
+  margin-top: 8px;
+}
+
+.day13-root .character {
+  font-family: var(--font-bebas);
+  font-size: clamp(46px, 7vw, 72px);
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.day13-root .show {
+  font-family: var(--font-dmsans);
+  color: #a4a4a4;
+  margin-top: 6px;
+  font-size: 16px;
+}
+
+.day13-root .divider {
+  margin: 18px 0;
+  border-top: 1px solid #2a2a2a;
+}
+
+.day13-root .reasons {
+  display: grid;
+  gap: 12px;
+}
+
+.day13-root .reason-title {
+  font-family: var(--font-dmsans);
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.day13-root .reason-body {
+  font-family: var(--font-dmsans);
+  font-size: 15px;
+  color: #bdbdbd;
+  line-height: 1.58;
+}
+
+.day13-root blockquote {
+  font-family: var(--font-playfair);
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.35;
+  color: #f0f0f0;
+}
+
+.day13-root .dark-label {
+  font-family: var(--font-dmsans);
+  color: #a7a7a7;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-bottom: 8px;
+}
+
+.day13-root .dark-name {
+  font-family: var(--font-dmsans);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.day13-root .dark-name span {
+  color: #9d9d9d;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.day13-root .dark-reason {
+  font-family: var(--font-dmsans);
+  margin-top: 8px;
+  color: #b8b8b8;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.day13-root .actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.day13-root .share,
+.day13-root .retake {
+  border-radius: 12px;
+  border: 1px solid #2b2b2b;
+  padding: 11px 16px;
+  font-family: var(--font-dmsans);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.day13-root .share {
+  background: var(--accent);
+  color: #090909;
+  border-color: var(--accent);
+}
+
+.day13-root .retake {
+  background: transparent;
+  color: #ddd;
+}
+
+.day13-root .copied {
+  margin-top: 8px;
+  font-family: var(--font-dmsans);
+  font-size: 13px;
+  color: #9be7b0;
+}
+
+.day13-root .loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-content: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.day13-root .spinner {
+  width: 62px;
+  height: 62px;
+  border-radius: 999px;
+  border: 2px solid #2a2a2a;
+  border-top-color: var(--accent);
+  margin: 0 auto;
+  animation: day13-spin 0.9s linear infinite;
+}
+
+.day13-root .loading-overlay p {
+  font-family: var(--font-dmsans);
+  color: #e9e9e9;
+  font-size: 17px;
+}
+
+@keyframes day13-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes day13-grainShift {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-2%, 1%);
+  }
+  50% {
+    transform: translate(1%, -1%);
+  }
+  75% {
+    transform: translate(2%, 1%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .day13-root .result-card {
+    grid-template-columns: 1fr;
+  }
+
+  .day13-root .media {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 640px) {
+  .day13-root .screen {
+    padding: 22px 16px;
+  }
+
+  .day13-root .intro-sub {
+    font-size: 16px;
+  }
+
+  .day13-root .question-block h2 {
+    font-size: clamp(30px, 10vw, 44px);
+  }
+
+  .day13-root .option {
+    font-size: 16px;
+  }
+
+  .day13-root .content {
+    padding: 20px 18px 18px;
+  }
+}
