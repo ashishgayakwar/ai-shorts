@@ -11,6 +11,7 @@ const PROJECT_RATE_LIMIT_MAX = 30;
 const PROJECT_RATE_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 type QuizAnswers = {
+  universe: "Hollywood" | "Bollywood";
   q1: string;
   q2: string;
   q3: string;
@@ -210,9 +211,10 @@ function normalizeResult(raw: unknown): MatchResult {
 }
 
 function buildPrompt(answers: QuizAnswers): string {
-  return `You are a precise character matching engine. You will receive 5 specific answers from a personality quiz. You MUST use each answer as a direct signal to narrow down the character match.
+  return `You are a precise character matching engine. You will receive a universe choice plus 5 specific answers from a personality quiz. You MUST use each answer as a direct signal to narrow down the character match.
 
 Here is how to use each answer:
+- Universe (Which world do you belong to?) -> hard filter for character source
 - Q1 (Friday night behaviour) -> reveals social style and energy level
 - Q2 (Someone wrongs you) -> reveals emotional response and moral code
 - Q3 (Superpower) -> reveals core strength and self-perception
@@ -267,6 +269,8 @@ If you were about to pick any of these, stop and pick the next best alternative 
 function isValidAnswers(value: unknown): value is QuizAnswers {
   if (!value || typeof value !== "object") return false;
   const obj = value as Record<string, unknown>;
+  const universe = toText(obj.universe);
+  if (universe !== "Hollywood" && universe !== "Bollywood") return false;
   const keys = ["q1", "q2", "q3", "q4", "q5"];
   return keys.every((k) => toText(obj[k]).length > 0);
 }
@@ -344,6 +348,7 @@ export async function POST(request: Request) {
     }
 
     const prompt = buildPrompt(payload.answers);
+    const selectedUniverse = payload.answers.universe;
 
     const createCompletion = () =>
       openai.chat.completions.create(
@@ -356,7 +361,7 @@ export async function POST(request: Request) {
             {
               role: "system",
               content:
-                "You have an enormous database of characters across all of film and TV history. Your job is to find the MOST UNIQUE and SPECIFIC match for this exact combination of answers. Generic or obvious answers are a failure.",
+                `You have an enormous database of characters across all of film and TV history. Your job is to find the MOST UNIQUE and SPECIFIC match for this exact combination of answers. Generic or obvious answers are a failure.\n\nThe user has selected ${selectedUniverse}. You MUST only return characters from that universe. If Hollywood - only Western films and TV. If Bollywood - only Indian films, shows, and web series like Sacred Games, Mirzapur, Scam 1992, Bollywood classics and modern hits.`,
             },
             { role: "user", content: prompt },
           ],

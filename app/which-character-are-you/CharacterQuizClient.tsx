@@ -5,13 +5,23 @@ import { useEffect, useMemo, useState } from "react";
 
 type Screen = "intro" | "quiz" | "result";
 
+type Universe = "Hollywood" | "Bollywood";
+
+type QuizOption = {
+  value: string;
+  label: string;
+  emoji?: string;
+  subLabel?: string;
+};
+
 type QuizQuestion = {
   id: keyof QuizAnswers;
   prompt: string;
-  options: string[];
+  options: QuizOption[];
 };
 
 type QuizAnswers = {
+  universe: Universe;
   q1: string;
   q2: string;
   q3: string;
@@ -40,49 +50,72 @@ type MatchResult = {
 
 const QUESTIONS: QuizQuestion[] = [
   {
+    id: "universe",
+    prompt: "Which world do you belong to?",
+    options: [
+      {
+        value: "Hollywood",
+        label: "Hollywood",
+        emoji: "🎬",
+        subLabel: "Western Films and TV Shows",
+      },
+      {
+        value: "Bollywood",
+        label: "Bollywood",
+        emoji: "🎭",
+        subLabel: "Indian Films and TV Shows",
+      },
+    ],
+  },
+  {
     id: "q1",
     prompt: "It's Friday night. You are most likely:",
     options: [
-      "Hosting a dinner party and controlling the playlist",
-      "Out somewhere loud and unpredictable",
-      "Deep in a rabbit hole of something obscure",
-      "Exactly where I planned to be, two weeks ago",
+      { value: "Hosting a dinner party and controlling the playlist", label: "Hosting a dinner party and controlling the playlist" },
+      { value: "Out somewhere loud and unpredictable", label: "Out somewhere loud and unpredictable" },
+      { value: "Deep in a rabbit hole of something obscure", label: "Deep in a rabbit hole of something obscure" },
+      { value: "Exactly where I planned to be, two weeks ago", label: "Exactly where I planned to be, two weeks ago" },
     ],
   },
   {
     id: "q2",
     prompt: "Someone wrongs you. You:",
     options: [
-      "Forgive them. Eventually.",
-      "Make a mental note. Never forget.",
-      "Handle it immediately and directly",
-      "Say nothing. Let karma work.",
+      { value: "Forgive them. Eventually.", label: "Forgive them. Eventually." },
+      { value: "Make a mental note. Never forget.", label: "Make a mental note. Never forget." },
+      { value: "Handle it immediately and directly", label: "Handle it immediately and directly" },
+      { value: "Say nothing. Let karma work.", label: "Say nothing. Let karma work." },
     ],
   },
   {
     id: "q3",
     prompt: "Your superpower would be:",
     options: [
-      "Reading people instantly",
-      "Being three steps ahead always",
-      "Surviving absolutely anything",
-      "Making everyone trust you instantly",
+      { value: "Reading people instantly", label: "Reading people instantly" },
+      { value: "Being three steps ahead always", label: "Being three steps ahead always" },
+      { value: "Surviving absolutely anything", label: "Surviving absolutely anything" },
+      { value: "Making everyone trust you instantly", label: "Making everyone trust you instantly" },
     ],
   },
   {
     id: "q4",
     prompt: "Pick a world:",
     options: [
-      "Gritty crime thriller",
-      "Mind-bending sci-fi",
-      "Epic fantasy",
-      "Sharp political drama",
+      { value: "Gritty crime thriller", label: "Gritty crime thriller" },
+      { value: "Mind-bending sci-fi", label: "Mind-bending sci-fi" },
+      { value: "Epic fantasy", label: "Epic fantasy" },
+      { value: "Sharp political drama", label: "Sharp political drama" },
     ],
   },
   {
     id: "q5",
     prompt: "What drives you most:",
-    options: ["Power", "Justice", "Freedom", "Love"],
+    options: [
+      { value: "Power", label: "Power" },
+      { value: "Justice", label: "Justice" },
+      { value: "Freedom", label: "Freedom" },
+      { value: "Love", label: "Love" },
+    ],
   },
 ];
 
@@ -120,6 +153,7 @@ export default function CharacterQuizClient() {
   const [result, setResult] = useState<MatchResult | null>(null);
   const [imageUrl, setImageUrl] = useState("");
   const [imageFailed, setImageFailed] = useState(false);
+  const [imageIsPortrait, setImageIsPortrait] = useState(false);
   const [copied, setCopied] = useState(false);
   const [animatedScore, setAnimatedScore] = useState(0);
 
@@ -178,6 +212,7 @@ export default function CharacterQuizClient() {
       setResult(nextResult);
       setImageUrl(toText(payload?.imageUrl || ""));
       setImageFailed(false);
+      setImageIsPortrait(false);
       setScreen("result");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unable to generate your character match.";
@@ -194,6 +229,7 @@ export default function CharacterQuizClient() {
     setResult(null);
     setImageUrl("");
     setImageFailed(false);
+    setImageIsPortrait(false);
     setQuestionIndex(0);
     setSelected("");
     setScreen("quiz");
@@ -235,6 +271,7 @@ export default function CharacterQuizClient() {
     setResult(null);
     setImageUrl("");
     setImageFailed(false);
+    setImageIsPortrait(false);
     setAnimatedScore(0);
     setSelected("");
   }
@@ -280,7 +317,7 @@ export default function CharacterQuizClient() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.34 }}
             >
-              5 questions. Every movie. Every show. One character.
+              6 steps. Every movie. Every show. One character.
             </motion.p>
 
             <motion.button
@@ -308,7 +345,7 @@ export default function CharacterQuizClient() {
             transition={{ duration: 0.3 }}
           >
             <div className="quiz-top">
-              <span className="q-label">{`Question ${questionIndex + 1} of 5`}</span>
+              <span className="q-label">{`Question ${questionIndex + 1} of 6`}</span>
               <div className="progress-track">
                 <motion.div
                   className="progress-fill"
@@ -329,20 +366,32 @@ export default function CharacterQuizClient() {
                 transition={{ duration: 0.22 }}
               >
                 <h2>{activeQuestion.prompt}</h2>
-                <div className="options">
+                <div className={`options ${activeQuestion.id === "universe" ? "universe-grid" : ""}`}>
                   {activeQuestion.options.map((option) => {
-                    const isSelected = selected === option;
+                    const isSelected = selected === option.value;
                     return (
                       <motion.button
-                        key={option}
+                        key={option.value}
                         type="button"
-                        className={`option ${isSelected ? "selected" : ""}`}
-                        onClick={() => handleSelect(option)}
+                        className={`option ${isSelected ? "selected" : ""} ${
+                          activeQuestion.id === "universe" ? "universe-option" : ""
+                        }`}
+                        onClick={() => handleSelect(option.value)}
                         whileHover={{ scale: isSelected ? 1 : 1.01 }}
                         animate={isSelected ? { scale: [1, 1.03, 1] } : { scale: 1 }}
                         transition={{ duration: 0.22 }}
                       >
-                        {option}
+                        {activeQuestion.id === "universe" ? (
+                          <>
+                            <span className="universe-line">
+                              <span className="universe-emoji">{option.emoji}</span>
+                              <span className="universe-label">{option.label}: </span>
+                              <span className="universe-sub">{option.subLabel}</span>
+                            </span>
+                          </>
+                        ) : (
+                          option.label
+                        )}
                       </motion.button>
                     );
                   })}
@@ -368,7 +417,15 @@ export default function CharacterQuizClient() {
                   <img
                     src={imageUrl}
                     alt={`${result.character} visual`}
-                    onError={() => setImageFailed(true)}
+                    className={imageIsPortrait ? "portrait" : ""}
+                    onLoad={(event) => {
+                      const img = event.currentTarget;
+                      setImageIsPortrait(img.naturalHeight > img.naturalWidth);
+                    }}
+                    onError={() => {
+                      setImageFailed(true);
+                      setImageIsPortrait(false);
+                    }}
                   />
                 ) : (
                   <div className="image-fallback">{initials(result.character)}</div>

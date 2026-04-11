@@ -1563,6 +1563,11 @@ body {
   gap: 12px;
 }
 
+.day13-root .options.universe-grid {
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
 .day13-root .option {
   background: var(--surface2);
   border: 1px solid var(--border);
@@ -1574,6 +1579,39 @@ body {
   font-size: 18px;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.day13-root .universe-option {
+  padding: 16px 18px;
+  border-radius: 14px;
+  min-height: 0;
+}
+
+.day13-root .universe-line {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.day13-root .universe-emoji {
+  font-size: 18px;
+  line-height: 1;
+  margin-right: 10px;
+}
+
+.day13-root .universe-label {
+  font-family: var(--font-dmsans);
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+.day13-root .universe-sub {
+  font-family: var(--font-dmsans);
+  font-size: 18px;
+  line-height: 1.35;
+  color: #c7c7c7;
 }
 
 .day13-root .option:hover {
@@ -1614,6 +1652,12 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.day13-root .media img.portrait {
+  object-fit: contain;
+  background: linear-gradient(180deg, #0e0e0e, #0a0a0a);
+  padding: 10px;
 }
 
 .day13-root .image-fallback {
@@ -1848,6 +1892,25 @@ body {
 
   .day13-root .question-block h2 {
     font-size: clamp(30px, 10vw, 44px);
+  }
+
+  .day13-root .universe-option {
+    min-height: 0;
+    padding: 16px 18px;
+  }
+
+  .day13-root .universe-line {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .day13-root .universe-label {
+    font-size: 16px;
+  }
+
+  .day13-root .universe-sub {
+    font-size: 16px;
   }
 
   .day13-root .option {
