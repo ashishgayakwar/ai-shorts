@@ -68,6 +68,17 @@ model RateLimit {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model ApiRateLimit {
+  key           String   @id
+  route         String
+  windowStart   DateTime
+  count         Int
+  lastRequestAt DateTime
+  updatedAt     DateTime @updatedAt
+
+  @@index([route, updatedAt])
+}
+
 model GenerationLog {
   id         String   @id @default(cuid())
   userId     String

@@ -2,19 +2,13 @@ import OpenAI from "openai";
 import { NextRequest, NextResponse } from "next/server";
 
 import type { CouncilRequest, CouncilResponse, ModelAnswer, SynthesisResult } from "@/app/council-gazette/types";
-
-type RateLimitEntry = {
-  count: number;
-  resetAt: number;
-};
+import { checkApiRateLimit, ipRateLimitKey } from "@/lib/api-rate-limit";
 
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const MODEL_TIMEOUT_MS = 60_000;
 const MODEL_MAX_TOKENS = 800;
 const GEMINI_MAX_OUTPUT_TOKENS = 4000;
-
-const rateLimitStore = new Map<string, RateLimitEntry>();
 
 const SYSTEM_PROMPT =
   "You are a brilliant, opinionated analyst. You give direct, specific, well-reasoned answers. No hedging. No generic advice. Every claim must be specific to the question asked. Write like a confident expert filing a dispatch, not a cautious assistant covering its bases.";
@@ -216,30 +210,6 @@ function isValidSynthesis(data: unknown): data is SynthesisResult {
   if (!Array.isArray(data.agree) || data.agree.some((item) => typeof item !== "string")) return false;
   if (!Array.isArray(data.disagree) || data.disagree.some((item) => typeof item !== "string")) return false;
   return typeof data.verdict === "string";
-}
-
-function extractIp(request: NextRequest): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  return forwarded ? forwarded.split(",")[0].trim() : "127.0.0.1";
-}
-
-function consumeRateLimit(ip: string): { limited: boolean; remaining: number; retryAfterSeconds: number } {
-  const now = Date.now();
-  const existing = rateLimitStore.get(ip);
-
-  if (!existing || now >= existing.resetAt) {
-    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return { limited: false, remaining: RATE_LIMIT_MAX - 1, retryAfterSeconds: 0 };
-  }
-
-  const retryAfterSeconds = Math.max(1, Math.ceil((existing.resetAt - now) / 1000));
-  if (existing.count >= RATE_LIMIT_MAX) {
-    return { limited: true, remaining: 0, retryAfterSeconds };
-  }
-
-  existing.count += 1;
-  rateLimitStore.set(ip, existing);
-  return { limited: false, remaining: Math.max(0, RATE_LIMIT_MAX - existing.count), retryAfterSeconds: 0 };
 }
 
 function sleep(ms: number): Promise<void> {
@@ -558,9 +528,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Question is too long. Max 500 characters." }, { status: 400 });
   }
 
-  const ip = extractIp(request);
-  const rateLimit = consumeRateLimit(ip);
-  if (rateLimit.limited) {
+  const rateLimit = await checkApiRateLimit({
+    key: ipRateLimitKey(request, "council-gazette"),
+    route: "council-gazette",
+    limit: RATE_LIMIT_MAX,
+    windowMs: RATE_LIMIT_WINDOW_MS,
+  });
+  if (!rateLimit.allowed) {
     return NextResponse.json(
       { error: "Too many requests. Try again in a minute." },
       {

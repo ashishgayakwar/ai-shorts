@@ -1,7 +1,7 @@
-import { createHash } from "crypto";
-
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+
+import { checkApiRateLimit, fingerprintRateLimitKey } from "@/lib/api-rate-limit";
 
 export const runtime = "nodejs";
 
@@ -57,55 +57,6 @@ const APPROVED_TOOLS = {
   Hosting: ["Vercel", "Railway", "Render", "AWS", "DigitalOcean", "Google Cloud", "Heroku"],
   "Project Management": ["Linear", "Notion", "Jira", "Trello", "Slack", "GitHub"],
 } as const;
-
-type RateLimitEntry = {
-  count: number;
-  resetAt: number;
-};
-
-const rateLimitStore = new Map<string, RateLimitEntry>();
-
-function getClientIp(request: NextRequest): string {
-  const xForwardedFor = request.headers.get("x-forwarded-for");
-  if (xForwardedFor) {
-    const firstIp = xForwardedFor.split(",")[0]?.trim();
-    if (firstIp) return firstIp;
-  }
-
-  return request.headers.get("x-real-ip")?.trim() || "unknown";
-}
-
-function hashWithSecret(value: string): string {
-  const secret = process.env.NEXTAUTH_SECRET || process.env.OPENAI_API_KEY || "stacklens-rate-limit-secret";
-  return createHash("sha256").update(`${value}|${secret}`).digest("hex");
-}
-
-function getRateLimitKey(request: NextRequest): string {
-  const ip = getClientIp(request);
-  const fingerprint = request.headers.get("x-fingerprint") || "unknown";
-  return hashWithSecret(`${ip}|${fingerprint}`);
-}
-
-function consumeRateLimit(
-  key: string,
-): { limited: boolean; remaining: number; retryAfterSeconds: number } {
-  const now = Date.now();
-  const existing = rateLimitStore.get(key);
-
-  if (!existing || now >= existing.resetAt) {
-    rateLimitStore.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return { limited: false, remaining: RATE_LIMIT_MAX - 1, retryAfterSeconds: 0 };
-  }
-
-  const retryAfterSeconds = Math.max(1, Math.ceil((existing.resetAt - now) / 1000));
-  if (existing.count >= RATE_LIMIT_MAX) {
-    return { limited: true, remaining: 0, retryAfterSeconds };
-  }
-
-  existing.count += 1;
-  rateLimitStore.set(key, existing);
-  return { limited: false, remaining: Math.max(0, RATE_LIMIT_MAX - existing.count), retryAfterSeconds: 0 };
-}
 
 function withRateHeaders(
   response: NextResponse,
@@ -249,9 +200,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const rateLimitKey = getRateLimitKey(request);
-    const decision = consumeRateLimit(rateLimitKey);
-    if (decision.limited) {
+    const decision = await checkApiRateLimit({
+      key: fingerprintRateLimitKey(request, "stacklens"),
+      route: "stacklens",
+      limit: RATE_LIMIT_MAX,
+      windowMs: RATE_LIMIT_WINDOW_MS,
+    });
+    if (!decision.allowed) {
       const response = NextResponse.json(
         { error: "Too many requests. Try again in a minute." },
         { status: 429 },

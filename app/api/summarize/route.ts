@@ -1,8 +1,11 @@
-import { createHash } from "crypto";
-
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import {
+  checkApiRateLimit,
+  fingerprintRateLimitKey,
+  type ApiRateLimitDecision,
+} from "@/lib/api-rate-limit";
 import { parseModelJson } from "@/lib/model-json";
 import { createCompletionWithDeepSeekFallback } from "@/lib/openai-fallback";
 
@@ -45,25 +48,7 @@ type SummaryPayload = {
   whoShouldRead: string;
 };
 
-type RateLimitAllowed = {
-  allowed: true;
-  remaining: number;
-};
-
-type RateLimitBlocked = {
-  allowed: false;
-  remaining: number;
-  retryAfterSeconds: number;
-  reason: "cooldown" | "limit";
-};
-
-type RateDecision = RateLimitAllowed | RateLimitBlocked;
-
-type RateEntry = {
-  windowStartMs: number;
-  usedCount: number;
-  lastRequestMs: number;
-};
+type RateDecision = ApiRateLimitDecision;
 
 function toCleanString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
@@ -77,117 +62,14 @@ function clamp(n: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, n));
 }
 
-function getClientIp(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const first = forwarded.split(",")[0]?.trim();
-    if (first) return first;
-  }
-
-  const realIp = request.headers.get("x-real-ip")?.trim();
-  return realIp || "unknown";
-}
-
-function hashWithSecret(value: string): string {
-  const secret =
-    process.env.NEXTAUTH_SECRET ||
-    process.env.OPENAI_API_KEY ||
-    "book-summarizer-rate-limit-secret";
-
-  return createHash("sha256").update(`${value}|${secret}`).digest("hex");
-}
-
-function getRateLimitKey(request: Request): string {
-  const ip = getClientIp(request);
-  const fingerprint = request.headers.get("x-fingerprint") || "unknown";
-  return hashWithSecret(`${ip}|${fingerprint}`);
-}
-
-function getRateStore(): Map<string, RateEntry> {
-  const globalState = globalThis as unknown as {
-    bookSummarizerRateStore?: Map<string, RateEntry>;
-  };
-
-  if (!globalState.bookSummarizerRateStore) {
-    globalState.bookSummarizerRateStore = new Map();
-  }
-
-  return globalState.bookSummarizerRateStore;
-}
-
-function checkAndConsumeLimit(request: Request): RateDecision {
-  const now = Date.now();
-  const key = getRateLimitKey(request);
-  const store = getRateStore();
-  const current = store.get(key);
-
-  if (!current) {
-    store.set(key, {
-      windowStartMs: now,
-      usedCount: 1,
-      lastRequestMs: now,
-    });
-
-    return {
-      allowed: true,
-      remaining: MAX_USES_PER_WINDOW - 1,
-    };
-  }
-
-  const expiredWindow = now - current.windowStartMs >= WINDOW_MS;
-  if (expiredWindow) {
-    store.set(key, {
-      windowStartMs: now,
-      usedCount: 1,
-      lastRequestMs: now,
-    });
-
-    return {
-      allowed: true,
-      remaining: MAX_USES_PER_WINDOW - 1,
-    };
-  }
-
-  if (now - current.lastRequestMs < COOLDOWN_MS) {
-    const retryAfterSeconds = clamp(
-      Math.ceil((COOLDOWN_MS - (now - current.lastRequestMs)) / 1000),
-      1,
-      30
-    );
-
-    return {
-      allowed: false,
-      remaining: Math.max(0, MAX_USES_PER_WINDOW - current.usedCount),
-      retryAfterSeconds,
-      reason: "cooldown",
-    };
-  }
-
-  if (current.usedCount >= MAX_USES_PER_WINDOW) {
-    return {
-      allowed: false,
-      remaining: 0,
-      retryAfterSeconds: clamp(
-        Math.ceil((current.windowStartMs + WINDOW_MS - now) / 1000),
-        1,
-        24 * 60 * 60
-      ),
-      reason: "limit",
-    };
-  }
-
-  const updated: RateEntry = {
-    ...current,
-    usedCount: current.usedCount + 1,
-    lastRequestMs: now,
-  };
-
-  store.set(key, updated);
-
-  return {
-    allowed: true,
-    remaining: Math.max(0, MAX_USES_PER_WINDOW - updated.usedCount),
-  };
+function checkAndConsumeLimit(request: Request): Promise<RateDecision> {
+  return checkApiRateLimit({
+    key: fingerprintRateLimitKey(request, "book-summarizer"),
+    route: "book-summarizer",
+    limit: MAX_USES_PER_WINDOW,
+    windowMs: WINDOW_MS,
+    cooldownMs: COOLDOWN_MS,
+  });
 }
 
 function normalizeIdeas(value: unknown): Idea[] {
@@ -415,7 +297,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const decision = checkAndConsumeLimit(request);
+    const decision = await checkAndConsumeLimit(request);
     if (!decision.allowed) {
       const message =
         decision.reason === "cooldown"

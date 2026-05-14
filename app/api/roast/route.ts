@@ -2,11 +2,7 @@ import OpenAI from "openai";
 import { NextRequest, NextResponse } from "next/server";
 
 import type { RoastResult } from "@/app/roast/types";
-
-type RateLimitEntry = {
-  count: number;
-  resetAt: number;
-};
+import { checkApiRateLimit, ipRateLimitKey } from "@/lib/api-rate-limit";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -14,7 +10,6 @@ const openai = new OpenAI({
 
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW_MS = 60_000;
-const ipRateLimitStore = new Map<string, RateLimitEntry>();
 
 const SYSTEM_PROMPT =
   "You are a savage but lovable startup roaster — like that brutally honest friend who genuinely wants you to win. Your job is to stress-test ideas with real insight, not meme insults. Every roast point must contain a specific, actionable observation about THIS idea — not generic startup advice. Be brutal but useful.";
@@ -26,37 +21,6 @@ const EXHIBIT_TAGS = [
   "Unfair Advantage",
   "Execution Trap",
 ];
-
-function extractIp(request: NextRequest): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const first = forwarded.split(",")[0]?.trim();
-    if (first) {
-      return first;
-    }
-  }
-  return "127.0.0.1";
-}
-
-function consumeRateLimit(ip: string): { limited: boolean; retryAfterSeconds: number } {
-  const now = Date.now();
-  const existing = ipRateLimitStore.get(ip);
-
-  if (!existing || now >= existing.resetAt) {
-    ipRateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return { limited: false, retryAfterSeconds: 0 };
-  }
-
-  const retryAfterSeconds = Math.max(1, Math.ceil((existing.resetAt - now) / 1000));
-
-  if (existing.count >= RATE_LIMIT_MAX) {
-    return { limited: true, retryAfterSeconds };
-  }
-
-  existing.count += 1;
-  ipRateLimitStore.set(ip, existing);
-  return { limited: false, retryAfterSeconds: 0 };
-}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -218,9 +182,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const ip = extractIp(request);
-  const rateLimit = consumeRateLimit(ip);
-  if (rateLimit.limited) {
+  const rateLimit = await checkApiRateLimit({
+    key: ipRateLimitKey(request, "roast"),
+    route: "roast",
+    limit: RATE_LIMIT_MAX,
+    windowMs: RATE_LIMIT_WINDOW_MS,
+  });
+  if (!rateLimit.allowed) {
     return NextResponse.json(
       { error: "Too many requests. Try again in a minute." },
       {

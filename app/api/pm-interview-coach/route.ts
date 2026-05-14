@@ -2,12 +2,8 @@ import OpenAI from "openai";
 import { NextRequest, NextResponse } from "next/server";
 
 import type { InterviewAnswer } from "@/app/pm-interview-coach/types";
+import { checkApiRateLimit, ipRateLimitKey } from "@/lib/api-rate-limit";
 import { parseModelJson } from "@/lib/model-json";
-
-type RateLimitEntry = {
-  count: number;
-  resetAt: number;
-};
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,7 +11,6 @@ const openai = new OpenAI({
 
 const RATE_LIMIT_MAX = 8;
 const RATE_LIMIT_WINDOW_MS = 60_000;
-const rateLimitStore = new Map<string, RateLimitEntry>();
 
 const SYSTEM_PROMPT =
   "You are an expert PM interview coach. You give structured, grounded, specific model answers to PM interview questions. Every answer must be built on real product logic — no generic frameworks, no fluff, no theory. Every action point must have a specific \"because\" — not just what to do, but why it works for this specific product.";
@@ -126,27 +121,6 @@ function isValidAnswer(data: unknown): data is InterviewAnswer {
   return true;
 }
 
-function extractIp(request: NextRequest): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  return forwarded ? forwarded.split(",")[0].trim() : "127.0.0.1";
-}
-
-function consumeRateLimit(ip: string): { limited: boolean; remaining: number; retryAfterSeconds: number } {
-  const now = Date.now();
-  const existing = rateLimitStore.get(ip);
-  if (!existing || now >= existing.resetAt) {
-    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return { limited: false, remaining: RATE_LIMIT_MAX - 1, retryAfterSeconds: 0 };
-  }
-  const retryAfterSeconds = Math.max(1, Math.ceil((existing.resetAt - now) / 1000));
-  if (existing.count >= RATE_LIMIT_MAX) {
-    return { limited: true, remaining: 0, retryAfterSeconds };
-  }
-  existing.count += 1;
-  rateLimitStore.set(ip, existing);
-  return { limited: false, remaining: Math.max(0, RATE_LIMIT_MAX - existing.count), retryAfterSeconds: 0 };
-}
-
 function shouldRetryOpenAIError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
   const status = (error as { status?: number }).status;
@@ -179,9 +153,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Question is too long. Max 500 characters." }, { status: 400 });
   }
 
-  const ip = extractIp(request);
-  const rateLimit = consumeRateLimit(ip);
-  if (rateLimit.limited) {
+  const rateLimit = await checkApiRateLimit({
+    key: ipRateLimitKey(request, "pm-interview-coach"),
+    route: "pm-interview-coach",
+    limit: RATE_LIMIT_MAX,
+    windowMs: RATE_LIMIT_WINDOW_MS,
+  });
+  if (!rateLimit.allowed) {
     return NextResponse.json(
       { error: "Too many requests. Try again in a minute." },
       {

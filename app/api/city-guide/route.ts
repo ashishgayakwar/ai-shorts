@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import {
+  checkApiRateLimit,
+  projectRateLimitKey,
+  type ApiRateLimitDecision,
+} from "@/lib/api-rate-limit";
 import { parseModelJson } from "@/lib/model-json";
 
 export const runtime = "nodejs";
@@ -46,57 +51,14 @@ function shouldRetryOrFallback(error: unknown): boolean {
   return false;
 }
 
-type ProjectRateEntry = {
-  count: number;
-  resetAt: number;
-};
-
-type RateDecision =
-  | { allowed: true; remaining: number }
-  | { allowed: false; remaining: number; retryAfterSeconds: number; reason: "project_cap" };
-
-function getProjectRateState(): ProjectRateEntry {
-  const globalState = globalThis as unknown as {
-    cityGuideProjectRate?: ProjectRateEntry;
-  };
-  if (!globalState.cityGuideProjectRate) {
-    globalState.cityGuideProjectRate = {
-      count: 0,
-      resetAt: Date.now() + PROJECT_RATE_LIMIT_WINDOW_MS,
-    };
-  }
-  return globalState.cityGuideProjectRate;
-}
-
-function setProjectRateState(next: ProjectRateEntry): void {
-  const globalState = globalThis as unknown as {
-    cityGuideProjectRate?: ProjectRateEntry;
-  };
-  globalState.cityGuideProjectRate = next;
-}
-
-function checkAndConsumeLimit(): RateDecision {
-  const now = Date.now();
-  const state = getProjectRateState();
-
-  if (now >= state.resetAt) {
-    const resetState = { count: 1, resetAt: now + PROJECT_RATE_LIMIT_WINDOW_MS };
-    setProjectRateState(resetState);
-    return { allowed: true, remaining: PROJECT_RATE_LIMIT_MAX - 1 };
-  }
-
-  if (state.count >= PROJECT_RATE_LIMIT_MAX) {
-    return {
-      allowed: false,
-      remaining: 0,
-      retryAfterSeconds: Math.max(1, Math.ceil((state.resetAt - now) / 1000)),
-      reason: "project_cap",
-    };
-  }
-
-  const nextState = { ...state, count: state.count + 1 };
-  setProjectRateState(nextState);
-  return { allowed: true, remaining: Math.max(0, PROJECT_RATE_LIMIT_MAX - nextState.count) };
+function checkAndConsumeLimit(): Promise<ApiRateLimitDecision> {
+  return checkApiRateLimit({
+    key: projectRateLimitKey("city-guide"),
+    route: "city-guide",
+    limit: PROJECT_RATE_LIMIT_MAX,
+    windowMs: PROJECT_RATE_LIMIT_WINDOW_MS,
+    capReason: "project_cap",
+  });
 }
 
 type CityGuidePayload = {
@@ -588,7 +550,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please enter a valid city name." }, { status: 400 });
     }
 
-    const rateLimit = checkAndConsumeLimit();
+    const rateLimit = await checkAndConsumeLimit();
     if (!rateLimit.allowed) {
       return NextResponse.json(
         {

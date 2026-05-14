@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createHash } from "crypto";
 
+import { checkApiRateLimit, ipRateLimitKey } from "@/lib/api-rate-limit";
 import { createMaangDownloadToken } from "@/lib/maang-download-token";
 import { prisma } from "@/lib/prisma";
 
@@ -89,36 +90,16 @@ function getClientIp(request: Request): string {
   return request.headers.get("x-real-ip") || "unknown";
 }
 
-function checkRateLimit(ip: string): boolean {
-  const globalState = globalThis as unknown as {
-    maangLeadRateLimit?: Map<string, { count: number; windowStart: number }>;
-  };
-
-  if (!globalState.maangLeadRateLimit) {
-    globalState.maangLeadRateLimit = new Map();
-  }
-
-  const now = Date.now();
-  const current = globalState.maangLeadRateLimit.get(ip);
-
-  if (!current || now - current.windowStart > RATE_LIMIT_WINDOW_MS) {
-    globalState.maangLeadRateLimit.set(ip, { count: 1, windowStart: now });
-    return true;
-  }
-
-  if (current.count >= RATE_LIMIT_MAX) {
-    return false;
-  }
-
-  current.count += 1;
-  globalState.maangLeadRateLimit.set(ip, current);
-  return true;
-}
-
 export async function POST(request: Request) {
   try {
     const ip = getClientIp(request);
-    if (!checkRateLimit(ip)) {
+    const rateLimit = await checkApiRateLimit({
+      key: ipRateLimitKey(request, "maang-leads"),
+      route: "maang-leads",
+      limit: RATE_LIMIT_MAX,
+      windowMs: RATE_LIMIT_WINDOW_MS,
+    });
+    if (!rateLimit.allowed) {
       return NextResponse.json(
         { ok: false, error: "Too many requests. Please try again shortly." },
         { status: 429 }

@@ -3,6 +3,11 @@ import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import OpenAI from "openai";
 
+import {
+  checkApiRateLimit,
+  projectRateLimitKey,
+  type ApiRateLimitDecision,
+} from "@/lib/api-rate-limit";
 import { parseModelJson } from "@/lib/model-json";
 
 export const runtime = "nodejs";
@@ -38,61 +43,18 @@ type MatchResult = {
   };
 };
 
-type ProjectRateEntry = {
-  count: number;
-  resetAt: number;
-};
-
-type RateDecision =
-  | { allowed: true; remaining: number }
-  | { allowed: false; remaining: number; retryAfterSeconds: number; reason: "project_cap" };
-
 const MODEL = process.env.OPENAI_CHARACTER_MODEL || "gpt-4o";
 
 const FILE_ENV_CACHE = loadEnvFileValues();
 
-function getProjectRateState(): ProjectRateEntry {
-  const globalState = globalThis as unknown as {
-    characterMatchProjectRate?: ProjectRateEntry;
-  };
-  if (!globalState.characterMatchProjectRate) {
-    globalState.characterMatchProjectRate = {
-      count: 0,
-      resetAt: Date.now() + PROJECT_RATE_LIMIT_WINDOW_MS,
-    };
-  }
-  return globalState.characterMatchProjectRate;
-}
-
-function setProjectRateState(next: ProjectRateEntry): void {
-  const globalState = globalThis as unknown as {
-    characterMatchProjectRate?: ProjectRateEntry;
-  };
-  globalState.characterMatchProjectRate = next;
-}
-
-function checkAndConsumeProjectLimit(): RateDecision {
-  const now = Date.now();
-  const state = getProjectRateState();
-
-  if (now >= state.resetAt) {
-    const resetState = { count: 1, resetAt: now + PROJECT_RATE_LIMIT_WINDOW_MS };
-    setProjectRateState(resetState);
-    return { allowed: true, remaining: PROJECT_RATE_LIMIT_MAX - 1 };
-  }
-
-  if (state.count >= PROJECT_RATE_LIMIT_MAX) {
-    return {
-      allowed: false,
-      remaining: 0,
-      retryAfterSeconds: Math.max(1, Math.ceil((state.resetAt - now) / 1000)),
-      reason: "project_cap",
-    };
-  }
-
-  const nextState = { ...state, count: state.count + 1 };
-  setProjectRateState(nextState);
-  return { allowed: true, remaining: Math.max(0, PROJECT_RATE_LIMIT_MAX - nextState.count) };
+function checkAndConsumeProjectLimit(): Promise<ApiRateLimitDecision> {
+  return checkApiRateLimit({
+    key: projectRateLimitKey("character-match"),
+    route: "character-match",
+    limit: PROJECT_RATE_LIMIT_MAX,
+    windowMs: PROJECT_RATE_LIMIT_WINDOW_MS,
+    capReason: "project_cap",
+  });
 }
 
 function parseEnvFile(filePath: string): Record<string, string> {
@@ -305,7 +267,7 @@ async function fetchTmdbImageForShow(showName: string): Promise<string | null> {
 
 export async function POST(request: Request) {
   try {
-    const limit = checkAndConsumeProjectLimit();
+    const limit = await checkAndConsumeProjectLimit();
     if (!limit.allowed) {
       const response = NextResponse.json(
         {

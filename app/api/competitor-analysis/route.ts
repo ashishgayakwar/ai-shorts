@@ -1,8 +1,11 @@
-import { createHash } from "crypto";
-
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import {
+  checkApiRateLimit,
+  fingerprintRateLimitKey,
+  type ApiRateLimitDecision,
+} from "@/lib/api-rate-limit";
 import { parseModelJson } from "@/lib/model-json";
 import { createCompletionWithDeepSeekFallback } from "@/lib/openai-fallback";
 
@@ -46,102 +49,20 @@ type CompetitorPayload = {
   opportunity: Opportunity;
 };
 
-type RateLimitDecision =
-  | { allowed: true; remaining: number }
-  | { allowed: false; remaining: number; retryAfterSeconds: number; reason: "cap" | "cooldown" };
-
-type RateEntry = {
-  windowStartMs: number;
-  count: number;
-  lastRequestMs: number;
-};
+type RateLimitDecision = ApiRateLimitDecision;
 
 function toText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
-
-function getClientIp(request: Request): string {
-  const xForwardedFor = request.headers.get("x-forwarded-for");
-  if (xForwardedFor) {
-    const firstIp = xForwardedFor.split(",")[0]?.trim();
-    if (firstIp) return firstIp;
-  }
-
-  const realIp = request.headers.get("x-real-ip")?.trim();
-  return realIp || "unknown";
-}
-
-function hashWithSecret(value: string): string {
-  const secret =
-    process.env.NEXTAUTH_SECRET || process.env.OPENAI_API_KEY || "competitor-analysis-rate-limit";
-  return createHash("sha256").update(`${value}|${secret}`).digest("hex");
-}
-
-function getRateStore(): Map<string, RateEntry> {
-  const globalState = globalThis as unknown as {
-    competitorAnalysisRateStore?: Map<string, RateEntry>;
-  };
-
-  if (!globalState.competitorAnalysisRateStore) {
-    globalState.competitorAnalysisRateStore = new Map();
-  }
-
-  return globalState.competitorAnalysisRateStore;
-}
-
-function checkAndConsumeRateLimit(request: Request): RateLimitDecision {
-  const now = Date.now();
-  const ip = getClientIp(request);
-  const fingerprint = request.headers.get("x-fingerprint") || "unknown";
-  const key = hashWithSecret(`${ip}|${fingerprint}`);
-  const store = getRateStore();
-  const existing = store.get(key);
-
-  if (!existing) {
-    store.set(key, { windowStartMs: now, count: 1, lastRequestMs: now });
-    return { allowed: true, remaining: MAX_ANALYSES_PER_VISITOR - 1 };
-  }
-
-  if (now - existing.windowStartMs >= WINDOW_MS) {
-    store.set(key, { windowStartMs: now, count: 1, lastRequestMs: now });
-    return { allowed: true, remaining: MAX_ANALYSES_PER_VISITOR - 1 };
-  }
-
-  if (now - existing.lastRequestMs < COOLDOWN_MS) {
-    const retryAfterSeconds = clamp(
-      Math.ceil((COOLDOWN_MS - (now - existing.lastRequestMs)) / 1000),
-      1,
-      30
-    );
-    return {
-      allowed: false,
-      remaining: Math.max(0, MAX_ANALYSES_PER_VISITOR - existing.count),
-      retryAfterSeconds,
-      reason: "cooldown",
-    };
-  }
-
-  if (existing.count >= MAX_ANALYSES_PER_VISITOR) {
-    const retryAfterSeconds = clamp(
-      Math.ceil((existing.windowStartMs + WINDOW_MS - now) / 1000),
-      1,
-      24 * 60 * 60
-    );
-    return { allowed: false, remaining: 0, retryAfterSeconds, reason: "cap" };
-  }
-
-  const updated: RateEntry = {
-    ...existing,
-    count: existing.count + 1,
-    lastRequestMs: now,
-  };
-  store.set(key, updated);
-
-  return { allowed: true, remaining: Math.max(0, MAX_ANALYSES_PER_VISITOR - updated.count) };
+function checkAndConsumeRateLimit(request: Request): Promise<RateLimitDecision> {
+  return checkApiRateLimit({
+    key: fingerprintRateLimitKey(request, "competitor-analysis"),
+    route: "competitor-analysis",
+    limit: MAX_ANALYSES_PER_VISITOR,
+    windowMs: WINDOW_MS,
+    cooldownMs: COOLDOWN_MS,
+  });
 }
 
 function normalizeList(value: unknown, fallback: string[] = []): string[] {
@@ -243,7 +164,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const rateLimit = checkAndConsumeRateLimit(request);
+    const rateLimit = await checkAndConsumeRateLimit(request);
     if (!rateLimit.allowed) {
       const message =
         rateLimit.reason === "cooldown"
