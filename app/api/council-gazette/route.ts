@@ -524,8 +524,8 @@ export async function POST(request: NextRequest) {
   if (question.length < 10) {
     return NextResponse.json({ error: "Question is too short. Min 10 characters." }, { status: 400 });
   }
-  if (question.length > 500) {
-    return NextResponse.json({ error: "Question is too long. Max 500 characters." }, { status: 400 });
+  if (question.length > 1000) {
+    return NextResponse.json({ error: "Question is too long. Max 1000 characters." }, { status: 400 });
   }
 
   const rateLimit = await checkApiRateLimit({

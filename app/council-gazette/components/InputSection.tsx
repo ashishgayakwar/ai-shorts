@@ -16,7 +16,7 @@ type InputSectionProps = {
   };
 };
 
-const MAX_LEN = 500;
+const MAX_LEN = 1000;
 
 function Dot({ state }: { state: DotState }) {
   return <span className={`${styles.corrDot} ${state === "active" ? styles.corrDotActive : ""} ${state === "done" ? styles.corrDotDone : ""}`} />;
@@ -51,7 +51,7 @@ export function InputSection({ question, errorMsg, disabled, onQuestionChange, o
           <button type="button" className={styles.submitBtn} onClick={onSubmit} disabled={disabled}>
             Dispatch to Council →
           </button>
-          <span className={styles.charCount}>{charCount} / 500</span>
+          <span className={styles.charCount}>{charCount} / {MAX_LEN}</span>
         </div>
         {errorMsg ? <p className={styles.errorLine}>{errorMsg}</p> : null}
       </div>

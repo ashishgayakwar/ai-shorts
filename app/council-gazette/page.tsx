@@ -134,8 +134,8 @@ export default function CouncilGazettePage() {
       setPhase("error");
       return;
     }
-    if (trimmed.length > 500) {
-      setErrorMsg("Question is too long. Max 500 characters.");
+    if (trimmed.length > 1000) {
+      setErrorMsg("Question is too long. Max 1000 characters.");
       setPhase("error");
       return;
     }
