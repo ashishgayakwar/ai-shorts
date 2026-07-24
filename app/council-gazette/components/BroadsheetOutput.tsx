@@ -48,6 +48,46 @@ function findAnswer(result: CouncilResponse, model: "gpt" | "deepseek" | "gemini
   return result.answers.find((answer) => answer.model === model);
 }
 
+function buildDownloadText(result: CouncilResponse): string {
+  const answerLabels = {
+    gpt: "OpenAI",
+    deepseek: "DeepSeek",
+    gemini: "Google Gemini",
+  } as const;
+
+  const dispatches = result.answers
+    .map(
+      (answer) =>
+        `## ${answerLabels[answer.model]}\n\n### ${answer.headline}\n\n${answer.body}`
+    )
+    .join("\n\n");
+  const consensus = result.synthesis.agree.map((point) => `- ${point}`).join("\n");
+  const contention = result.synthesis.disagree.map((point) => `- ${point}`).join("\n");
+
+  return `# The Council Gazette
+
+## Question
+
+${result.question}
+
+# Dispatches
+
+${dispatches}
+
+# Points of Consensus
+
+${consensus || "- None reported"}
+
+# Points of Contention
+
+${contention || "- None reported"}
+
+# The Editor's Verdict
+
+${result.synthesis.verdict}
+`;
+}
+
 export function BroadsheetOutput({
   result,
   onReset,
@@ -62,6 +102,22 @@ export function BroadsheetOutput({
 
   if (!gpt || !deepseek || !gemini) {
     return null;
+  }
+
+  function downloadGazette() {
+    const file = new Blob([buildDownloadText(result)], {
+      type: "text/markdown;charset=utf-8",
+    });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    const date = new Date().toISOString().slice(0, 10);
+
+    link.href = url;
+    link.download = `council-gazette-${date}.md`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
   }
 
   return (
@@ -163,9 +219,14 @@ export function BroadsheetOutput({
 
       <div className={styles.paperFooter}>
         <span>The Council Gazette · Day 10 · 75 Products 75 Days · Ashish Gayakwar</span>
-        <button type="button" className={styles.newQBtn} onClick={onReset}>
-          ← New Question
-        </button>
+        <div className={styles.footerActions}>
+          <button type="button" className={styles.downloadBtn} onClick={downloadGazette} aria-label="Download Council Gazette">
+            ↓ Download
+          </button>
+          <button type="button" className={styles.newQBtn} onClick={onReset}>
+            ← New Question
+          </button>
+        </div>
       </div>
     </section>
   );
