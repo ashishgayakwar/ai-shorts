@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { jsPDF } from "jspdf";
 
 import styles from "../council-gazette.module.css";
 import type { BodyFontOption, BodySizeOption, CouncilResponse } from "../types";
@@ -48,44 +49,13 @@ function findAnswer(result: CouncilResponse, model: "gpt" | "deepseek" | "gemini
   return result.answers.find((answer) => answer.model === model);
 }
 
-function buildDownloadText(result: CouncilResponse): string {
-  const answerLabels = {
-    gpt: "OpenAI",
-    deepseek: "DeepSeek",
-    gemini: "Google Gemini",
-  } as const;
-
-  const dispatches = result.answers
-    .map(
-      (answer) =>
-        `## ${answerLabels[answer.model]}\n\n### ${answer.headline}\n\n${answer.body}`
-    )
-    .join("\n\n");
-  const consensus = result.synthesis.agree.map((point) => `- ${point}`).join("\n");
-  const contention = result.synthesis.disagree.map((point) => `- ${point}`).join("\n");
-
-  return `# The Council Gazette
-
-## Question
-
-${result.question}
-
-# Dispatches
-
-${dispatches}
-
-# Points of Consensus
-
-${consensus || "- None reported"}
-
-# Points of Contention
-
-${contention || "- None reported"}
-
-# The Editor's Verdict
-
-${result.synthesis.verdict}
-`;
+function pdfSafeText(value: string): string {
+  return value
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/\u2026/g, "...")
+    .replace(/\u00A0/g, " ");
 }
 
 export function BroadsheetOutput({
@@ -105,19 +75,95 @@ export function BroadsheetOutput({
   }
 
   function downloadGazette() {
-    const file = new Blob([buildDownloadText(result)], {
-      type: "text/markdown;charset=utf-8",
-    });
-    const url = URL.createObjectURL(file);
-    const link = document.createElement("a");
-    const date = new Date().toISOString().slice(0, 10);
+    const pdf = new jsPDF({ unit: "pt", format: "a4" });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 48;
+    const contentWidth = pageWidth - margin * 2;
+    let y = 52;
 
-    link.href = url;
-    link.download = `council-gazette-${date}.md`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
+    const ensureSpace = (needed: number) => {
+      if (y + needed <= pageHeight - margin) return;
+      pdf.addPage();
+      y = 52;
+    };
+
+    const write = (
+      text: string,
+      size = 10,
+      style: "normal" | "bold" | "italic" = "normal",
+      lineHeight = 14,
+      indent = 0
+    ) => {
+      pdf.setFont("times", style);
+      pdf.setFontSize(size);
+      const lines = pdf.splitTextToSize(pdfSafeText(text), contentWidth - indent);
+
+      lines.forEach((line: string) => {
+        ensureSpace(lineHeight);
+        pdf.text(line, margin + indent, y);
+        y += lineHeight;
+      });
+    };
+
+    const section = (title: string) => {
+      ensureSpace(30);
+      y += 8;
+      pdf.setDrawColor(80, 65, 45);
+      pdf.line(margin, y, pageWidth - margin, y);
+      y += 18;
+      write(title.toUpperCase(), 12, "bold", 16);
+      y += 4;
+    };
+
+    pdf.setTextColor(35, 28, 20);
+    write("THE COUNCIL GAZETTE", 22, "bold", 26);
+    write(`Downloaded ${new Date().toLocaleDateString()}`, 9, "italic", 13);
+
+    section("Question Before the Council");
+    write(result.question, 12, "italic", 17);
+
+    section("Dispatches from the Correspondents");
+    const answerLabels = {
+      gpt: "OPENAI",
+      deepseek: "DEEPSEEK",
+      gemini: "GOOGLE GEMINI",
+    } as const;
+
+    result.answers.forEach((answer) => {
+      ensureSpace(48);
+      write(answerLabels[answer.model], 9, "bold", 13);
+      write(answer.headline, 14, "bold", 18);
+      y += 2;
+      write(answer.body, 10, "normal", 15);
+      y += 10;
+    });
+
+    section("Points of Consensus");
+    if (result.synthesis.agree.length === 0) {
+      write("None reported.", 10, "normal", 15);
+    } else {
+      result.synthesis.agree.forEach((point) => {
+        write(`- ${point}`, 10, "normal", 15, 8);
+        y += 3;
+      });
+    }
+
+    section("Points of Contention");
+    if (result.synthesis.disagree.length === 0) {
+      write("None reported.", 10, "normal", 15);
+    } else {
+      result.synthesis.disagree.forEach((point) => {
+        write(`- ${point}`, 10, "normal", 15, 8);
+        y += 3;
+      });
+    }
+
+    section("The Editor's Verdict");
+    write(result.synthesis.verdict, 11, "italic", 17);
+
+    const date = new Date().toISOString().slice(0, 10);
+    pdf.save(`council-gazette-${date}.pdf`);
   }
 
   return (
@@ -221,7 +267,7 @@ export function BroadsheetOutput({
         <span>The Council Gazette · Day 10 · 75 Products 75 Days · Ashish Gayakwar</span>
         <div className={styles.footerActions}>
           <button type="button" className={styles.downloadBtn} onClick={downloadGazette} aria-label="Download Council Gazette">
-            ↓ Download
+            ↓ PDF
           </button>
           <button type="button" className={styles.newQBtn} onClick={onReset}>
             ← New Question
