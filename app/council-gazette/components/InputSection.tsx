@@ -16,7 +16,7 @@ type InputSectionProps = {
   };
 };
 
-const MAX_LEN = 1000;
+const MAX_LEN = 5000;
 
 function Dot({ state }: { state: DotState }) {
   return <span className={`${styles.corrDot} ${state === "active" ? styles.corrDotActive : ""} ${state === "done" ? styles.corrDotDone : ""}`} />;
